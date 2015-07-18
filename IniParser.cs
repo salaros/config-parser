@@ -425,8 +425,20 @@ namespace Salaros.Config.Ini
                 return false;
             }             
 
-            var iniKey = new IniKeyValue(keyName, value);
-            section.AddLine(iniKey);
+
+            var iniKey = section.Lines
+                .OfType<IniKeyValue>()
+                .FirstOrDefault(k => k.Key.Equals(keyName));
+
+            if (iniKey != null)
+            {
+                iniKey.Value = value;
+            }
+            else
+            {
+                iniKey = new IniKeyValue(keyName, value);
+                section.AddLine(iniKey);
+            }
             return true;
         }
 

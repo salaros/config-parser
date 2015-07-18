@@ -40,7 +40,7 @@ namespace Salaros.Config.Ini
         public object Value
         {
             get;
-            private set;
+            internal set;
         }
 
         public string SectionName
