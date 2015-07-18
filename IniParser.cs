@@ -126,6 +126,9 @@ namespace Salaros.Config.Ini
 
         #region Read & write
 
+        /// <summary>
+        /// Read Ini file.
+        /// </summary>
         public void Read()
         {
             if (textContent == null)
@@ -190,6 +193,9 @@ namespace Salaros.Config.Ini
             }
         }
 
+        /// <summary>
+        /// Writes Ini content.
+        /// </summary>
         public bool Write()
         {
             var sb = new StringBuilder();
@@ -207,6 +213,10 @@ namespace Salaros.Config.Ini
 
         #region Plain
 
+        /// <summary>
+        /// Gets Ini lines.
+        /// </summary>
+        /// <value>The lines.</value>
         public ReadOnlyCollection<IIniLine> Lines
         {
             get 
@@ -216,6 +226,14 @@ namespace Salaros.Config.Ini
             }
         }
 
+        /// <summary>
+        /// Gets the raw value of the key.
+        /// </summary>
+        /// <returns>The value raw.</returns>
+        /// <param name="sectionName">Section name.</param>
+        /// <param name="keyName">Key name.</param>
+        /// <param name="defaultValue">Default value returned if the key with the given name does not exist.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
         internal virtual T GetValueRaw<T>(string sectionName, string keyName, T defaultValue) 
         {
             if (string.IsNullOrWhiteSpace(sectionName)) throw new ArgumentNullException("sectionName");
