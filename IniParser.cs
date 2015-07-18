@@ -199,6 +199,7 @@ namespace Salaros.Config.Ini
         public bool Write()
         {
             var sb = new StringBuilder();
+
             foreach (var line in Lines.ToList())
             {
                 sb.AppendLine(line.ToString());
@@ -596,7 +597,13 @@ namespace Salaros.Config.Ini
 
             try 
             {
-                File.WriteAllText(iniFile.FullName, sb.ToString());
+                using (var fileWriter = new FileStream(iniFile.FullName, FileMode.Truncate, FileAccess.Write))
+                {
+                    using (var writer = new StreamWriter(fileWriter, Encoding.UTF8, 4096, true))
+                    {
+                        writer.Write(sb);
+                    }
+                } 
                 return true;
             }
             catch (Exception ex)
