@@ -41,6 +41,7 @@ namespace Salaros.Config.Ini
         internal protected void AddLine(IniLine iniLine)
         {
             lines.Add(iniLine);
+            iniLine.Section = this;
         }
 
         #region IIniLine implementation

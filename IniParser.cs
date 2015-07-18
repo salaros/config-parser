@@ -19,7 +19,7 @@ namespace Salaros.Config.Ini
 
         #region Line matchers
 
-        const string SECTION_REGEX = @"^\[(?<name>.*)\]$";
+        const string SECTION_REGEX = @"\[(?<name>.*)\]";
         const string COMMENT_REGEX = @"((?<delimiter>(;|:|#))\s*?(?<comment>.*?))?";
         const string KEY_REGEX = "^(?<key>.*)\\s*?=\\s*?";
         const string VALUE_REGEX = @"(?<quote1>\"")?(?<value>[^\""]*.?)?(?<quote2>\"")?\s*?";

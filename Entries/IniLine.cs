@@ -33,7 +33,7 @@
         {
             get
             {
-                if (lineNumber == -1 && Section != null)
+                if (lineNumber < 0 && Section != null)
                     lineNumber = Section.GetLineNumber(this);
 
                 return lineNumber;
@@ -62,6 +62,7 @@
             {
                 return section;   
             }
+            internal set { section = value; }
         }
 
         #endregion
