@@ -15,6 +15,7 @@ namespace Salaros.Config.Ini
         protected List<IniLine> header = new List<IniLine>();
         protected Dictionary<string, IniSection> sections = new Dictionary<string, IniSection>();
         protected FileInfo iniFile;
+        protected static ILoggingService logger;
 
         #region Line matchers
 
@@ -301,9 +302,10 @@ namespace Salaros.Config.Ini
                     ? defaultValue
                     : DecodeByteArray(stringValue);
             }
-            catch
+            catch(Exception ex)
             {
-                // TODO log the error
+                if (logger != null)
+                    logger.Error(ex);
                 return defaultValue;
             }
         }
@@ -400,7 +402,8 @@ namespace Salaros.Config.Ini
 
             if (section == null)
             {
-                // TODO log the error
+                if (logger != null)
+                    logger.Warn(string.Format("Failed to create {0} and store {1}={2} key", sectionName, keyName, value));
                 return false;
             }             
 
@@ -540,6 +543,8 @@ namespace Salaros.Config.Ini
             }
             catch (Exception ex)
             {
+                if (logger != null)
+                    logger.Fatal(ex);
                 var message = string.Format("Failed to initialize IniParser for the following file: '{0}'", iniFile.FullName);
                 throw new IniParserException(message, -1, ex);
             }
@@ -566,6 +571,8 @@ namespace Salaros.Config.Ini
             }
             catch (Exception ex)
             {
+                if (logger != null)
+                    logger.Fatal(ex);
                 var message = string.Format("Failed to write IniParser content to the following file: '{0}'", iniFile.FullName);
                 throw new IniParserException(message, -1, ex);
             }
