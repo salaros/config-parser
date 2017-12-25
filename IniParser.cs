@@ -38,10 +38,10 @@ namespace Salaros.Config.Ini
         static IniParser()
         {
             _sectionMatcher = new Regex(SECTION_REGEX, RegexOptions.Compiled);
-            _commentMatcher = new Regex(string.Format("^{0}$",COMMENT_REGEX), RegexOptions.Compiled);
+            _commentMatcher = new Regex(string.Format("^{0}$", COMMENT_REGEX), RegexOptions.Compiled);
             _keyValueMatcher = new Regex(KEY_REGEX + VALUE_REGEX + COMMENT_REGEX + '$', RegexOptions.Compiled);
         }
-            
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Salaros.Config.Ini.IniParser"/> class.
         /// </summary>
@@ -113,7 +113,7 @@ namespace Salaros.Config.Ini
         /// <value>The sections.</value>
         public ReadOnlyDictionary<string, IniSection> Sections
         {
-            get 
+            get
             { 
                 var result = sections.Values.OrderBy(s => s.LineNumber).ToDictionary(s => s.SectionName, s => s);
                 return new ReadOnlyDictionary<string, IniSection>(result);
@@ -135,7 +135,7 @@ namespace Salaros.Config.Ini
                 throw new InvalidOperationException();
 
             IniSection lastSection = null;
-            for(int lineNumber = 0; lineNumber < textContent.Count; lineNumber++)
+            for (int lineNumber = 0; lineNumber < textContent.Count; lineNumber++)
             {
                 var line = textContent[lineNumber];
 
@@ -220,7 +220,7 @@ namespace Salaros.Config.Ini
         /// <value>The lines.</value>
         public ReadOnlyCollection<IIniLine> Lines
         {
-            get 
+            get
             {
                 var lines = sections.Values.SelectMany(s => s.Lines);
                 return new ReadOnlyCollection<IIniLine>(header.Concat(lines).ToList());
@@ -235,10 +235,12 @@ namespace Salaros.Config.Ini
         /// <param name="keyName">Key name.</param>
         /// <param name="defaultValue">Default value returned if the key with the given name does not exist.</param>
         /// <typeparam name="T">The 1st type parameter.</typeparam>
-        internal virtual T GetValueRaw<T>(string sectionName, string keyName, T defaultValue) 
+        internal virtual T GetValueRaw<T>(string sectionName, string keyName, T defaultValue)
         {
-            if (string.IsNullOrWhiteSpace(sectionName)) throw new ArgumentNullException("sectionName");
-            if (string.IsNullOrWhiteSpace(keyName))throw new ArgumentNullException("keyName");
+            if (string.IsNullOrWhiteSpace(sectionName))
+                throw new ArgumentNullException("sectionName");
+            if (string.IsNullOrWhiteSpace(keyName))
+                throw new ArgumentNullException("keyName");
 
             var iniKey = new IniKeyValue(keyName, defaultValue);
 
@@ -266,7 +268,8 @@ namespace Salaros.Config.Ini
         /// <returns></returns>
         public virtual string GetValue(string sectionName, string key, string defaultValue)
         {
-            return GetValueRaw(sectionName, key, defaultValue); ;
+            return GetValueRaw(sectionName, key, defaultValue);
+            ;
         }
 
         /// <summary>
@@ -278,7 +281,7 @@ namespace Salaros.Config.Ini
         /// <returns></returns>
         public virtual bool GetValue(string sectionName, string key, bool defaultValue)
         {
-            return GetValue(sectionName, key, (defaultValue ? "1" : "0"))  == "1";
+            return GetValue(sectionName, key, (defaultValue ? "1" : "0")) == "1";
         }
 
         /// <summary>
@@ -321,7 +324,7 @@ namespace Salaros.Config.Ini
                     ? defaultValue
                     : DecodeByteArray(stringValue);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (logger != null)
                     logger.Error(ex);
@@ -342,10 +345,10 @@ namespace Salaros.Config.Ini
         /// <exception cref="System.ArgumentException"><key> section must have a not null reference value</exception>
         public string GetValue(KeyData<string> key)
         {
-            if (key == null) 
+            if (key == null)
                 throw new ArgumentNullException();
             
-            if (string.IsNullOrWhiteSpace(key.SectionName)) 
+            if (string.IsNullOrWhiteSpace(key.SectionName))
                 throw new ArgumentException("<key> section must have a not null reference value");
 
             return GetValue(key.SectionName, key.Key, key.Value);
@@ -409,8 +412,10 @@ namespace Salaros.Config.Ini
         /// <exception cref="System.InvalidOperationException"></exception>
         public bool SetValue(string sectionName, string keyName, string value)
         {
-            if (string.IsNullOrWhiteSpace(sectionName)) throw new ArgumentNullException("sectionName");
-            if (string.IsNullOrWhiteSpace(keyName))throw new ArgumentNullException("keyName");
+            if (string.IsNullOrWhiteSpace(sectionName))
+                throw new ArgumentNullException("sectionName");
+            if (string.IsNullOrWhiteSpace(keyName))
+                throw new ArgumentNullException("keyName");
 
             IniSection section;
             if (!sections.TryGetValue(sectionName, out section))
@@ -568,7 +573,7 @@ namespace Salaros.Config.Ini
             if (iniFile == null)
                 throw new ArgumentNullException("iniFile");
 
-            try 
+            try
             {
                 return iniFile.Exists ? File.ReadLines(iniFile.FullName).ToList() : new List<string>(0);
             }
@@ -595,7 +600,7 @@ namespace Salaros.Config.Ini
             if (sb == null)
                 throw new ArgumentNullException("sb");
 
-            try 
+            try
             {
                 using (var fileWriter = new FileStream(iniFile.FullName, FileMode.Truncate, FileAccess.Write))
                 {
@@ -622,16 +627,16 @@ namespace Salaros.Config.Ini
         /// <returns></returns>
         private static byte[] DecodeByteArray(string value)
         {
-            if (value == null) 
+            if (value == null)
                 return null;
 
             var l = value.Length;
-            if (l < 2) 
+            if (l < 2)
                 return new byte[] { };
 
             l /= 2;
             var result = new byte[l];
-            for (var i = 0; i < l; i++) 
+            for (var i = 0; i < l; i++)
                 result[i] = Convert.ToByte(value.Substring(i * 2, 2), 16);
             return result;
         }
@@ -643,7 +648,7 @@ namespace Salaros.Config.Ini
         /// <returns></returns>
         private static string EncodeByteArray(byte[] value)
         {
-            if (value == null) 
+            if (value == null)
                 return null;
 
             var sb = new StringBuilder();
@@ -657,7 +662,7 @@ namespace Salaros.Config.Ini
                 }
                 else
                 {
-                    if (l < 2) 
+                    if (l < 2)
                         sb.Append("0");
                     sb.Append(hex);
                 }

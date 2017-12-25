@@ -44,7 +44,7 @@ namespace Salaros.Config.Ini
         /// </summary>
         /// <value><c>true</c> if this instance is warn enabled; otherwise, <c>false</c>.</value>
         bool IsWarnEnabled { get; }
-       
+
         #endregion
 
         #region Trace
