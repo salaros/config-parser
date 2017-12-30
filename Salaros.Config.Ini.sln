@@ -1,7 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salaros.Config.Ini", "Salaros.Config.Ini.csproj", "{B835EC8E-1BD4-4B41-A01B-E5C80B4F51C0}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salaros.Config.Ini", "src\Salaros.Config.Ini.csproj", "{B835EC8E-1BD4-4B41-A01B-E5C80B4F51C0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{610826DA-5E33-40B5-AF2C-27DA4A73FDA1}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		nuget.config = nuget.config
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,5 +23,11 @@ Global
 		{B835EC8E-1BD4-4B41-A01B-E5C80B4F51C0}.Debug|x86.Build.0 = Debug|x86
 		{B835EC8E-1BD4-4B41-A01B-E5C80B4F51C0}.Release|x86.ActiveCfg = Release|x86
 		{B835EC8E-1BD4-4B41-A01B-E5C80B4F51C0}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C925688F-B1AA-4F13-A48C-D5538AA5B08E}
 	EndGlobalSection
 EndGlobal
