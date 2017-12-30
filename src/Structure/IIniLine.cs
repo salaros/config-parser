@@ -8,6 +8,5 @@ namespace Salaros.Config.Ini
         /// <value>The line number.</value>
         int LineNumber { get; }
 	}
-
 }
 

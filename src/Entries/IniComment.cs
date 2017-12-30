@@ -4,11 +4,12 @@ namespace Salaros.Config.Ini
     {
         protected char delimiter;
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a new instance of the <see cref="IniComment"/> class.
+        /// Initializes a new instance of the <see cref="T:IniComment" /> class.
         /// </summary>
         /// <param name="delimiter">Delimiter.</param>
-        /// <param name = "comment"></param>
+        /// <param name="comment"></param>
         /// <param name="lineNumber">Line number.</param>
         public IniComment(char delimiter = ';', string comment = "", int lineNumber = -1)
             : base(lineNumber)
@@ -24,7 +25,6 @@ namespace Salaros.Config.Ini
         public char Delimiter
         {
             get;
-            private set;
         }
 
         /// <summary>
@@ -38,9 +38,9 @@ namespace Salaros.Config.Ini
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="IniComment"/>.
+        /// Returns a <see cref="string"/> that represents the current <see cref="IniComment"/>.
         /// </summary>
-        /// <returns>A <see cref="System.String"/> that represents the current <see cref="IniComment"/>.</returns>
+        /// <returns>A <see cref="string"/> that represents the current <see cref="IniComment"/>.</returns>
         public override string ToString()
         {
             return string.Format("{0} {1}", Delimiter, Comment);

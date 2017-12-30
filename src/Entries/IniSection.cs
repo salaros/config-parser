@@ -31,14 +31,14 @@ namespace Salaros.Config.Ini
         internal int GetLineNumber(IniLine line)
         {
             if (line == null)
-                throw new ArgumentNullException("line");
+                throw new ArgumentNullException(nameof(line));
             
             return (lines == null || !lines.Any())
                 ? -1 
                 : lines.IndexOf(line);
         }
 
-        internal protected void AddLine(IniLine iniLine)
+        protected internal void AddLine(IniLine iniLine)
         {
             lines.Add(iniLine);
             iniLine.Section = this;
@@ -46,33 +46,22 @@ namespace Salaros.Config.Ini
 
         #region IIniLine implementation
 
+        /// <inheritdoc />
         /// <summary>
         /// Gets the line number.
         /// </summary>
         /// <value>The line number.</value>
-        public virtual int LineNumber
-        {
-            get
-            {
-                return lineNumber;
-            }
-        }
-            
-        #endregion
+        public virtual int LineNumber => lineNumber;
+
+	    #endregion
 
         /// <summary>
         /// Gets the name of the section.
         /// </summary>
         /// <value>The name of the section.</value>
-        public string SectionName
-        {
-            get
-            {
-                return sectionName;
-            }
-        }
+        public string SectionName => sectionName;
 
-        /// <summary>
+	    /// <summary>
         /// Gets the keys.
         /// </summary>
         /// <value>The keys.</value>
@@ -99,13 +88,12 @@ namespace Salaros.Config.Ini
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="IniSection"/>.
+        /// Returns a <see cref="string"/> that represents the current <see cref="IniSection"/>.
         /// </summary>
-        /// <returns>A <see cref="System.String"/> that represents the current <see cref="IniSection"/>.</returns>
+        /// <returns>A <see cref="string"/> that represents the current <see cref="IniSection"/>.</returns>
         public override string ToString()
         {
-            return string.Format("[{0}]", sectionName);
+            return $"[{sectionName}]";
         }
 	}
 }
-

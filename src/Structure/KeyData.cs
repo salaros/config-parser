@@ -16,6 +16,7 @@ namespace Salaros.Config.Ini
 
         #region IIniKeyValuePair implementation
 
+        /// <inheritdoc />
         /// <summary>
         /// Gets the key.
         /// </summary>
@@ -23,9 +24,9 @@ namespace Salaros.Config.Ini
         public string Key
         {
             get;
-            private set;
         }
 
+        /// <inheritdoc />
         /// <summary>
         /// Gets the value.
         /// </summary>
@@ -33,9 +34,9 @@ namespace Salaros.Config.Ini
         public TValue Value
         {
             get;
-            private set;
         }
 
+        /// <inheritdoc />
         /// <summary>
         /// Gets the name of the section.
         /// </summary>
@@ -43,7 +44,6 @@ namespace Salaros.Config.Ini
         public string SectionName
         {
             get;
-            private set;
         }
 
         #endregion

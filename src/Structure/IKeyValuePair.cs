@@ -1,6 +1,6 @@
 namespace Salaros.Config.Ini
 {
-    public interface IIniKeyValuePair<TValue>
+    public interface IIniKeyValuePair<out TValue>
 	{
         /// <summary>
         /// Gets the key.

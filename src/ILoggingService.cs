@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Salaros.Config.Ini
 {
@@ -56,14 +56,14 @@ namespace Salaros.Config.Ini
         void Trace(Exception exception);
 
         /// <summary>
-        /// Trace the specified format and args.
+        /// Trace the specified format and arguments.
         /// </summary>
         /// <param name="format">Format.</param>
         /// <param name="args">Arguments.</param>
         void Trace(string format, params object[] args);
 
         /// <summary>
-        /// Trace the specified exception, format and args.
+        /// Trace the specified exception, format and arguments.
         /// </summary>
         /// <param name="exception">Exception.</param>
         /// <param name="format">Format.</param>
@@ -81,14 +81,14 @@ namespace Salaros.Config.Ini
         void Debug(Exception exception);
 
         /// <summary>
-        /// Debug the specified format and args.
+        /// Debug the specified format and arguments.
         /// </summary>
         /// <param name="format">Format.</param>
         /// <param name="args">Arguments.</param>
         void Debug(string format, params object[] args);
 
         /// <summary>
-        /// Debug the specified exception, format and args.
+        /// Debug the specified exception, format and arguments.
         /// </summary>
         /// <param name="exception">Exception.</param>
         /// <param name="format">Format.</param>
@@ -106,14 +106,14 @@ namespace Salaros.Config.Ini
         void Info(Exception exception);
 
         /// <summary>
-        /// Info the specified format and args.
+        /// Info the specified format and arguments.
         /// </summary>
         /// <param name="format">Format.</param>
         /// <param name="args">Arguments.</param>
         void Info(string format, params object[] args);
 
         /// <summary>
-        /// Info the specified exception, format and args.
+        /// Info the specified exception, format and arguments.
         /// </summary>
         /// <param name="exception">Exception.</param>
         /// <param name="format">Format.</param>
@@ -131,14 +131,14 @@ namespace Salaros.Config.Ini
         void Warn(Exception exception);
 
         /// <summary>
-        /// Warn the specified format and args.
+        /// Warn the specified format and arguments.
         /// </summary>
         /// <param name="format">Format.</param>
         /// <param name="args">Arguments.</param>
         void Warn(string format, params object[] args);
 
         /// <summary>
-        /// Warn the specified exception, format and args.
+        /// Warn the specified exception, format and arguments.
         /// </summary>
         /// <param name="exception">Exception.</param>
         /// <param name="format">Format.</param>
@@ -156,14 +156,14 @@ namespace Salaros.Config.Ini
         void Error(Exception exception);
 
         /// <summary>
-        /// Error the specified format and args.
+        /// Error the specified format and arguments.
         /// </summary>
         /// <param name="format">Format.</param>
         /// <param name="args">Arguments.</param>
         void Error(string format, params object[] args);
 
         /// <summary>
-        /// Error the specified exception, format and args.
+        /// Error the specified exception, format and arguments.
         /// </summary>
         /// <param name="exception">Exception.</param>
         /// <param name="format">Format.</param>
@@ -181,14 +181,14 @@ namespace Salaros.Config.Ini
         void Fatal(Exception exception);
 
         /// <summary>
-        /// Fatal the specified format and args.
+        /// Fatal the specified format and arguments.
         /// </summary>
         /// <param name="format">Format.</param>
         /// <param name="args">Arguments.</param>
         void Fatal(string format, params object[] args);
 
         /// <summary>
-        /// Fatal the specified exception, format and args.
+        /// Fatal the specified exception, format and arguments.
         /// </summary>
         /// <param name="exception">Exception.</param>
         /// <param name="format">Format.</param>

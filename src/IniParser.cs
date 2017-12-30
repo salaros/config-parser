@@ -19,39 +19,39 @@ namespace Salaros.Config.Ini
 
         #region Line matchers
 
-        const string SECTION_REGEX = @"\[(?<name>.*)\]";
-        const string COMMENT_REGEX = @"((?<delimiter>(;|:|#))\s*?(?<comment>.*?))?";
-        const string KEY_REGEX = "^(?<key>.*)\\s*?=\\s*?";
-        const string VALUE_REGEX = @"(?<quote1>\"")?(?<value>[^\""]*.?)?(?<quote2>\"")?\s*?";
+        private const string SECTION_REGEX = @"\[(?<name>.*)\]";
+        private const string COMMENT_REGEX = @"((?<delimiter>(;|:|#))\s*?(?<comment>.*?))?";
+        private const string KEY_REGEX = "^(?<key>.*)\\s*?=\\s*?";
+        private const string VALUE_REGEX = @"(?<quote1>\"")?(?<value>[^\""]*.?)?(?<quote2>\"")?\s*?";
 
-        static readonly Regex _sectionMatcher;
-        static readonly Regex _commentMatcher;
-        static readonly Regex _keyValueMatcher;
+        private static readonly Regex SectionMatcher;
+        private static readonly Regex CommentMatcher;
+        private static readonly Regex KeyValueMatcher;
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes the <see cref="Salaros.Config.Ini.IniParser"/> class.
+        /// Initializes the <see cref="IniParser"/> class.
         /// </summary>
         static IniParser()
         {
-            _sectionMatcher = new Regex(SECTION_REGEX, RegexOptions.Compiled);
-            _commentMatcher = new Regex(string.Format("^{0}$", COMMENT_REGEX), RegexOptions.Compiled);
-            _keyValueMatcher = new Regex(KEY_REGEX + VALUE_REGEX + COMMENT_REGEX + '$', RegexOptions.Compiled);
+            SectionMatcher = new Regex(SECTION_REGEX, RegexOptions.Compiled);
+            CommentMatcher = new Regex(string.Format("^{0}$", COMMENT_REGEX), RegexOptions.Compiled);
+            KeyValueMatcher = new Regex(KEY_REGEX + VALUE_REGEX + COMMENT_REGEX + '$', RegexOptions.Compiled);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Salaros.Config.Ini.IniParser"/> class.
+        /// Initializes a new instance of the <see cref="IniParser"/> class.
         /// </summary>
         /// <param name="iniContent">Ini content.</param>
         /// <param name="newLine">New line.</param>
         /// <param name = "autoParse"></param>
         public IniParser(StringBuilder iniContent, string newLine = null, bool autoParse = true)
         {
-            if (iniContent == null || string.IsNullOrWhiteSpace(iniContent.ToString()))
-                throw new ArgumentNullException("iniContent");
+            if (string.IsNullOrWhiteSpace(iniContent?.ToString()))
+                throw new ArgumentNullException(nameof(iniContent));
 
             var newLineSeps = (string.IsNullOrWhiteSpace(newLine))
                 ? new[] {Environment.NewLine}
@@ -64,16 +64,16 @@ namespace Salaros.Config.Ini
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Salaros.Config.Ini.IniParser"/> class.
+        /// Initializes a new instance of the <see cref="IniParser"/> class.
         /// </summary>
         /// <param name="iniFilePath">Ini file path.</param>
         /// <param name = "autoParse"></param>
         public IniParser(string iniFilePath, bool autoParse = true)
         {
             if (iniFilePath == null)
-                throw new ArgumentNullException("iniFilePath");
+                throw new ArgumentNullException(nameof(iniFilePath));
 
-            this.iniFile = null;
+            iniFile = null;
             try
             {
                 iniFile = new FileInfo(iniFilePath);
@@ -92,7 +92,7 @@ namespace Salaros.Config.Ini
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Salaros.Config.Ini.IniParser"/> class.
+        /// Initializes a new instance of the <see cref="IniParser"/> class.
         /// </summary>
         /// <param name="iniFile">Ini file.</param>
         /// <param name = "autoParse"></param>
@@ -152,18 +152,18 @@ namespace Salaros.Config.Ini
                 }
 
                 // Check if the line is a comment
-                var commentMatch = _commentMatcher.Match(line);
+                var commentMatch = CommentMatcher.Match(line);
                 if (commentMatch.Success)
                 {
                     var delimiter = commentMatch.Groups["delimiter"].Value[0];
                     var comment = commentMatch.Groups["comment"].Value;
                     var commentLine = new IniComment(delimiter, comment, lineNumber);
-                    lastSection.AddLine(commentLine);
+                    lastSection?.AddLine(commentLine);
                     continue;
                 }
 
                 // Check if the line is a section
-                var sectionMatcher = _sectionMatcher.Match(line);
+                var sectionMatcher = SectionMatcher.Match(line);
                 if (sectionMatcher.Success)
                 {
                     var sectionName = sectionMatcher.Groups["name"].Value;
@@ -178,23 +178,20 @@ namespace Salaros.Config.Ini
                 }
 
                 // Check if the line is a key-value pair
-                var keyMatcher = _keyValueMatcher.Match(line);
-                if (keyMatcher.Success)
-                {
-                    if (lastSection == null)
-                        throw new IniParserException(
-                            "This key value pair is orphan, all the keys must be preceded by a section.", lineNumber);
+                var keyMatcher = KeyValueMatcher.Match(line);
+                if (!keyMatcher.Success)
+                    throw new IniParserException(
+                        "Unknown line type. Only empty lines, sections, comments and key-value pairs are accepted.",
+                        lineNumber);
 
-                    var key = keyMatcher.Groups["key"].Value;
-                    var value = keyMatcher.Groups["value"].Value;
-                    var keyLine = new IniKeyValue(key, value, lineNumber);
-                    lastSection.AddLine(keyLine);
-                    continue;
-                }
+                if (lastSection == null)
+                    throw new IniParserException(
+                        "This key value pair is orphan, all the keys must be preceded by a section.", lineNumber);
 
-                throw new IniParserException(
-                    "Unknown line type. Only empty lines, sections, comments and key-value pairs are accepted.",
-                    lineNumber);
+                var key = keyMatcher.Groups["key"].Value;
+                var value = keyMatcher.Groups["value"].Value;
+                var keyLine = new IniKeyValue(key, value, lineNumber);
+                lastSection.AddLine(keyLine);
             }
         }
 
@@ -243,14 +240,13 @@ namespace Salaros.Config.Ini
         internal virtual T GetValueRaw<T>(string sectionName, string keyName, T defaultValue)
         {
             if (string.IsNullOrWhiteSpace(sectionName))
-                throw new ArgumentNullException("sectionName");
+                throw new ArgumentNullException(nameof(sectionName));
             if (string.IsNullOrWhiteSpace(keyName))
-                throw new ArgumentNullException("keyName");
+                throw new ArgumentNullException(nameof(keyName));
 
             var iniKey = new IniKeyValue(keyName, defaultValue);
 
-            IniSection section;
-            if (!sections.TryGetValue(sectionName, out section))
+            if (!sections.TryGetValue(sectionName, out var section))
             {
                 section = new IniSection(sectionName, GetNewLineNumber());
                 sections.Add(sectionName, section);
@@ -274,7 +270,6 @@ namespace Salaros.Config.Ini
         public virtual string GetValue(string sectionName, string key, string defaultValue)
         {
             return GetValueRaw(sectionName, key, defaultValue);
-            ;
         }
 
         /// <summary>
@@ -331,8 +326,7 @@ namespace Salaros.Config.Ini
             }
             catch (Exception ex)
             {
-                if (logger != null)
-                    logger.Error(ex);
+                logger?.Error(ex);
                 return defaultValue;
             }
         }
@@ -346,8 +340,8 @@ namespace Salaros.Config.Ini
         /// </summary>
         /// <param name="key">The key.</param>
         /// <returns></returns>
-        /// <exception cref="System.ArgumentNullException"></exception>
-        /// <exception cref="System.ArgumentException"><key> section must have a not null reference value</exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"><key/> section must have a not null reference value</exception>
         public string GetValue(KeyData<string> key)
         {
             if (key == null)
@@ -414,16 +408,15 @@ namespace Salaros.Config.Ini
         /// <param name="keyName">Name of the key.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        /// <exception cref="System.InvalidOperationException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public bool SetValue(string sectionName, string keyName, string value)
         {
             if (string.IsNullOrWhiteSpace(sectionName))
-                throw new ArgumentNullException("sectionName");
+                throw new ArgumentNullException(nameof(sectionName));
             if (string.IsNullOrWhiteSpace(keyName))
-                throw new ArgumentNullException("keyName");
+                throw new ArgumentNullException(nameof(keyName));
 
-            IniSection section;
-            if (!sections.TryGetValue(sectionName, out section))
+            if (!sections.TryGetValue(sectionName, out var section))
             {
                 section = new IniSection(sectionName, GetNewLineNumber());
                 sections.Add(sectionName, section);
@@ -431,9 +424,8 @@ namespace Salaros.Config.Ini
 
             if (section == null)
             {
-                if (logger != null)
-                    logger.Warn(
-                        string.Format("Failed to create {0} and store {1}={2} key", sectionName, keyName, value));
+                logger?.Warn(
+                    string.Format("Failed to create {0} and store {1}={2} key", sectionName, keyName, value));
                 return false;
             }
 
@@ -577,7 +569,7 @@ namespace Salaros.Config.Ini
         private static List<string> GetFileContent(FileInfo iniFile)
         {
             if (iniFile == null)
-                throw new ArgumentNullException("iniFile");
+                throw new ArgumentNullException(nameof(iniFile));
 
             try
             {
@@ -585,8 +577,7 @@ namespace Salaros.Config.Ini
             }
             catch (Exception ex)
             {
-                if (logger != null)
-                    logger.Fatal(ex);
+                logger?.Fatal(ex);
                 var message = string.Format("Failed to initialize IniParser for the following file: '{0}'",
                     iniFile.FullName);
                 throw new IniParserException(message, -1, ex);
@@ -602,10 +593,10 @@ namespace Salaros.Config.Ini
         private static bool SetFileContent(FileInfo iniFile, StringBuilder sb)
         {
             if (iniFile == null)
-                throw new ArgumentNullException("iniFile");
+                throw new ArgumentNullException(nameof(iniFile));
 
             if (sb == null)
-                throw new ArgumentNullException("sb");
+                throw new ArgumentNullException(nameof(sb));
 
             try
             {
@@ -628,8 +619,7 @@ namespace Salaros.Config.Ini
             }
             catch (Exception ex)
             {
-                if (logger != null)
-                    logger.Fatal(ex);
+                logger?.Fatal(ex);
                 var message = string.Format("Failed to write IniParser content to the following file: '{0}'",
                     iniFile.FullName);
                 throw new IniParserException(message, -1, ex);
@@ -693,9 +683,7 @@ namespace Salaros.Config.Ini
         private int GetNewLineNumber()
         {
             var lastLine = Lines.LastOrDefault();
-            return (lastLine == null)
-                ? 0
-                : lastLine.LineNumber + 1;
+            return lastLine?.LineNumber + 1 ?? 0;
         }
 
 #endregion

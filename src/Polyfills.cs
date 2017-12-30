@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 
+// ReSharper disable once CheckNamespace
 namespace System.Collections.ObjectModel
 {
     public class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>
@@ -57,9 +58,9 @@ namespace System.Collections.ObjectModel
             return _dictionary.GetEnumerator();
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            return (_dictionary as System.Collections.IEnumerable).GetEnumerator();
+            return (_dictionary as IEnumerable).GetEnumerator();
         }
 
         public bool Remove(TKey key)

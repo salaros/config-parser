@@ -4,8 +4,9 @@ namespace Salaros.Config.Ini
 {
     public class IniKeyValue : IniLine, IIniKeyValuePair<object>
     {
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a new instance of the <see cref="IniKeyValue"/> class.
+        /// Initializes a new instance of the <see cref="T:Salaros.Config.Ini.IniKeyValue" /> class.
         /// </summary>
         /// <param name="key">Key.</param>
         /// <param name="value">Value.</param>
@@ -14,7 +15,7 @@ namespace Salaros.Config.Ini
             : base(lineNumber)
         {
             if (string.IsNullOrWhiteSpace(key))
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
             
             Key = key;
             Value = value;
@@ -22,6 +23,7 @@ namespace Salaros.Config.Ini
 
         #region IIniKeyValuePair implementation
 
+        /// <inheritdoc />
         /// <summary>
         /// Gets the key.
         /// </summary>
@@ -29,9 +31,9 @@ namespace Salaros.Config.Ini
         public string Key
         {
             get;
-            private set;
         }
 
+        /// <inheritdoc />
         /// <summary>
         /// Gets the value.
         /// </summary>
@@ -42,13 +44,7 @@ namespace Salaros.Config.Ini
             internal set;
         }
 
-        public string SectionName
-        {
-            get
-            {
-                return (Section == null) ? string.Empty : Section.SectionName;
-            }
-        }
+        public string SectionName => (Section == null) ? string.Empty : Section.SectionName;
 
         #endregion
 
@@ -56,24 +52,18 @@ namespace Salaros.Config.Ini
         /// Gets the string representation of key value.
         /// </summary>
         /// <value>The string value.</value>
-        public object StringValue
-        {
-            get 
-            { 
-                return (Value == null)
-                    ? string.Empty
-                        : Value.ToString();
-            }
-        }
+        public object StringValue => (Value == null)
+            ? string.Empty
+            : Value.ToString();
 
+        /// <inheritdoc />
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="IniKeyValue"/>.
+        /// Returns a <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.Ini.IniKeyValue" />.
         /// </summary>
-        /// <returns>A <see cref="System.String"/> that represents the current <see cref="IniKeyValue"/>.</returns>
+        /// <returns>A <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.Ini.IniKeyValue" />.</returns>
         public override string ToString()
         {
-            return string.Format("{0}={1}", Key, StringValue);
+            return $"{Key}={StringValue}";
         }
     }
 }
-

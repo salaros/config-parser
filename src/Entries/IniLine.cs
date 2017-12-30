@@ -6,7 +6,7 @@ namespace Salaros.Config.Ini
         protected string lineContent;
         protected IniSection section;
 
-        #region Contructor
+        #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IniLine"/> class.
@@ -25,6 +25,7 @@ namespace Salaros.Config.Ini
 
         #region IIniLine implementation
 
+        /// <inheritdoc />
         /// <summary>
         /// Gets the line number.
         /// </summary>
@@ -44,13 +45,7 @@ namespace Salaros.Config.Ini
         /// Gets the raw content of the line.
         /// </summary>
         /// <value>The raw content of the line.</value>
-        public virtual string Content
-        {
-            get
-            { 
-                return lineContent;
-            }
-        }
+        public virtual string Content => lineContent;
 
         #endregion
 
@@ -58,11 +53,8 @@ namespace Salaros.Config.Ini
 
         public IniSection Section
         {
-            get
-            {
-                return section;   
-            }
-            internal set { section = value; }
+            get => section;
+            internal set => section = value;
         }
 
         #endregion
@@ -72,9 +64,9 @@ namespace Salaros.Config.Ini
         #region Methods
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="IniLine"/>.
+        /// Returns a <see cref="string"/> that represents the current <see cref="IniLine"/>.
         /// </summary>
-        /// <returns>A <see cref="System.String"/> that represents the current <see cref="IniLine"/>.</returns>
+        /// <returns>A <see cref="string"/> that represents the current <see cref="IniLine"/>.</returns>
         public override string ToString()
         {
             return Content;
@@ -83,4 +75,3 @@ namespace Salaros.Config.Ini
         #endregion
     }
 }
-
