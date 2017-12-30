@@ -1,5 +1,3 @@
-﻿using System.Runtime.InteropServices;
-
 namespace Salaros.Config.Ini
 {
     public class IniComment : IniLine
@@ -7,7 +5,7 @@ namespace Salaros.Config.Ini
         protected char delimiter;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Salaros.Config.Ini.IniComment"/> class.
+        /// Initializes a new instance of the <see cref="IniComment"/> class.
         /// </summary>
         /// <param name="delimiter">Delimiter.</param>
         /// <param name = "comment"></param>
@@ -40,9 +38,9 @@ namespace Salaros.Config.Ini
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="Salaros.Config.Ini.IniComment"/>.
+        /// Returns a <see cref="System.String"/> that represents the current <see cref="IniComment"/>.
         /// </summary>
-        /// <returns>A <see cref="System.String"/> that represents the current <see cref="Salaros.Config.Ini.IniComment"/>.</returns>
+        /// <returns>A <see cref="System.String"/> that represents the current <see cref="IniComment"/>.</returns>
         public override string ToString()
         {
             return string.Format("{0} {1}", Delimiter, Comment);

@@ -1,5 +1,3 @@
-﻿using System;
-
 namespace Salaros.Config.Ini
 {
     public interface IIniSectionLine : IIniLine

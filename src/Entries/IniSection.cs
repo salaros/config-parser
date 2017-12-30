@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Salaros.Config.Ini
 {
@@ -12,7 +12,7 @@ namespace Salaros.Config.Ini
         protected List<IniLine> lines;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Salaros.Config.Ini.IniSection"/> class.
+        /// Initializes a new instance of the <see cref="IniSection"/> class.
         /// </summary>
         /// <param name="sectionName">Section name.</param>
         /// <param name="lineNumber">Line number.</param>
@@ -99,9 +99,9 @@ namespace Salaros.Config.Ini
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="Salaros.Config.Ini.IniSection"/>.
+        /// Returns a <see cref="System.String"/> that represents the current <see cref="IniSection"/>.
         /// </summary>
-        /// <returns>A <see cref="System.String"/> that represents the current <see cref="Salaros.Config.Ini.IniSection"/>.</returns>
+        /// <returns>A <see cref="System.String"/> that represents the current <see cref="IniSection"/>.</returns>
         public override string ToString()
         {
             return string.Format("[{0}]", sectionName);

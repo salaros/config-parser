@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 
 namespace Salaros.Config.Ini
 {
     public class IniKeyValue : IniLine, IIniKeyValuePair<object>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Salaros.Config.Ini.IniKeyValue"/> class.
+        /// Initializes a new instance of the <see cref="IniKeyValue"/> class.
         /// </summary>
         /// <param name="key">Key.</param>
         /// <param name="value">Value.</param>
@@ -68,9 +67,9 @@ namespace Salaros.Config.Ini
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="Salaros.Config.Ini.IniKeyValue"/>.
+        /// Returns a <see cref="System.String"/> that represents the current <see cref="IniKeyValue"/>.
         /// </summary>
-        /// <returns>A <see cref="System.String"/> that represents the current <see cref="Salaros.Config.Ini.IniKeyValue"/>.</returns>
+        /// <returns>A <see cref="System.String"/> that represents the current <see cref="IniKeyValue"/>.</returns>
         public override string ToString()
         {
             return string.Format("{0}={1}", Key, StringValue);

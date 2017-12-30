@@ -1,4 +1,4 @@
-﻿namespace Salaros.Config.Ini
+namespace Salaros.Config.Ini
 {
     public class IniLine : IIniLine
     {
@@ -9,7 +9,7 @@
         #region Contructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Salaros.Config.Ini.IniLine"/> class.
+        /// Initializes a new instance of the <see cref="IniLine"/> class.
         /// </summary>
         /// <param name="lineNumber">Line number.</param>
         /// <param name="lineContent">Raw line content.</param>
@@ -72,9 +72,9 @@
         #region Methods
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="Salaros.Config.Ini.IniLine"/>.
+        /// Returns a <see cref="System.String"/> that represents the current <see cref="IniLine"/>.
         /// </summary>
-        /// <returns>A <see cref="System.String"/> that represents the current <see cref="Salaros.Config.Ini.IniLine"/>.</returns>
+        /// <returns>A <see cref="System.String"/> that represents the current <see cref="IniLine"/>.</returns>
         public override string ToString()
         {
             return Content;
