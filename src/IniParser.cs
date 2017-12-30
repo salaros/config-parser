@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
@@ -52,10 +52,10 @@ namespace Salaros.Config.Ini
         {
             if (iniContent == null || string.IsNullOrWhiteSpace(iniContent.ToString()))
                 throw new ArgumentNullException("iniContent");
-            
+
             var newLineSeps = (string.IsNullOrWhiteSpace(newLine))
-                ? new[]{ Environment.NewLine }
-                : new[]{ newLine };
+                ? new[] {Environment.NewLine}
+                : new[] {newLine};
 
             iniFile = null;
             textContent = iniContent.ToString().Split(newLineSeps, StringSplitOptions.None).ToList();
@@ -80,7 +80,8 @@ namespace Salaros.Config.Ini
             }
             catch (Exception ex)
             {
-                var message = string.Format("Failed to initialize IniParser for the following file: '{0}'", iniFilePath);
+                var message = string.Format("Failed to initialize IniParser for the following file: '{0}'",
+                    iniFilePath);
                 throw new IniParserException(message, -1, ex);
             }
 
@@ -114,7 +115,7 @@ namespace Salaros.Config.Ini
         public ReadOnlyDictionary<string, IniSection> Sections
         {
             get
-            { 
+            {
                 var result = sections.Values.OrderBy(s => s.LineNumber).ToDictionary(s => s.SectionName, s => s);
                 return new ReadOnlyDictionary<string, IniSection>(result);
             }
@@ -146,7 +147,7 @@ namespace Salaros.Config.Ini
                     if (lastSection == null)
                         header.Add(emptyLine);
                     else
-                        lastSection.AddLine(emptyLine);                    
+                        lastSection.AddLine(emptyLine);
                     continue;
                 }
 
@@ -168,7 +169,8 @@ namespace Salaros.Config.Ini
                     var sectionName = sectionMatcher.Groups["name"].Value;
                     var sectionLine = new IniSection(sectionName, lineNumber);
                     if (sections.ContainsKey(sectionLine.SectionName))
-                        throw new IniParserException(string.Format("Duplicate section name '{0}'", sectionLine.SectionName), lineNumber);
+                        throw new IniParserException(
+                            string.Format("Duplicate section name '{0}'", sectionLine.SectionName), lineNumber);
 
                     sections.Add(sectionLine.SectionName, sectionLine);
                     lastSection = sectionLine;
@@ -180,7 +182,8 @@ namespace Salaros.Config.Ini
                 if (keyMatcher.Success)
                 {
                     if (lastSection == null)
-                        throw new IniParserException("This key value pair is orphan, all the keys must be preceded by a section.", lineNumber);
+                        throw new IniParserException(
+                            "This key value pair is orphan, all the keys must be preceded by a section.", lineNumber);
 
                     var key = keyMatcher.Groups["key"].Value;
                     var value = keyMatcher.Groups["value"].Value;
@@ -189,7 +192,9 @@ namespace Salaros.Config.Ini
                     continue;
                 }
 
-                throw new IniParserException("Unknown line type. Only empty lines, sections, comments and key-value pairs are accepted.", lineNumber);
+                throw new IniParserException(
+                    "Unknown line type. Only empty lines, sections, comments and key-value pairs are accepted.",
+                    lineNumber);
             }
         }
 
@@ -256,7 +261,7 @@ namespace Salaros.Config.Ini
             var key = section.Keys.FirstOrDefault(k => k.Key.Equals(keyName));
             return (key == null)
                 ? defaultValue
-                    : (T)key.Value;
+                : (T) key.Value;
         }
 
         /// <summary>
@@ -347,7 +352,7 @@ namespace Salaros.Config.Ini
         {
             if (key == null)
                 throw new ArgumentNullException();
-            
+
             if (string.IsNullOrWhiteSpace(key.SectionName))
                 throw new ArgumentException("<key> section must have a not null reference value");
 
@@ -427,9 +432,10 @@ namespace Salaros.Config.Ini
             if (section == null)
             {
                 if (logger != null)
-                    logger.Warn(string.Format("Failed to create {0} and store {1}={2} key", sectionName, keyName, value));
+                    logger.Warn(
+                        string.Format("Failed to create {0} and store {1}={2} key", sectionName, keyName, value));
                 return false;
-            }             
+            }
 
 
             var iniKey = section.Lines
@@ -581,7 +587,8 @@ namespace Salaros.Config.Ini
             {
                 if (logger != null)
                     logger.Fatal(ex);
-                var message = string.Format("Failed to initialize IniParser for the following file: '{0}'", iniFile.FullName);
+                var message = string.Format("Failed to initialize IniParser for the following file: '{0}'",
+                    iniFile.FullName);
                 throw new IniParserException(message, -1, ex);
             }
         }
@@ -596,7 +603,7 @@ namespace Salaros.Config.Ini
         {
             if (iniFile == null)
                 throw new ArgumentNullException("iniFile");
-            
+
             if (sb == null)
                 throw new ArgumentNullException("sb");
 
@@ -604,18 +611,27 @@ namespace Salaros.Config.Ini
             {
                 using (var fileWriter = new FileStream(iniFile.FullName, FileMode.Truncate, FileAccess.Write))
                 {
-                    using (var writer = new StreamWriter(fileWriter, Encoding.UTF8, 4096, true))
+                    using (var writer = new StreamWriter(
+                        fileWriter,
+                        Encoding.UTF8,
+                        4096
+#if !NET40
+                        , true
+#endif
+                        )
+                    )
                     {
                         writer.Write(sb);
                     }
-                } 
+                }
                 return true;
             }
             catch (Exception ex)
             {
                 if (logger != null)
                     logger.Fatal(ex);
-                var message = string.Format("Failed to write IniParser content to the following file: '{0}'", iniFile.FullName);
+                var message = string.Format("Failed to write IniParser content to the following file: '{0}'",
+                    iniFile.FullName);
                 throw new IniParserException(message, -1, ex);
             }
         }
@@ -677,11 +693,11 @@ namespace Salaros.Config.Ini
         private int GetNewLineNumber()
         {
             var lastLine = Lines.LastOrDefault();
-            return (lastLine == null) 
-                ? 0 
+            return (lastLine == null)
+                ? 0
                 : lastLine.LineNumber + 1;
         }
 
-        #endregion
+#endregion
     }
 }
