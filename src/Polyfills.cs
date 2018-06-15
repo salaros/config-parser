@@ -1,5 +1,3 @@
-#if NET40
-
 using System.Collections.Generic;
 
 // ReSharper disable once CheckNamespace
@@ -86,5 +84,3 @@ namespace System.Collections.ObjectModel
         public ICollection<TValue> Values => throw new NotSupportedException(NOTSUPPORTED_EXCEPTION_MESSAGE);
     }
 }
-
-#endif

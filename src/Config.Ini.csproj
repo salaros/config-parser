@@ -1,32 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;netstandard2.0;net40;net45</TargetFrameworks>
-    <RuntimeFrameworkVersion>2.0.3</RuntimeFrameworkVersion>
-    <RootNamespace>Salaros.Config.Ini</RootNamespace>
-    <AssemblyName>Salaros.Config.Ini</AssemblyName>
-  </PropertyGroup>
-  
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\bin\Release\</OutputPath>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net45;netstandard2.0;net40;netstandard1.6</TargetFrameworks>
+        <RootNamespace>Salaros.Config.Ini</RootNamespace>
+        <AssemblyName>Salaros.Config.Ini</AssemblyName>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\bin\Debug\</OutputPath>
-    <DocumentationFile></DocumentationFile>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+    <PropertyGroup>
+        <OutputPath>..\bin\$(Configuration)\</OutputPath>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Salaros.Config.Ini.csproj.DotSettings" />
-    <None Remove="Config.Ini.csproj.DotSettings" />
-  </ItemGroup>
-
+    <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
+        <Compile Remove="Polyfills.cs" />
+        <None Include="Polyfills.cs" />
+    </ItemGroup>
+        
 </Project>
