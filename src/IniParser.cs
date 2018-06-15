@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using Salaros.Config.Ini.Logging;
 
 namespace Salaros.Config.Ini
 {
@@ -15,7 +16,7 @@ namespace Salaros.Config.Ini
         protected List<IniLine> header = new List<IniLine>();
         protected Dictionary<string, IniSection> sections = new Dictionary<string, IniSection>();
         protected FileInfo iniFile;
-        protected static ILoggingService logger;
+        private static readonly ILog logger = LogProvider.GetCurrentClassLogger();
 
         #region Line matchers
 
@@ -326,7 +327,7 @@ namespace Salaros.Config.Ini
             }
             catch (Exception ex)
             {
-                logger?.Error(ex);
+                logger?.Error(ex.Message);
                 return defaultValue;
             }
         }
@@ -577,7 +578,7 @@ namespace Salaros.Config.Ini
             }
             catch (Exception ex)
             {
-                logger?.Fatal(ex);
+                logger?.Fatal(ex.Message);
                 var message = string.Format("Failed to initialize IniParser for the following file: '{0}'",
                     iniFile.FullName);
                 throw new IniParserException(message, -1, ex);
@@ -619,7 +620,7 @@ namespace Salaros.Config.Ini
             }
             catch (Exception ex)
             {
-                logger?.Fatal(ex);
+                logger?.Fatal(ex.Message);
                 var message = string.Format("Failed to write IniParser content to the following file: '{0}'",
                     iniFile.FullName);
                 throw new IniParserException(message, -1, ex);

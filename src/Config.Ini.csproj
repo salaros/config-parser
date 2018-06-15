@@ -25,4 +25,17 @@
         <None Include="Polyfills.cs" />
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CSharp" Version="4.5.0" Condition="'$(TargetFramework)' != 'net40'" />
+        <Reference Include="Microsoft.CSharp" Version="4.0.0" Condition="'$(TargetFramework)' == 'net40'" />
+    </ItemGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <DefineConstants>TRACE;LIBLOG_PUBLIC</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+        <DefineConstants>TRACE;DEBUG;LIBLOG_PUBLIC</DefineConstants>
+    </PropertyGroup>
+        
 </Project>
