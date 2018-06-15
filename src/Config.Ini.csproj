@@ -10,6 +10,16 @@
         <OutputPath>..\bin\$(Configuration)\</OutputPath>
     </PropertyGroup>
 
+    <!-- A workaround for "full" .NET Framework targets to try to fallback on Mono before failing -->
+    <PropertyGroup Condition="'$(OS)' != 'Windows_NT' And $(TargetFramework.StartsWith('net'))">
+        <!-- Look up for Mono installations on Linux or macOS -->
+        <MonoPath Condition="'$(MonoPath)' == '' And Exists('/usr/lib/mono')">/usr/lib/mono</MonoPath>
+        <MonoPath Condition="'$(MonoPath)' == '' And Exists('/Library/Frameworks/Mono.framework/Versions/Current/lib/mono')">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</MonoPath>
+        <!-- Try to apply framework override fo supported targets if Mono was found -->
+        <FrameworkPathOverride Condition="'$(MonoPath)' != '' And '$(TargetFramework)' == 'net40'">$(MonoPath)/4.0-api</FrameworkPathOverride>
+        <FrameworkPathOverride Condition="'$(MonoPath)' != '' And '$(TargetFramework)' == 'net45'">$(MonoPath)/4.5-api</FrameworkPathOverride>
+    </PropertyGroup>
+
     <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
         <Compile Remove="Polyfills.cs" />
         <None Include="Polyfills.cs" />
