@@ -37,5 +37,5 @@
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
         <DefineConstants>TRACE;DEBUG;LIBLOG_PUBLIC</DefineConstants>
     </PropertyGroup>
-        
+
 </Project>

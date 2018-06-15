@@ -1,0 +1,8 @@
+﻿[settings]
+exclude  =
+  ^/var/
+  ^/tmp/
+  ^/private/
+  COMMIT_EDITMSG$
+  PULLREQ_EDITMSG$
+  MERGE_MSG$
