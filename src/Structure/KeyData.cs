@@ -1,4 +1,4 @@
-namespace Salaros.Config.Ini
+﻿namespace Salaros.Config
 {
     /// <summary>
     /// This class is used to represent an abstract key data.

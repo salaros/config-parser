@@ -1,4 +1,4 @@
-//===============================================================================
+﻿//===============================================================================
 // LibLog
 //
 // https://github.com/damianh/LibLog
@@ -40,23 +40,23 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "Salaros.Config.Ini.Logging")]
-[assembly: SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Scope = "member", Target = "Salaros.Config.Ini.Logging.Logger.#Invoke(Salaros.Config.Ini.Logging.LogLevel,System.Func`1<System.String>,System.Exception,System.Object[])")]
+[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes", Scope = "namespace", Target = "Salaros.Config.Logging")]
+[assembly: SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Scope = "member", Target = "Salaros.Config.Logging.Logger.#Invoke(Salaros.Config.Logging.LogLevel,System.Func`1<System.String>,System.Exception,System.Object[])")]
 
 // If you copied this file manually, you need to change all "YourRootNameSpace" so not to clash with other libraries
 // that use LibLog
 #if LIBLOG_PROVIDERS_ONLY
-namespace Salaros.Config.Ini.LibLog
+namespace Salaros.Config.LibLog
 #else
-namespace Salaros.Config.Ini.Logging
+namespace Salaros.Config.Logging
 #endif
 {
     using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 #if LIBLOG_PROVIDERS_ONLY
-    using Salaros.Config.Ini.LibLog.LogProviders;
+    using Salaros.Config.LibLog.LogProviders;
 #else
-using Salaros.Config.Ini.Logging.LogProviders;
+using Salaros.Config.Logging.LogProviders;
 #endif
     using System;
 #if !LIBLOG_PROVIDERS_ONLY
@@ -714,9 +714,9 @@ internal class LoggerExecutionWrapper : ILog
 }
 
 #if LIBLOG_PROVIDERS_ONLY
-namespace Salaros.Config.Ini.LibLog.LogProviders
+namespace Salaros.Config.LibLog.LogProviders
 #else
-namespace Salaros.Config.Ini.Logging.LogProviders
+namespace Salaros.Config.Logging.LogProviders
 #endif
 {
     using System;

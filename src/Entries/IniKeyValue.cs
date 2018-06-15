@@ -1,12 +1,12 @@
-using System;
+﻿using System;
 
-namespace Salaros.Config.Ini
+namespace Salaros.Config
 {
     public class IniKeyValue : IniLine, IIniKeyValuePair<object>
     {
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Salaros.Config.Ini.IniKeyValue" /> class.
+        /// Initializes a new instance of the <see cref="T:Salaros.Config.IniKeyValue" /> class.
         /// </summary>
         /// <param name="key">Key.</param>
         /// <param name="value">Value.</param>
@@ -58,9 +58,9 @@ namespace Salaros.Config.Ini
 
         /// <inheritdoc />
         /// <summary>
-        /// Returns a <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.Ini.IniKeyValue" />.
+        /// Returns a <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.IniKeyValue" />.
         /// </summary>
-        /// <returns>A <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.Ini.IniKeyValue" />.</returns>
+        /// <returns>A <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.IniKeyValue" />.</returns>
         public override string ToString()
         {
             return $"{Key}={StringValue}";

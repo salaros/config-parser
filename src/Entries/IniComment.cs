@@ -1,4 +1,4 @@
-namespace Salaros.Config.Ini
+﻿namespace Salaros.Config
 {
     public class IniComment : IniLine
     {

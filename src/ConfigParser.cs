@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using Salaros.Config.Ini.Logging;
+using Salaros.Config.Logging;
 
-namespace Salaros.Config.Ini
+namespace Salaros.Config
 {
-    public class IniParser
+    public class ConfigParser
     {
         protected List<string> textContent;
         protected List<IniLine> header = new List<IniLine>();
@@ -36,7 +36,7 @@ namespace Salaros.Config.Ini
         /// <summary>
         /// Initializes the <see cref="IniParser"/> class.
         /// </summary>
-        static IniParser()
+        static ConfigParser()
         {
             SectionMatcher = new Regex(SECTION_REGEX, RegexOptions.Compiled);
             CommentMatcher = new Regex(string.Format("^{0}$", COMMENT_REGEX), RegexOptions.Compiled);
@@ -49,7 +49,7 @@ namespace Salaros.Config.Ini
         /// <param name="iniContent">Ini content.</param>
         /// <param name="newLine">New line.</param>
         /// <param name = "autoParse"></param>
-        public IniParser(StringBuilder iniContent, string newLine = null, bool autoParse = true)
+        public ConfigParser(StringBuilder iniContent, string newLine = null, bool autoParse = true)
         {
             if (string.IsNullOrWhiteSpace(iniContent?.ToString()))
                 throw new ArgumentNullException(nameof(iniContent));
@@ -69,7 +69,7 @@ namespace Salaros.Config.Ini
         /// </summary>
         /// <param name="iniFilePath">Ini file path.</param>
         /// <param name = "autoParse"></param>
-        public IniParser(string iniFilePath, bool autoParse = true)
+        public ConfigParser(string iniFilePath, bool autoParse = true)
         {
             if (iniFilePath == null)
                 throw new ArgumentNullException(nameof(iniFilePath));
@@ -83,7 +83,7 @@ namespace Salaros.Config.Ini
             {
                 var message = string.Format("Failed to initialize IniParser for the following file: '{0}'",
                     iniFilePath);
-                throw new IniParserException(message, -1, ex);
+                throw new ConfigParserException(message, -1, ex);
             }
 
             textContent = GetFileContent(iniFile);
@@ -97,7 +97,7 @@ namespace Salaros.Config.Ini
         /// </summary>
         /// <param name="iniFile">Ini file.</param>
         /// <param name = "autoParse"></param>
-        public IniParser(FileInfo iniFile, bool autoParse = true)
+        public ConfigParser(FileInfo iniFile, bool autoParse = true)
         {
             this.iniFile = iniFile;
             textContent = GetFileContent(iniFile);
@@ -170,7 +170,7 @@ namespace Salaros.Config.Ini
                     var sectionName = sectionMatcher.Groups["name"].Value;
                     var sectionLine = new IniSection(sectionName, lineNumber);
                     if (sections.ContainsKey(sectionLine.SectionName))
-                        throw new IniParserException(
+                        throw new ConfigParserException(
                             string.Format("Duplicate section name '{0}'", sectionLine.SectionName), lineNumber);
 
                     sections.Add(sectionLine.SectionName, sectionLine);
@@ -181,12 +181,12 @@ namespace Salaros.Config.Ini
                 // Check if the line is a key-value pair
                 var keyMatcher = KeyValueMatcher.Match(line);
                 if (!keyMatcher.Success)
-                    throw new IniParserException(
+                    throw new ConfigParserException(
                         "Unknown line type. Only empty lines, sections, comments and key-value pairs are accepted.",
                         lineNumber);
 
                 if (lastSection == null)
-                    throw new IniParserException(
+                    throw new ConfigParserException(
                         "This key value pair is orphan, all the keys must be preceded by a section.", lineNumber);
 
                 var key = keyMatcher.Groups["key"].Value;
@@ -581,7 +581,7 @@ namespace Salaros.Config.Ini
                 logger?.Fatal(ex.Message);
                 var message = string.Format("Failed to initialize IniParser for the following file: '{0}'",
                     iniFile.FullName);
-                throw new IniParserException(message, -1, ex);
+                throw new ConfigParserException(message, -1, ex);
             }
         }
 
@@ -623,7 +623,7 @@ namespace Salaros.Config.Ini
                 logger?.Fatal(ex.Message);
                 var message = string.Format("Failed to write IniParser content to the following file: '{0}'",
                     iniFile.FullName);
-                throw new IniParserException(message, -1, ex);
+                throw new ConfigParserException(message, -1, ex);
             }
         }
 

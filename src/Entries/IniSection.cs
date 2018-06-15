@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Salaros.Config.Ini
+namespace Salaros.Config
 {
     public class IniSection : IIniLine
 	{

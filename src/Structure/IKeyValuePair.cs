@@ -1,4 +1,4 @@
-namespace Salaros.Config.Ini
+﻿namespace Salaros.Config
 {
     public interface IIniKeyValuePair<out TValue>
 	{
