@@ -390,7 +390,7 @@ namespace Salaros.Config
 
                     switch (lineRaw)
                     {
-                        case var _ when string.IsNullOrEmpty(lineRaw):
+                        case var _ when string.IsNullOrWhiteSpace(lineRaw):
                             ReadEmptyLine(ref currentSection, ref currentLine, lineRaw, lineNumber);
                             continue;
 
