@@ -59,6 +59,19 @@ namespace Salaros.Config
 	        return $"[{sectionName}]";
 	    }
 
+	    /// <inheritdoc />
+	    /// <summary>
+	    /// Returns a <see cref="T:System.String" /> that represents this instance.
+	    /// </summary>
+	    /// <param name="multiLineSettings">The multi line settings.</param>
+	    /// <returns>
+	    /// A <see cref="T:System.String" /> that represents this instance.
+	    /// </returns>
+        public string ToString(MultuLineValues multiLineSettings)
+	    {
+	        return ToString();
+	    }
+
         #endregion
 
         #region Properties
@@ -72,7 +85,7 @@ namespace Salaros.Config
         /// <value>The line number.</value>
         public virtual int LineNumber => lineNumber;
 
-        #endregion
+	    #endregion
 
         /// <summary>
         /// Gets the name of the section.

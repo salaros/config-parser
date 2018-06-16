@@ -119,5 +119,6 @@ namespace Salaros.Config
         NotAllowed = 1,
         OnlyDelimited = 2,
         Arrays = 4,
+        AllowValuelessKeys = 8
     }
 }

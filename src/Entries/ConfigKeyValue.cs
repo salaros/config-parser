@@ -93,7 +93,28 @@ namespace Salaros.Config
         /// <returns>A <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.ConfigKeyValue" />.</returns>
         public override string ToString()
         {
-            return $"{Key}={Content}";
+            return ToString(MultuLineValues.NotAllowed);
+        }
+
+        /// ReSharper disable once InheritdocInvalidUsage
+        /// <inheritdoc cref="ConfigLine" />
+        /// <summary>
+        /// Returns a <see cref="T:System.String" /> that represents this instance.
+        /// </summary>
+        /// <param name="multiLineSettings">The multi line settings.</param>
+        /// <returns>
+        /// A <see cref="T:System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString(MultuLineValues multiLineSettings)
+        {
+            switch (multiLineSettings)
+            {
+                case MultuLineValues.AllowValuelessKeys:
+                    return Key;
+
+                default:
+                    return $"{Key}={Content}";
+            }
         }
 
         #endregion

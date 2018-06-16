@@ -4,7 +4,7 @@
     {
         protected int lineNumber;
         protected string lineContent;
-        protected IniSection section;
+        protected ConfigSection section;
 
         #region Constructor
 
@@ -55,7 +55,7 @@
 
         #region IIniSectionLine implementation
 
-        public IniSection Section
+        public ConfigSection Section
         {
             get => section;
             internal set => section = value;
@@ -74,6 +74,19 @@
         public override string ToString()
         {
             return Content;
+        }
+
+        /// <inheritdoc />
+        /// <summary>
+        /// Returns a <see cref="T:System.String" /> that represents this instance.
+        /// </summary>
+        /// <param name="multiLineSettings">The multi line settings.</param>
+        /// <returns>
+        /// A <see cref="T:System.String" /> that represents this instance.
+        /// </returns>
+        public virtual string ToString(MultuLineValues multiLineSettings)
+        {
+            return ToString();
         }
 
         #endregion

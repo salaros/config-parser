@@ -407,7 +407,10 @@ namespace Salaros.Config
                             break;
 
                         case var _ when Settings.ValueMatcher.IsMatch(lineRaw):
-                            AppendValueToKey(ref currentSection, ref currentLine, lineRaw, lineNumber);
+                            if (Settings.MultuLineValues.HasFlag(MultuLineValues.AllowValuelessKeys))
+                                ReadValuelessKey(ref currentSection, ref currentLine, lineRaw, lineNumber);
+                            else
+                                AppendValueToKey(ref currentSection, ref currentLine, lineRaw, lineNumber);
                             break;
 
                         default:
@@ -421,6 +424,21 @@ namespace Salaros.Config
                 if (null != currentSection)
                     sections.Add(currentSection.SectionName, currentSection);
             }
+        }
+
+        /// <summary>
+        /// Reads the valueless key.
+        /// </summary>
+        /// <param name="currentSection">The current section.</param>
+        /// <param name="currentLine">The current line.</param>
+        /// <param name="lineRaw">The line raw.</param>
+        /// <param name="lineNumber">The line number.</param>
+        private void ReadValuelessKey(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw, int lineNumber)
+        {
+            if (null != currentLine)
+                BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
+
+            currentLine = new ConfigKeyValue<object>(lineRaw, null, lineNumber);
         }
 
         /// <summary>
