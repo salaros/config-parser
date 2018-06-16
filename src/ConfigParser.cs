@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Salaros.Config.Logging;
 
 namespace Salaros.Config
@@ -9,8 +12,9 @@ namespace Salaros.Config
     public class ConfigParser
     {
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
-        protected List<IniLine> fileHeader = new List<IniLine>();
-        protected Dictionary<string, IniSection> sections = new Dictionary<string, IniSection>();
+        protected readonly List<IniLine> fileHeader;
+        protected readonly Dictionary<string, IniSection> sections;
+        protected FileInfo fileInfo;
 
         #region Constructor
 
@@ -24,13 +28,16 @@ namespace Salaros.Config
         {
             if (string.IsNullOrWhiteSpace(configFile)) throw new ArgumentException(nameof(configFile));
 
+            fileHeader = new List<IniLine>();
+            sections = new Dictionary<string, IniSection>();
+
             Settings = settings ?? new ConfigParserSettings();
 
             if (File.Exists(configFile))
             {
-                var configFileInfo = new FileInfo(configFile);
-                Settings.Encoding = Settings.Encoding ?? configFileInfo.GetEncoding();
-                Settings.NewLine = configFileInfo.DetectNewLine(configFile);
+                fileInfo = new FileInfo(configFile);
+                Settings.Encoding = Settings.Encoding ?? fileInfo.GetEncoding();
+                Settings.NewLine = fileInfo.DetectNewLine(configFile);
             }
 
             configFile = File.ReadAllText(configFile, Settings.Encoding);
@@ -49,7 +56,316 @@ namespace Salaros.Config
         /// </value>
         public ConfigParserSettings Settings { get; }
 
+#if NET40
+        public ReadOnlyDictionary<string, IniSection> Sections => new ReadOnlyDictionary<string, IniSection>(sections);
+#else
+        public IReadOnlyDictionary<string, IniSection> Sections => sections;
+#endif
+
+        /// <summary>
+        /// Gets configuration file's lines.
+        /// </summary>
+        /// <value>The lines.</value>
+        public ReadOnlyCollection<IIniLine> Lines
+        {
+            get
+            {
+                return new ReadOnlyCollection<IIniLine>(fileHeader.Concat(sections.Values.SelectMany(s => s.Lines)).ToArray());
+            }
+        }
+
         #endregion Properties
+
+        #region Methods
+
+        #region GetValue
+
+        /// <summary>
+        /// Tries to get the value.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="keyName">Name of the key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">
+        /// sectionName
+        /// or
+        /// keyName
+        /// </exception>
+        internal virtual bool TryGetValue<T>(string sectionName, string keyName, out T value)
+        {
+            if (string.IsNullOrWhiteSpace(sectionName))
+                throw new ArgumentNullException(nameof(sectionName));
+            if (string.IsNullOrWhiteSpace(keyName))
+                throw new ArgumentNullException(nameof(keyName));
+
+            value = default(T);
+
+            if (!sections.TryGetValue(sectionName, out var section))
+                return false;
+
+            var key = section.Keys.FirstOrDefault(k => k.Key.Equals(keyName));
+            if (key == null)
+                return false;
+
+            value = (T) key.ValueRaw;
+            return true;
+        }
+
+        /// <summary>
+        /// Gets the raw value of the key.
+        /// </summary>
+        /// <returns>The value raw.</returns>
+        /// <param name="sectionName">Section name.</param>
+        /// <param name="keyName">Key name.</param>
+        /// <param name="defaultValue">Default value returned if the key with the given name does not exist.</param>
+        /// <typeparam name="T">The 1st type parameter.</typeparam>
+        internal virtual T GetRawValue<T>(string sectionName, string keyName, T defaultValue)
+        {
+            if (string.IsNullOrWhiteSpace(sectionName))
+                throw new ArgumentNullException(nameof(sectionName));
+            if (string.IsNullOrWhiteSpace(keyName))
+                throw new ArgumentNullException(nameof(keyName));
+
+            var iniKey = new IniKeyValue<T>(keyName, defaultValue);
+
+            if (!sections.TryGetValue(sectionName, out var section))
+            {
+                section = new IniSection(sectionName, Lines.Max(l => l.LineNumber));
+                sections.Add(sectionName, section);
+                section.AddLine(iniKey);
+                return defaultValue;
+            }
+
+            var key = section.Keys.FirstOrDefault(k => k.Key.Equals(keyName));
+            return (key == null)
+                ? defaultValue
+                : (T)key.ValueRaw;
+        }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns></returns>
+        public virtual string GetValue(string sectionName, string key, string defaultValue)
+        {
+            return GetRawValue(sectionName, key, defaultValue);
+        }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">if set to <c>true</c> [default value].</param>
+        /// <returns></returns>
+        public virtual bool GetValue(string sectionName, string key, bool defaultValue)
+        {
+            return GetRawValue(sectionName, key, (defaultValue ? "1" : "0")) == "1";
+        }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns></returns>
+        public virtual int GetValue(string sectionName, string key, int defaultValue)
+        {
+            return GetRawValue(sectionName, key, defaultValue);
+        }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns></returns>
+        public virtual double GetValue(string sectionName, string key, double defaultValue)
+        {
+            return GetRawValue(sectionName, key, defaultValue);
+        }
+
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns></returns>
+        public virtual byte[] GetValue(string sectionName, string key, byte[] defaultValue)
+        {
+            var stringValue = GetRawValue(sectionName, key, string.Empty);
+            try
+            {
+                return (string.IsNullOrWhiteSpace(stringValue))
+                    ? defaultValue
+                    : DecodeByteArray(stringValue);
+            }
+            catch (Exception ex)
+            {
+                Logger?.Error(ex.Message);
+                return defaultValue;
+            }
+        }
+
+        #endregion
+
+        #region SetValue
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="keyName">Name of the key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public bool SetValue(string sectionName, string keyName, string value)
+        {
+            if (string.IsNullOrWhiteSpace(sectionName))
+                throw new ArgumentNullException(nameof(sectionName));
+            if (string.IsNullOrWhiteSpace(keyName))
+                throw new ArgumentNullException(nameof(keyName));
+
+            if (!sections.TryGetValue(sectionName, out var section))
+            {
+                section = new IniSection(sectionName, Lines.Max(l => l.LineNumber));
+                sections.Add(sectionName, section);
+            }
+
+            if (section == null)
+            {
+                Logger?.Warn($"Failed to create {sectionName} and store {keyName}={value} key");
+                return false;
+            }
+
+            var iniKey = section.Keys
+                .FirstOrDefault(k => k.Key.Equals(keyName));
+
+            if (iniKey != null)
+            {
+                iniKey.ValueRaw = value;
+            }
+            else
+            {
+                iniKey = new IniKeyValue<string>(keyName, value);
+                section.AddLine((IniLine)iniKey);
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="value">if set to <c>true</c> [value].</param>
+        /// <returns></returns>
+        public virtual bool SetValue(string sectionName, string key, bool value)
+        {
+            return SetValue(sectionName, key, (value) ? "1" : "0");
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public virtual bool SetValue(string sectionName, string key, int value)
+        {
+            return SetValue(sectionName, key, value.ToString(CultureInfo.InvariantCulture));
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public virtual bool SetValue(string sectionName, string key, double value)
+        {
+            return SetValue(sectionName, key, value.ToString(CultureInfo.InvariantCulture));
+        }
+
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public virtual bool SetValue(string sectionName, string key, byte[] value)
+        {
+            return SetValue(sectionName, key, EncodeByteArray(value));
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Save configuration file's content.
+        /// </summary>
+        /// <param name="configFilePath">The configuration file path.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">configFilePath</exception>
+        /// <exception cref="ConfigParserException">
+        /// -1
+        /// </exception>
+        public bool Save(string configFilePath = null)
+        {
+            if (string.IsNullOrWhiteSpace(configFilePath) || Path.GetInvalidPathChars().Any(configFilePath.Contains) ||
+                Path.GetInvalidFileNameChars().Any(Path.GetFileName(configFilePath).Contains))
+            {
+                throw new ArgumentException($"{nameof(configFilePath)} must contain a valid path to a file", nameof(configFilePath));
+            }
+
+            if (!string.IsNullOrWhiteSpace(configFilePath))
+                fileInfo = new FileInfo(configFilePath);
+
+            if (null == fileInfo)
+                throw new InvalidOperationException("Configuration file cannot be saved, it doesn't have a file path assigned. Please specify one.");
+
+            var fileLines = new StringBuilder();
+            foreach (var line in Lines.ToList())
+                fileLines.AppendLine(line.ToString());
+
+            try
+            {
+                using (var fileWriter = new FileStream(fileInfo.FullName, FileMode.Truncate, FileAccess.Write))
+                {
+                    using (var writer = new StreamWriter(
+                            fileWriter,
+                            Encoding.UTF8,
+                            4096
+#if !NET40
+                        , true
+#endif
+                        )
+                    )
+                    {
+                        writer.Write(fileLines);
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger?.Fatal(ex.Message);
+                throw new ConfigParserException(
+                    $"Failed to write IniParser content to the following file: '{fileInfo.FullName}'", -1, ex);
+            }
+        }
+
+        #endregion
 
         #region Helpers
 
@@ -176,7 +492,7 @@ namespace Salaros.Config
             if (append)
                 currentLine.Content = $"{currentLine.Content}{Settings.NewLine}{value}";
             else
-                currentLine = new IniKeyValue(keyName, value, lineNumber);
+                currentLine = new IniKeyValue<object>(keyName, value, lineNumber);
         }
 
         /// <summary>
@@ -253,7 +569,7 @@ namespace Salaros.Config
         {
             if (null == currentSection)
             {
-                if (currentLine is IniKeyValue)
+                if (currentLine is IIniKeyValue)
                     throw new ConfigParserException(
                         "This key value pair is orphan, all the keys must be preceded by a section.", lineNumber);
 
@@ -263,6 +579,56 @@ namespace Salaros.Config
             }
             currentSection.AddLine(currentLine);
             currentLine = null;
+        }
+
+        /// <summary>
+        /// Decode byte array
+        /// </summary>
+        /// <param name="value">String value to decode</param>
+        /// <returns></returns>
+        private static byte[] DecodeByteArray(string value)
+        {
+            if (value == null)
+                return null;
+
+            var l = value.Length;
+            if (l < 2)
+                return new byte[] { };
+
+            l /= 2;
+            var result = new byte[l];
+            for (var i = 0; i < l; i++)
+                result[i] = Convert.ToByte(value.Substring(i * 2, 2), 16);
+            return result;
+        }
+
+        /// <summary>
+        /// Encode byte array
+        /// </summary>
+        /// <param name="value">Byte array value to encode.</param>
+        /// <returns></returns>
+        private static string EncodeByteArray(byte[] value)
+        {
+            if (value == null)
+                return null;
+
+            var sb = new StringBuilder();
+            foreach (var b in value)
+            {
+                var hex = Convert.ToString(b, 16);
+                var l = hex.Length;
+                if (l > 2)
+                {
+                    sb.Append(hex.Substring(l - 2, 2));
+                }
+                else
+                {
+                    if (l < 2)
+                        sb.Append("0");
+                    sb.Append(hex);
+                }
+            }
+            return sb.ToString();
         }
 
         #endregion Helpers

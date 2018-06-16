@@ -65,11 +65,11 @@ namespace Salaros.Config
         /// Gets the keys.
         /// </summary>
         /// <value>The keys.</value>
-        public ReadOnlyCollection<IniKeyValue> Keys
+        public ReadOnlyCollection<IIniKeyValue> Keys
         {
             get
             {
-                return new ReadOnlyCollection<IniKeyValue>(lines.OfType<IniKeyValue>().OrderBy(k => k.LineNumber).ToList());
+                return new ReadOnlyCollection<IIniKeyValue>(lines.OfType<IIniKeyValue>().OrderBy(k => k.LineNumber).ToList());
             }
         }
 
