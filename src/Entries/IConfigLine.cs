@@ -15,7 +15,7 @@
         /// <returns>
         /// A <see cref="string" /> that represents this instance.
         /// </returns>
-        string ToString(MultuLineValues multiLineSettings);
+        string ToString(MultiLineValues multiLineSettings);
     }
 }
 

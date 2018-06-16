@@ -336,7 +336,7 @@ namespace Salaros.Config
 
             var fileLines = new StringBuilder();
             foreach (var line in Lines.ToList())
-                fileLines.AppendLine(line.ToString(Settings.MultuLineValues));
+                fileLines.AppendLine(line.ToString(Settings.MultiLineValues));
 
             try
             {
@@ -407,7 +407,7 @@ namespace Salaros.Config
                             break;
 
                         case var _ when Settings.ValueMatcher.IsMatch(lineRaw):
-                            if (Settings.MultuLineValues.HasFlag(MultuLineValues.AllowValuelessKeys))
+                            if (Settings.MultiLineValues.HasFlag(MultiLineValues.AllowValuelessKeys))
                                 ReadValuelessKey(ref currentSection, ref currentLine, lineRaw, lineNumber);
                             else
                                 AppendValueToKey(ref currentSection, ref currentLine, lineRaw, lineNumber);
@@ -451,7 +451,7 @@ namespace Salaros.Config
         /// <exception cref="NotImplementedException"></exception>
         private void AppendValueToKey(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw, int lineNumber)
         {
-            if (MultuLineValues.NotAllowed == Settings.MultuLineValues || Settings.MultuLineValues.HasFlag(MultuLineValues.NotAllowed))
+            if (MultiLineValues.NotAllowed == Settings.MultiLineValues || Settings.MultiLineValues.HasFlag(MultiLineValues.NotAllowed))
                 throw new ConfigParserException(
                     "Multi-line values are explicitly disallowed by parser settings. Please consider changing them.", lineNumber);
 
@@ -487,19 +487,19 @@ namespace Salaros.Config
             var quote2 = valueMatch.Groups["quote2"]?.Value;
             var value = valueMatch.Groups["value"]?.Value;
 
-            switch (Settings.MultuLineValues)
+            switch (Settings.MultiLineValues)
             {
-                case var _ when Settings.MultuLineValues.HasFlag(MultuLineValues.Arrays):
+                case var _ when Settings.MultiLineValues.HasFlag(MultiLineValues.Arrays):
                     if (!string.IsNullOrWhiteSpace(value?.Trim()))
                         throw new ConfigParserException("Arrays must start from a new line and not after the key!", lineNumber);
                     break;
 
-                case var _ when Settings.MultuLineValues.HasFlag(MultuLineValues.NotAllowed) ||
-                                Settings.MultuLineValues.HasFlag(MultuLineValues.Simple):
+                case var _ when Settings.MultiLineValues.HasFlag(MultiLineValues.NotAllowed) ||
+                                Settings.MultiLineValues.HasFlag(MultiLineValues.Simple):
                     // Do nothing add with quotes if any
                     break;
 
-                case var _ when Settings.MultuLineValues.HasFlag(MultuLineValues.OnlyDelimited):
+                case var _ when Settings.MultiLineValues.HasFlag(MultiLineValues.OnlyDelimited):
                     if (!string.IsNullOrEmpty(value))
                     {
                         if (Equals("\"", quote1) || Equals('"', value.First()))

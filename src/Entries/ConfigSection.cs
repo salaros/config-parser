@@ -67,7 +67,7 @@ namespace Salaros.Config
 	    /// <returns>
 	    /// A <see cref="T:System.String" /> that represents this instance.
 	    /// </returns>
-        public string ToString(MultuLineValues multiLineSettings)
+        public string ToString(MultiLineValues multiLineSettings)
 	    {
 	        return ToString();
 	    }

@@ -4,7 +4,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace Salaros.Config.Tests
 {
-    internal class MultuLineValuesResolver : DefaultContractResolver
+    internal class MultiLineValuesResolver : DefaultContractResolver
     {
         /// <summary>
         /// Creates a <see cref="T:Newtonsoft.Json.Serialization.JsonPrimitiveContract" /> for the given type.
@@ -16,7 +16,7 @@ namespace Salaros.Config.Tests
         protected override JsonPrimitiveContract CreatePrimitiveContract(Type objectType)
         {
             var contract = base.CreatePrimitiveContract(objectType);
-            if (objectType == typeof(MultuLineValues))
+            if (objectType == typeof(MultiLineValues))
             {
                 contract.Converter = new EnumConverter();
             }

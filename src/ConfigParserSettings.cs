@@ -15,13 +15,13 @@ namespace Salaros.Config
         /// <param name="keyValueSeparator">The key value separator.</param>
         /// <param name="commentCharacters">The comment characters.</param>
         public ConfigParserSettings(
-            MultuLineValues multiLineValues = MultuLineValues.NotAllowed,
+            MultiLineValues multiLineValues = MultiLineValues.NotAllowed,
             Encoding encoding = null,
             char keyValueSeparator = '=',
             string[] commentCharacters = null
         )
         {
-            MultuLineValues = multiLineValues;
+            MultiLineValues = multiLineValues;
             Encoding = encoding;
             KeyValueSeparator = keyValueSeparator;
             CommentCharacters = commentCharacters ?? new [] { "#", ";" };
@@ -31,7 +31,7 @@ namespace Salaros.Config
             CommentMatcher = new Regex(
                 $@"^(\s+)?(?<delimiter>({string.Join("|", CommentCharacters.Select(c => c.ToString()))})+)(\s+)?(?<comment>.*?)$",
                 RegexOptions.Compiled);
-            ValueMatcher = (multiLineValues.HasFlag(MultuLineValues.OnlyDelimited))
+            ValueMatcher = (multiLineValues.HasFlag(MultiLineValues.OnlyDelimited))
                 ? new Regex(@"^(?<quote1>\"")?(?<value>[^\""]+)(?<quote2>\"")?(\s+)?$", RegexOptions.Compiled)
                 : new Regex(@"^(?<value>.*?)?$", RegexOptions.Compiled);
         }
@@ -42,7 +42,7 @@ namespace Salaros.Config
         /// <value>
         /// The multi-line value-related settings.
         /// </value>
-        public MultuLineValues MultuLineValues { get; }
+        public MultiLineValues MultiLineValues { get; }
 
         /// <summary>
         /// Gets the encoding.
@@ -113,7 +113,7 @@ namespace Salaros.Config
     /// Flags / settings for handling multi-line values
     /// </summary>
     [Flags]
-    public enum MultuLineValues
+    public enum MultiLineValues
     {
         Simple = 0,
         NotAllowed = 1,

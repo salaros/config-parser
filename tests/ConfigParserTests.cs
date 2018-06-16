@@ -41,7 +41,7 @@ namespace Salaros.Config.Tests
                     
                     var jsonSettings = new JsonSerializerSettings
                     {
-                        ContractResolver = new MultuLineValuesResolver()
+                        ContractResolver = new MultiLineValuesResolver()
                     };
 
                     var realConfigSettings = File.Exists(realConfigSettingsPath)

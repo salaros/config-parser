@@ -1,8 +1,7 @@
 {
-  "MultuLineValues": [
+  "MultiLineValues": [
     "Simple"
   ],
-  "Encoding": null,
   "KeyValueSeparator": "=",
   "CommentCharacters": [
     "#",

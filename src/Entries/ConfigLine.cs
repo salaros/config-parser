@@ -84,7 +84,7 @@
         /// <returns>
         /// A <see cref="T:System.String" /> that represents this instance.
         /// </returns>
-        public virtual string ToString(MultuLineValues multiLineSettings)
+        public virtual string ToString(MultiLineValues multiLineSettings)
         {
             return ToString();
         }
