@@ -13,21 +13,33 @@ namespace Salaros.Config
 
         #region Constructors
 
+	    /// <inheritdoc />
 	    /// <summary>
-	    /// Initializes a new instance of the <see cref="ConfigSection" /> class.
+	    /// Initializes a new instance of the <see cref="T:Salaros.Config.ConfigSection" /> class.
 	    /// </summary>
 	    /// <param name="sectionName">Section name.</param>
 	    /// <param name="lineNumber">Line number.</param>
 	    public ConfigSection(string sectionName, int lineNumber = -1)
+            : this()
 	    {
 	        lines = new List<ConfigLine>();
-	        this.sectionName = sectionName;
+	        this.sectionName = sectionName ?? throw new ArgumentNullException(nameof(sectionName));
 	        this.lineNumber = lineNumber;
+	    }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigSection"/> class.
+        /// </summary>
+        internal ConfigSection()
+	    {
+	        lines = new List<ConfigLine>();
+	        sectionName = string.Empty;
+	        lineNumber = 0;
 	    }
 
         #endregion
 
-	    #region Methods
+        #region Methods
 
         /// <summary>
         /// Gets the line number of the given line.
@@ -56,7 +68,9 @@ namespace Salaros.Config
 	    /// <returns>A <see cref="string"/> that represents the current <see cref="ConfigSection"/>.</returns>
 	    public override string ToString()
 	    {
-	        return $"[{sectionName}]";
+	        return string.IsNullOrWhiteSpace(sectionName)
+                ? string.Empty
+                : $"[{sectionName}]";
 	    }
 
 	    /// <inheritdoc />
@@ -113,9 +127,11 @@ namespace Salaros.Config
         {
             get
             {
-                var result = new List<IConfigLine> { this };
-                result.AddRange(lines.Cast<IConfigLine>().OrderBy(k => k.LineNumber));
-                return new ReadOnlyCollection<IConfigLine>(result);
+                var allLines = (string.IsNullOrWhiteSpace(sectionName))
+                    ? new List<IConfigLine>()
+                    : new List<IConfigLine> { this };
+                allLines.AddRange(lines.Cast<IConfigLine>().OrderBy(k => k.LineNumber));
+                return new ReadOnlyCollection<IConfigLine>(allLines);
             }
         }
 

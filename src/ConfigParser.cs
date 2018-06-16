@@ -12,7 +12,7 @@ namespace Salaros.Config
     public class ConfigParser
     {
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
-        protected readonly List<ConfigLine> fileHeader;
+        protected readonly ConfigSection fileHeader;
         protected readonly Dictionary<string, ConfigSection> sections;
         protected FileInfo fileInfo;
 
@@ -28,7 +28,7 @@ namespace Salaros.Config
         {
             if (string.IsNullOrWhiteSpace(configFile)) throw new ArgumentException(nameof(configFile));
 
-            fileHeader = new List<ConfigLine>();
+            fileHeader = new ConfigSection();
             sections = new Dictionary<string, ConfigSection>();
 
             Settings = settings ?? new ConfigParserSettings();
@@ -70,7 +70,7 @@ namespace Salaros.Config
         {
             get
             {
-                return new ReadOnlyCollection<IConfigLine>(fileHeader.Concat(sections.Values.SelectMany(s => s.Lines)).ToArray());
+                return new ReadOnlyCollection<IConfigLine>(fileHeader.Lines.Concat(sections.Values.SelectMany(s => s.Lines)).ToArray());
             }
         }
 
@@ -542,7 +542,7 @@ namespace Salaros.Config
                 return;
             }
 
-            fileHeader.Add(currentLine);
+            fileHeader.AddLine(currentLine);
         }
 
         /// <summary>
@@ -576,7 +576,7 @@ namespace Salaros.Config
             currentLine = new ConfigLine(lineNumber, lineRaw);
             if (null == currentSection)
             {
-                fileHeader.Add(currentLine);
+                fileHeader.AddLine(currentLine);
                 return;
             }
             currentSection.AddLine(currentLine);
@@ -593,11 +593,11 @@ namespace Salaros.Config
         {
             if (null == currentSection)
             {
-                if (currentLine is IConfigKeyValue)
+                if (currentLine is IConfigKeyValue && !Settings.MultiLineValues.HasFlag(MultiLineValues.AllowEmptyTopSection))
                     throw new ConfigParserException(
                         "This key value pair is orphan, all the keys must be preceded by a section.", lineNumber);
 
-                fileHeader.Add(currentLine);
+                fileHeader.AddLine(currentLine);
                 currentLine = null;
                 return;
             }

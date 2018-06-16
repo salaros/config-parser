@@ -119,6 +119,7 @@ namespace Salaros.Config
         NotAllowed = 1,
         OnlyDelimited = 2,
         Arrays = 4,
-        AllowValuelessKeys = 8
+        AllowValuelessKeys = 8,
+        AllowEmptyTopSection = 16
     }
 }
