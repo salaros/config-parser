@@ -414,6 +414,12 @@ namespace Salaros.Config
                             throw new ConfigParserException($"Unknown element at line {lineNumber}", lineNumber);
                     }
                 }
+
+                if (null != currentLine)
+                    BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
+
+                if (null != currentSection)
+                    sections.Add(currentSection.SectionName, currentSection);
             }
         }
 
