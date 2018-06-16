@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Salaros.Config.Logging;
 
 namespace Salaros.Config
@@ -12,6 +11,8 @@ namespace Salaros.Config
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
         protected List<IniLine> fileHeader = new List<IniLine>();
         protected Dictionary<string, IniSection> sections = new Dictionary<string, IniSection>();
+
+        #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigParser"/> class.
@@ -36,6 +37,10 @@ namespace Salaros.Config
             Read(configFile);
         }
 
+        #endregion Constructor
+
+        #region Properties
+
         /// <summary>
         /// Gets the settings.
         /// </summary>
@@ -44,12 +49,16 @@ namespace Salaros.Config
         /// </value>
         public ConfigParserSettings Settings { get; }
 
+        #endregion Properties
+
+        #region Helpers
+
         /// <summary>
         /// Reads the specified configuration content.
         /// </summary>
         /// <param name="configContent">Content of the configuration.</param>
         /// <exception cref="ArgumentException">configContent</exception>
-        public void Read(string configContent)
+        private void Read(string configContent)
         {
             if (string.IsNullOrWhiteSpace(configContent)) throw new ArgumentException(nameof(configContent));
 
@@ -255,5 +264,7 @@ namespace Salaros.Config
             currentSection.AddLine(currentLine);
             currentLine = null;
         }
+
+        #endregion Helpers
     }
 }

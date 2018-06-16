@@ -23,6 +23,9 @@ namespace Salaros.Config.Tests
                 .ToArray();
         }
 
+        /// <summary>
+        /// Parses some real world configuration files.
+        /// </summary>
         [Fact]
         public void ParseRealWorldFiles()
         {
@@ -52,19 +55,6 @@ namespace Salaros.Config.Tests
                     Assert.NotNull(config);
                 }
             });
-        }
-    }
-
-    internal class MultuLineValuesResolver : DefaultContractResolver
-    {
-        protected override JsonPrimitiveContract CreatePrimitiveContract(Type objectType)
-        {
-            var contract = base.CreatePrimitiveContract(objectType);
-            if (objectType == typeof(MultuLineValues))
-            {
-                contract.Converter = new EnumConverter();
-            }
-            return contract;
         }
     }
 }

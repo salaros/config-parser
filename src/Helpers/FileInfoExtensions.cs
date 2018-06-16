@@ -207,7 +207,7 @@ namespace System.IO
         }
 
         /// <summary>
-        /// Detects the new line.
+        /// Detects the most used new line string / character in a file.
         /// </summary>
         /// <param name="fileInfo">The file information.</param>
         /// <param name="configFile">The configuration file.</param>
