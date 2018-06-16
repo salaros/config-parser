@@ -340,7 +340,7 @@ namespace Salaros.Config
 
             try
             {
-                using (var fileWriter = new FileStream(fileInfo.FullName, FileMode.Truncate, FileAccess.Write))
+                using (var fileWriter = new FileStream(fileInfo.FullName, FileMode.OpenOrCreate, FileAccess.Write))
                 {
                     using (var writer = new StreamWriter(
                             fileWriter,
@@ -395,7 +395,7 @@ namespace Salaros.Config
                             continue;
 
                         case var _ when Settings.SectionMatcher.IsMatch(lineRaw):
-                            ReadSection(ref currentSection, lineRaw, lineNumber);
+                            ReadSection(ref currentSection, ref currentLine, lineRaw, lineNumber);
                             break;
 
                         case var _ when Settings.CommentMatcher.IsMatch(lineRaw):
@@ -535,24 +535,20 @@ namespace Salaros.Config
             var delimiter = commentMatch.Groups["delimiter"]?.Value;
             var comment = commentMatch.Groups["comment"]?.Value;
             currentLine = new ConfigComment(delimiter, comment, lineNumber);
-
-            if (null != currentSection)
-            {
-                currentSection.AddLine(currentLine);
-                return;
-            }
-
-            fileHeader.AddLine(currentLine);
         }
 
         /// <summary>
         /// Reads the section.
         /// </summary>
         /// <param name="currentSection">The current section.</param>
+        /// <param name="currentLine">The current line.</param>
         /// <param name="lineRaw">The line raw.</param>
         /// <param name="lineNumber">The line number.</param>
-        private void ReadSection(ref ConfigSection currentSection, string lineRaw, int lineNumber)
+        private void ReadSection(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw, int lineNumber)
         {
+            if (null != currentLine)
+                BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
+
             if (null != currentSection)
                 sections.Add(currentSection.SectionName, currentSection);
 
@@ -574,12 +570,6 @@ namespace Salaros.Config
                 BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
 
             currentLine = new ConfigLine(lineNumber, lineRaw);
-            if (null == currentSection)
-            {
-                fileHeader.AddLine(currentLine);
-                return;
-            }
-            currentSection.AddLine(currentLine);
         }
 
         /// <summary>
