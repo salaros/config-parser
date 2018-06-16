@@ -1,0 +1,10 @@
+{
+  "MultiLineValues": [
+    "AllowValuelessKeys"
+  ],
+  "KeyValueSeparator": "=",
+  "CommentCharacters": [
+    "#",
+    ";"
+  ]
+}
