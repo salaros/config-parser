@@ -5,12 +5,9 @@
 
 # This definition stops the following lines choking if HOME isn't
 # defined.
-HOME			= .
-RANDFILE		= $ENV::HOME/.rnd
 
 # Extra OBJECT IDENTIFIER info:
 #oid_file		= $ENV::HOME/.oid
-oid_section		= new_oids
 
 # To use this configuration file with the "-extfile" option of the
 # "openssl x509" utility, name here the section containing the

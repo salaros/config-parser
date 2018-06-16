@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <IsPackable>false</IsPackable>
-    <RootNamespace>Salaros.Config.ConfigParser.Tests</RootNamespace>
+    <RootNamespace>Salaros.Config.Tests</RootNamespace>
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
