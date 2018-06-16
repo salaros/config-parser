@@ -1,6 +1,6 @@
 ﻿namespace Salaros.Config
 {
-    public class IniComment : IniLine
+    public class ConfigComment : ConfigLine
     {
         protected string delimiter;
 
@@ -11,7 +11,7 @@
         /// <param name="delimiter">Delimiter.</param>
         /// <param name="comment"></param>
         /// <param name="lineNumber">Line number.</param>
-        public IniComment(string delimiter = ";", string comment = "", int lineNumber = -1)
+        public ConfigComment(string delimiter = ";", string comment = "", int lineNumber = -1)
             : base(lineNumber)
         {
             Delimiter = delimiter;

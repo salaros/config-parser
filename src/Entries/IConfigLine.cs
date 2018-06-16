@@ -1,7 +1,7 @@
 ﻿namespace Salaros.Config
 {
-	public interface IIniLine
-	{
+	public interface IConfigLine
+    {
 	    /// <summary>
 	    /// Gets the line number.
 	    /// </summary>

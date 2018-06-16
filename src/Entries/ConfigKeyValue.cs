@@ -2,18 +2,19 @@
 
 namespace Salaros.Config
 {
-    public class IniKeyValue<T> : IniLine, IIniKeyValue
+    public class ConfigKeyValue<T> : ConfigLine, IConfigKeyValue
     {
         #region Constructors
 
-        /// <inheritdoc />
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Salaros.Config.IniKeyValue" /> class.
+        /// Initializes a new instance of the <see cref="T:Salaros.Config.ConfigKeyValue`T" /> class.
         /// </summary>
         /// <param name="key">Key.</param>
         /// <param name="value">Value.</param>
         /// <param name="lineNumber">Line number.</param>
-        public IniKeyValue(string key, T value, int lineNumber = -1)
+        /// <exception cref="ArgumentNullException">key</exception>
+        /// <inheritdoc />
+        public ConfigKeyValue(string key, T value, int lineNumber = -1)
             : base(lineNumber)
         {
             if (string.IsNullOrWhiteSpace(key))
@@ -87,9 +88,9 @@ namespace Salaros.Config
 
         /// <inheritdoc />
         /// <summary>
-        /// Returns a <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.IniKeyValue" />.
+        /// Returns a <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.ConfigKeyValue" />.
         /// </summary>
-        /// <returns>A <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.IniKeyValue" />.</returns>
+        /// <returns>A <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.ConfigKeyValue" />.</returns>
         public override string ToString()
         {
             return $"{Key}={Content}";

@@ -12,8 +12,8 @@ namespace Salaros.Config
     public class ConfigParser
     {
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
-        protected readonly List<IniLine> fileHeader;
-        protected readonly Dictionary<string, IniSection> sections;
+        protected readonly List<ConfigLine> fileHeader;
+        protected readonly Dictionary<string, ConfigSection> sections;
         protected FileInfo fileInfo;
 
         #region Constructor
@@ -28,8 +28,8 @@ namespace Salaros.Config
         {
             if (string.IsNullOrWhiteSpace(configFile)) throw new ArgumentException(nameof(configFile));
 
-            fileHeader = new List<IniLine>();
-            sections = new Dictionary<string, IniSection>();
+            fileHeader = new List<ConfigLine>();
+            sections = new Dictionary<string, ConfigSection>();
 
             Settings = settings ?? new ConfigParserSettings();
 
@@ -57,20 +57,20 @@ namespace Salaros.Config
         public ConfigParserSettings Settings { get; }
 
 #if NET40
-        public ReadOnlyDictionary<string, IniSection> Sections => new ReadOnlyDictionary<string, IniSection>(sections);
+        public ReadOnlyDictionary<string, ConfigSection> Sections => new ReadOnlyDictionary<string, ConfigSection>(sections);
 #else
-        public IReadOnlyDictionary<string, IniSection> Sections => sections;
+        public IReadOnlyDictionary<string, ConfigSection> Sections => sections;
 #endif
 
         /// <summary>
         /// Gets configuration file's lines.
         /// </summary>
         /// <value>The lines.</value>
-        public ReadOnlyCollection<IIniLine> Lines
+        public ReadOnlyCollection<IConfigLine> Lines
         {
             get
             {
-                return new ReadOnlyCollection<IIniLine>(fileHeader.Concat(sections.Values.SelectMany(s => s.Lines)).ToArray());
+                return new ReadOnlyCollection<IConfigLine>(fileHeader.Concat(sections.Values.SelectMany(s => s.Lines)).ToArray());
             }
         }
 
@@ -128,11 +128,11 @@ namespace Salaros.Config
             if (string.IsNullOrWhiteSpace(keyName))
                 throw new ArgumentNullException(nameof(keyName));
 
-            var iniKey = new IniKeyValue<T>(keyName, defaultValue);
+            var iniKey = new ConfigKeyValue<T>(keyName, defaultValue);
 
             if (!sections.TryGetValue(sectionName, out var section))
             {
-                section = new IniSection(sectionName, Lines.Max(l => l.LineNumber));
+                section = new ConfigSection(sectionName, Lines.Max(l => l.LineNumber));
                 sections.Add(sectionName, section);
                 section.AddLine(iniKey);
                 return defaultValue;
@@ -236,7 +236,7 @@ namespace Salaros.Config
 
             if (!sections.TryGetValue(sectionName, out var section))
             {
-                section = new IniSection(sectionName, Lines.Max(l => l.LineNumber));
+                section = new ConfigSection(sectionName, Lines.Max(l => l.LineNumber));
                 sections.Add(sectionName, section);
             }
 
@@ -255,8 +255,8 @@ namespace Salaros.Config
             }
             else
             {
-                iniKey = new IniKeyValue<string>(keyName, value);
-                section.AddLine((IniLine)iniKey);
+                iniKey = new ConfigKeyValue<string>(keyName, value);
+                section.AddLine((ConfigLine)iniKey);
             }
             return true;
         }
@@ -336,7 +336,7 @@ namespace Salaros.Config
 
             var fileLines = new StringBuilder();
             foreach (var line in Lines.ToList())
-                fileLines.AppendLine(line.ToString());
+                fileLines.AppendLine(line.ToString(Settings.MultuLineValues));
 
             try
             {
@@ -382,8 +382,8 @@ namespace Salaros.Config
             {
                 string lineRaw;
                 var lineNumber = 0;
-                IniSection currentSection = null;
-                IniLine currentLine = null;
+                ConfigSection currentSection = null;
+                ConfigLine currentLine = null;
                 while (null != (lineRaw = stringReader.ReadLine()))
                 {
                     lineNumber++;
@@ -425,7 +425,7 @@ namespace Salaros.Config
         /// <param name="lineRaw">The line raw.</param>
         /// <param name="lineNumber">The line number.</param>
         /// <exception cref="NotImplementedException"></exception>
-        private void AppendValueToKey(ref IniSection currentSection, ref IniLine currentLine, string lineRaw, int lineNumber)
+        private void AppendValueToKey(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw, int lineNumber)
         {
             if (MultuLineValues.NotAllowed == Settings.MultuLineValues || Settings.MultuLineValues.HasFlag(MultuLineValues.NotAllowed))
                 throw new ConfigParserException(
@@ -445,7 +445,7 @@ namespace Salaros.Config
         /// <exception cref="ConfigParserException">Arrays must start from a new line and not after the key!
         /// or</exception>
         /// <exception cref="NotImplementedException"></exception>
-        private void ReadKeyAndValue(ref IniSection currentSection, ref IniLine currentLine, string lineRaw, int lineNumber, bool append = false)
+        private void ReadKeyAndValue(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw, int lineNumber, bool append = false)
         {
             if (null != currentLine && !append)
                 BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
@@ -492,7 +492,7 @@ namespace Salaros.Config
             if (append)
                 currentLine.Content = $"{currentLine.Content}{Settings.NewLine}{value}";
             else
-                currentLine = new IniKeyValue<object>(keyName, value, lineNumber);
+                currentLine = new ConfigKeyValue<object>(keyName, value, lineNumber);
         }
 
         /// <summary>
@@ -502,7 +502,7 @@ namespace Salaros.Config
         /// <param name="currentLine">The current line.</param>
         /// <param name="lineRaw">The line raw.</param>
         /// <param name="lineNumber">The line number.</param>
-        private void ReadComment(ref IniSection currentSection, ref IniLine currentLine, string lineRaw, int lineNumber)
+        private void ReadComment(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw, int lineNumber)
         {
             if (null != currentLine)
                 BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
@@ -510,7 +510,7 @@ namespace Salaros.Config
             var commentMatch = Settings.CommentMatcher.Match(lineRaw);
             var delimiter = commentMatch.Groups["delimiter"]?.Value;
             var comment = commentMatch.Groups["comment"]?.Value;
-            currentLine = new IniComment(delimiter, comment, lineNumber);
+            currentLine = new ConfigComment(delimiter, comment, lineNumber);
 
             if (null != currentSection)
             {
@@ -527,13 +527,13 @@ namespace Salaros.Config
         /// <param name="currentSection">The current section.</param>
         /// <param name="lineRaw">The line raw.</param>
         /// <param name="lineNumber">The line number.</param>
-        private void ReadSection(ref IniSection currentSection, string lineRaw, int lineNumber)
+        private void ReadSection(ref ConfigSection currentSection, string lineRaw, int lineNumber)
         {
             if (null != currentSection)
                 sections.Add(currentSection.SectionName, currentSection);
 
             var sectionName = Settings.SectionMatcher.Match(lineRaw).Groups["name"]?.Value;
-            currentSection = new IniSection(sectionName, lineNumber);
+            currentSection = new ConfigSection(sectionName, lineNumber);
         }
 
         /// <summary>
@@ -544,12 +544,12 @@ namespace Salaros.Config
         /// <param name="lineRaw">The line raw.</param>
         /// <param name="lineNumber">The line number.</param>
         /// <exception cref="ConfigParserException"></exception>
-        private void ReadEmptyLine(ref IniSection currentSection, ref IniLine currentLine, string lineRaw, int lineNumber)
+        private void ReadEmptyLine(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw, int lineNumber)
         {
             if (null != currentLine)
                 BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
 
-            currentLine = new IniLine(lineNumber, lineRaw);
+            currentLine = new ConfigLine(lineNumber, lineRaw);
             if (null == currentSection)
             {
                 fileHeader.Add(currentLine);
@@ -565,11 +565,11 @@ namespace Salaros.Config
         /// <param name="currentLine">The current line.</param>
         /// <param name="lineNumber">The line number.</param>
         /// <exception cref="ConfigParserException">This key value pair is orphan, all the keys must be preceded by a section.</exception>
-        private void BackupCurrentLine(ref IniSection currentSection, ref IniLine currentLine, int lineNumber)
+        private void BackupCurrentLine(ref ConfigSection currentSection, ref ConfigLine currentLine, int lineNumber)
         {
             if (null == currentSection)
             {
-                if (currentLine is IIniKeyValue)
+                if (currentLine is IConfigKeyValue)
                     throw new ConfigParserException(
                         "This key value pair is orphan, all the keys must be preceded by a section.", lineNumber);
 

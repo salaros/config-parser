@@ -1,6 +1,6 @@
 ﻿namespace Salaros.Config
 {
-    public interface IIniKeyValue : IIniLine
+    public interface IConfigKeyValue : IConfigLine
     {
         string Key { get; }
 

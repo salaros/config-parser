@@ -1,6 +1,6 @@
 ﻿namespace Salaros.Config
 {
-    public class IniLine : IIniLine
+    public class ConfigLine : IConfigLine
     {
         protected int lineNumber;
         protected string lineContent;
@@ -9,11 +9,11 @@
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IniLine"/> class.
+        /// Initializes a new instance of the <see cref="ConfigLine"/> class.
         /// </summary>
         /// <param name="lineNumber">Line number.</param>
         /// <param name="lineContent">Raw line content.</param>
-        public IniLine(int lineNumber = -1, string lineContent = "")
+        public ConfigLine(int lineNumber = -1, string lineContent = "")
         {
             this.lineContent = lineContent;
             this.lineNumber = lineNumber;
@@ -23,7 +23,7 @@
 
         #region Properties
 
-        #region IIniLine implementation
+        #region IConfigLine implementation
 
         /// <inheritdoc />
         /// <summary>
@@ -68,9 +68,9 @@
         #region Methods
 
         /// <summary>
-        /// Returns a <see cref="string"/> that represents the current <see cref="IniLine"/>.
+        /// Returns a <see cref="string"/> that represents the current <see cref="ConfigLine"/>.
         /// </summary>
-        /// <returns>A <see cref="string"/> that represents the current <see cref="IniLine"/>.</returns>
+        /// <returns>A <see cref="string"/> that represents the current <see cref="ConfigLine"/>.</returns>
         public override string ToString()
         {
             return Content;
