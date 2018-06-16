@@ -128,7 +128,7 @@ namespace Salaros.Config
             if (string.IsNullOrWhiteSpace(keyName))
                 throw new ArgumentNullException(nameof(keyName));
 
-            var iniKey = new ConfigKeyValue<T>(keyName, defaultValue);
+            var iniKey = new ConfigKeyValue<T>(keyName, Settings.KeyValueSeparator, defaultValue, -1);
 
             if (!sections.TryGetValue(sectionName, out var section))
             {
@@ -255,7 +255,7 @@ namespace Salaros.Config
             }
             else
             {
-                iniKey = new ConfigKeyValue<string>(keyName, value);
+                iniKey = new ConfigKeyValue<string>(keyName, Settings.KeyValueSeparator, value, -1);
                 section.AddLine((ConfigLine)iniKey);
             }
             return true;
@@ -438,7 +438,7 @@ namespace Salaros.Config
             if (null != currentLine)
                 BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
 
-            currentLine = new ConfigKeyValue<object>(lineRaw, null, lineNumber);
+            currentLine = new ConfigKeyValue<object>(lineRaw, string.Empty, null, lineNumber);
         }
 
         /// <summary>
@@ -479,6 +479,9 @@ namespace Salaros.Config
 
             var keyMatch = Settings.KeyMatcher.Match(lineRaw);
             var keyName = keyMatch.Groups["key"]?.Value;
+            var separator = (string.IsNullOrWhiteSpace(keyMatch.Groups["separator"]?.Value))
+               ? Settings.KeyValueSeparator
+               : keyMatch.Groups["separator"]?.Value;
             if (keyMatch.Success && keyMatch.Captures.Count > 0)
                 lineRaw = lineRaw.Substring(keyMatch.Captures[0].Value.Length);
 
@@ -516,7 +519,7 @@ namespace Salaros.Config
             if (append)
                 currentLine.Content = $"{currentLine.Content}{Settings.NewLine}{value}";
             else
-                currentLine = new ConfigKeyValue<object>(keyName, value, lineNumber);
+                currentLine = new ConfigKeyValue<object>(keyName, separator, value, lineNumber);
         }
 
         /// <summary>

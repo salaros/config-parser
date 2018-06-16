@@ -10,17 +10,22 @@ namespace Salaros.Config
         /// Initializes a new instance of the <see cref="T:Salaros.Config.ConfigKeyValue`T" /> class.
         /// </summary>
         /// <param name="key">Key.</param>
+        /// <param name="separator">The separator.</param>
         /// <param name="value">Value.</param>
         /// <param name="lineNumber">Line number.</param>
         /// <exception cref="ArgumentNullException">key</exception>
         /// <inheritdoc />
-        public ConfigKeyValue(string key, T value, int lineNumber = -1)
+        public ConfigKeyValue(string key, string separator, T value, int lineNumber)
             : base(lineNumber)
         {
             if (string.IsNullOrWhiteSpace(key))
                 throw new ArgumentNullException(nameof(key));
-            
+
+            if (string.IsNullOrWhiteSpace(separator))
+                throw new ArgumentNullException(nameof(separator));
+
             Key = key;
+            Separator = separator;
             Value = value;
         }
 
@@ -36,6 +41,14 @@ namespace Salaros.Config
         {
             get;
         }
+
+        /// <summary>
+        /// Gets or sets the separator.
+        /// </summary>
+        /// <value>
+        /// The separator.
+        /// </value>
+        public string Separator { get; }
 
         /// <summary>
         /// Gets the value.
@@ -109,11 +122,11 @@ namespace Salaros.Config
         {
             switch (multiLineSettings)
             {
-                case MultiLineValues.AllowValuelessKeys:
+                case MultiLineValues.AllowValuelessKeys when string.IsNullOrWhiteSpace(Content):
                     return Key;
 
                 default:
-                    return $"{Key}={Content}";
+                    return $"{Key}{Separator}{Content}";
             }
         }
 

@@ -17,17 +17,17 @@ namespace Salaros.Config
         public ConfigParserSettings(
             MultiLineValues multiLineValues = MultiLineValues.NotAllowed,
             Encoding encoding = null,
-            char keyValueSeparator = '=',
+            string keyValueSeparator = null,
             string[] commentCharacters = null
         )
         {
             MultiLineValues = multiLineValues;
             Encoding = encoding;
-            KeyValueSeparator = keyValueSeparator;
+            KeyValueSeparator = keyValueSeparator ?? "=";
             CommentCharacters = commentCharacters ?? new [] { "#", ";" };
 
             SectionMatcher = new Regex(@"^(\s+)?\[(?<name>.*?)\].*$", RegexOptions.Compiled);
-            KeyMatcher = new Regex(@"^(?<key>.*?)(\s+)?=(\s+)?", RegexOptions.Compiled);
+            KeyMatcher = new Regex($@"^(?<key>.*?)(?<separator>(\s+)?{Regex.Escape(KeyValueSeparator)}(\s+)?)", RegexOptions.Compiled);
             CommentMatcher = new Regex(
                 $@"^(\s+)?(?<delimiter>({string.Join("|", CommentCharacters.Select(c => c.ToString()))})+)(\s+)?(?<comment>.*?)$",
                 RegexOptions.Compiled);
@@ -66,7 +66,7 @@ namespace Salaros.Config
         /// <value>
         /// The key value separator.
         /// </value>
-        public char KeyValueSeparator { get; }
+        public string KeyValueSeparator { get; }
 
         /// <summary>
         /// Gets the comment characters.
