@@ -45,7 +45,11 @@
         /// Gets the raw content of the line.
         /// </summary>
         /// <value>The raw content of the line.</value>
-        public virtual string Content => lineContent;
+        public virtual string Content
+        {
+            get => lineContent;
+            internal set => lineContent = value;
+        }
 
         #endregion
 

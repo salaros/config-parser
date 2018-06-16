@@ -2,7 +2,7 @@
 {
     public class IniComment : IniLine
     {
-        protected char delimiter;
+        protected string delimiter;
 
         /// <inheritdoc />
         /// <summary>
@@ -11,7 +11,7 @@
         /// <param name="delimiter">Delimiter.</param>
         /// <param name="comment"></param>
         /// <param name="lineNumber">Line number.</param>
-        public IniComment(char delimiter = ';', string comment = "", int lineNumber = -1)
+        public IniComment(string delimiter = ";", string comment = "", int lineNumber = -1)
             : base(lineNumber)
         {
             Delimiter = delimiter;
@@ -22,7 +22,7 @@
         /// Gets the delimiter.
         /// </summary>
         /// <value>The delimiter.</value>
-        public char Delimiter
+        public string Delimiter
         {
             get;
         }
@@ -37,13 +37,14 @@
             internal set;
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Returns a <see cref="string"/> that represents the current <see cref="IniComment"/>.
+        /// Returns a <see cref="T:System.String" /> that represents the current <see cref="T:Salaros.Config.IniComment" />.
         /// </summary>
-        /// <returns>A <see cref="string"/> that represents the current <see cref="IniComment"/>.</returns>
+        /// <returns>A <see cref="T:System.String" /> that represents the current <see cref="T:Salaros.Config.IniComment" />.</returns>
         public override string ToString()
         {
-            return string.Format("{0} {1}", Delimiter, Comment);
+            return $"{Delimiter} {Comment}";
         }
     }
 }

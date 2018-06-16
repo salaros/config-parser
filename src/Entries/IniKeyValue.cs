@@ -2,7 +2,7 @@
 
 namespace Salaros.Config
 {
-    public class IniKeyValue : IniLine, IIniKeyValuePair<object>
+    public class IniKeyValue : IniLine
     {
         /// <inheritdoc />
         /// <summary>
@@ -48,13 +48,18 @@ namespace Salaros.Config
 
         #endregion
 
+        /// <inheritdoc />
         /// <summary>
-        /// Gets the string representation of key value.
+        /// Gets the raw content of the line.
         /// </summary>
-        /// <value>The string value.</value>
-        public object StringValue => (Value == null)
-            ? string.Empty
-            : Value.ToString();
+        /// <value>
+        /// The raw content of the line.
+        /// </value>
+        public override string Content
+        {
+            get => Value?.ToString();
+            internal set => Value = value;
+        }
 
         /// <inheritdoc />
         /// <summary>
@@ -63,7 +68,7 @@ namespace Salaros.Config
         /// <returns>A <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.IniKeyValue" />.</returns>
         public override string ToString()
         {
-            return $"{Key}={StringValue}";
+            return $"{Key}={Content}";
         }
     }
 }

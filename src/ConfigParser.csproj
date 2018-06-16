@@ -22,7 +22,11 @@
 
     <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
         <Compile Remove="Polyfills.cs" />
-        <None Include="Polyfills.cs" />
+        <None Include="Helpers\Polyfills.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="ConfigParser.csproj.DotSettings" />
     </ItemGroup>
 
     <ItemGroup>
@@ -36,6 +40,10 @@
 
     <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
         <DefineConstants>TRACE;DEBUG;LIBLOG_PUBLIC</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|AnyCPU'">
+      <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
 </Project>
