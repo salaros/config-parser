@@ -44,7 +44,9 @@
         /// <returns>A <see cref="T:System.String" /> that represents the current <see cref="T:Salaros.Config.IniComment" />.</returns>
         public override string ToString()
         {
-            return $"{Delimiter} {Comment}";
+            return (string.IsNullOrWhiteSpace(Comment))
+                ? Delimiter
+                : $"{Delimiter}{Comment}";
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Salaros.Config
             SectionMatcher = new Regex(@"^(\s+)?\[(?<name>.*?)\].*$", RegexOptions.Compiled);
             KeyMatcher = new Regex($@"^(?<key>.*?)(?<separator>(\s+)?{Regex.Escape(KeyValueSeparator)}(\s+)?)", RegexOptions.Compiled);
             CommentMatcher = new Regex(
-                $@"^(\s+)?(?<delimiter>({string.Join("|", CommentCharacters.Select(c => c.ToString()))})+)(\s+)?(?<comment>.*?)$",
+                $@"^(?<delimiter>(\s+)?({string.Join("|", CommentCharacters.Select(c => c.ToString()))})+(\s+)?)(?<comment>(\s+)?.*?)$",
                 RegexOptions.Compiled);
             ValueMatcher = (multiLineValues.HasFlag(MultiLineValues.OnlyDelimited))
                 ? new Regex(@"^(?<quote1>\"")?(?<value>[^\""]+)(?<quote2>\"")?(\s+)?$", RegexOptions.Compiled)
