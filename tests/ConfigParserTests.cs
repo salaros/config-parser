@@ -34,11 +34,7 @@ namespace Salaros.Config.Tests
                 ConfigParser config = null;
                 try
                 {
-                    var realConfigSettingsPath = Path.Combine(
-                        Directory.GetParent(realConfigFile).FullName,
-                        $"{Path.GetFileNameWithoutExtension(realConfigFile)}.json"
-                    );
-                    
+                    var realConfigSettingsPath = $"{realConfigFile}.json";
                     var jsonSettings = new JsonSerializerSettings
                     {
                         ContractResolver = new MultiLineValuesResolver()
