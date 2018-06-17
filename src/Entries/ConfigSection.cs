@@ -43,7 +43,7 @@ namespace Salaros.Config
 	    }
 
         #endregion
-
+        
         #region Methods
 
         /// <summary>
@@ -153,6 +153,30 @@ namespace Salaros.Config
 	        ? string.Empty
 	        : $"{indentation}[{sectionName}]{comment}";
 
-	    #endregion
+        #endregion
+
+        #region Indexing
+
+        /// <summary>
+        /// Gets the <see cref="string"/> with the specified key name.
+        /// </summary>
+        /// <value>
+        /// The <see cref="string"/>.
+        /// </value>
+        /// <param name="keyName">Name of the key.</param>
+        /// <returns></returns>
+        public string this[string keyName]
+	    {
+	        get
+	        {
+	            return (null == keyName)
+	                ? null
+	                : Keys
+	                    ?.FirstOrDefault(s => keyName.Equals(s.Name, StringComparison.InvariantCultureIgnoreCase))
+	                    ?.ValueRaw as string;
+	        }
+	    }
+
+        #endregion
     }
 }

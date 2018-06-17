@@ -370,6 +370,30 @@ namespace Salaros.Config
 
         #endregion
 
+        #region Indexing
+
+        /// <summary>
+        /// Gets the <see cref="ConfigSection"/> with the specified section name.
+        /// </summary>
+        /// <value>
+        /// The <see cref="ConfigSection"/>.
+        /// </value>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <returns></returns>
+        public ConfigSection this[string sectionName]
+        {
+            get
+            {
+                return (null == sectionName)
+                    ? null
+                    : sections
+                        ?.FirstOrDefault(s => sectionName.Equals(s.Key, StringComparison.InvariantCultureIgnoreCase))
+                        .Value;
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Save configuration file's content.
         /// </summary>
