@@ -438,7 +438,7 @@ namespace Salaros.Config
             if (null != currentLine)
                 BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
 
-            currentLine = new ConfigKeyValue<object>(lineRaw, string.Empty, null, lineNumber);
+            currentLine = new ConfigKeyValue<object>(lineRaw, Settings.KeyValueSeparator, null, lineNumber);
         }
 
         /// <summary>
