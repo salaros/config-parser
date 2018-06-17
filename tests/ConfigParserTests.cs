@@ -141,6 +141,45 @@ namespace Salaros.Config.Tests
         }
 
         /// <summary>
+        /// Checks if multi-line values are parsed correctly.
+        /// </summary>
+        [Fact]
+        public void MultilineValuesAreParsedCorrectly()
+        {
+            var multiLineDelimitedFilePath = StructureSampleFiles.FirstOrDefault(f => 
+                f.EndsWith("multi-line.ini", StringComparison.OrdinalIgnoreCase));
+            Assert.NotNull(multiLineDelimitedFilePath);
+
+            var configFile = new ConfigParser(multiLineDelimitedFilePath, new ConfigParserSettings(MultiLineValues.Simple));
+            var multiLineDelimitedValue = configFile.GetValue("Multiline Values", "chorus", string.Empty);
+            Assert.Equal(
+                "I'm a lumberjack, and I'm okay\n" +
+                "    I sleep all night and I work all day",
+                multiLineDelimitedValue
+            );
+        }
+
+        /// <summary>
+        /// Checks if quote delimited (!) multiline values are parsed correctly.
+        /// </summary>
+        [Fact]
+        public void DelimitedMultilineValuesAreParsedCorrectly()
+        {
+            var multiLineDelimitedFilePath = StructureSampleFiles.FirstOrDefault(f =>
+                f.EndsWith("multi-line-delimited.ini", StringComparison.OrdinalIgnoreCase));
+            Assert.NotNull(multiLineDelimitedFilePath);
+
+            var configFile = new ConfigParser(multiLineDelimitedFilePath, new ConfigParserSettings(MultiLineValues.QuoteDelimitedValues));
+            var multiLineDelimitedValue = configFile.GetValue("Multiline Values", "chorus", string.Empty);
+            Assert.Equal(
+                "I'm a lumberjack, and I'm okay\n" +
+                "    I sleep all night and I work all day\n" +
+                "\t",
+                multiLineDelimitedValue
+            );
+        }
+
+        /// <summary>
         /// Gets the settings for file.
         /// </summary>
         /// <param name="pathToConfigFile">The path to configuration file.</param>
