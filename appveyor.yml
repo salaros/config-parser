@@ -20,9 +20,11 @@ install:
 environment:
   VERSION_SIMPLE: '{version}'
   VERSION_INFORMATIONAL: '{version}'
-  VERSION_UNSTABLE_SUFFIX: '-preview-$(APPVEYOR_BUILD_NUMBER)'
+  VERSION_UNSTABLE_SUFFIX: '-preview$(APPVEYOR_BUILD_NUMBER)'
   COVERALLS_REPO_TOKEN:
     secure: 9iA9d5GcWja7EnS3gFvbTMrhyKrzjW3pcYuQ/HHaEJjjMY5VR/e4mQ0uNk+fWaAA
+  APPVEYOR_TOKEN:
+    secure: LtoVAPATN9iTCl1zkCvEktqP92QSEEngyS3vqG3GphE=
 
 init:
 - ps: |
@@ -117,6 +119,22 @@ deploy:
       secure: 3zmnmVBweTgdk4SBM/rWHdC9JOM9s0pxm1bw1d+WHDo=
     artifact: NuGet_Files
 
+after_deploy:
+  - ps: |
+        if ($env:APPVEYOR_REPO_TAG -eq "true" -and $env:APPVEYOR_REPO_TAG_NAME) {
+            $apiUrl = 'https://ci.appveyor.com/api'
+            $headers = @{
+                "Authorization" = "Bearer $env:APPVEYOR_TOKEN"
+                "Content-type" = "application/json"
+                "Accept" = "application/json"
+            }
+            $build = @{
+                nextBuildNumber = 1
+            }
+            $json = $build | ConvertTo-Json
+            Invoke-RestMethod -Method Put "$apiUrl/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/settings/build-number" -Body $json -Headers $headers
+        }
+
 # Start builds on tags only (GitHub and BitBucket)
 skip_non_tags: false
 
@@ -127,7 +145,7 @@ test_script:
 # Test coverage: OpenCover + Coveralls
 after_test:
   - ps: |
-      # Install NuGet pacakges and tools
+      # Install NuGet packages and tools
       nuget install  OpenCover  -Version 4.6.519  -OutputDirectory packages
       dotnet tool install coveralls.net --tool-path tools
       
