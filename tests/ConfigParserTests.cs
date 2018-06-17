@@ -39,8 +39,8 @@ namespace Salaros.Config.Tests
                         ? JsonConvert.DeserializeObject<ConfigParserSettings>(
                             File.ReadAllText(realConfigSettingsPath),
                             new JsonSerializerSettings
-                    {
-                        ContractResolver = new MultiLineValuesResolver()
+                            {
+                                ContractResolver = new MultiLineValuesResolver()
                             })
                         : null;
 
@@ -50,6 +50,37 @@ namespace Salaros.Config.Tests
                 {
                     Assert.NotNull(config);
                 }
+            });
+        }
+
+        /// <summary>
+        /// Checks if real world files equal their ToString representation.
+        /// </summary>
+        [Fact]
+        public void RealWorldFilesEqualToString()
+        {
+            Assert.All(RealWorldConfigFiles, realConfigFile =>
+            {
+                var realConfigSettingsPath = $"{realConfigFile}.json";
+                var realConfigSettings = File.Exists(realConfigSettingsPath)
+                    ? JsonConvert.DeserializeObject<ConfigParserSettings>(
+                        File.ReadAllText(realConfigSettingsPath),
+                        new JsonSerializerSettings
+                        {
+                            ContractResolver = new MultiLineValuesResolver()
+                        })
+                    : null;
+
+                var configFile = new ConfigParser(realConfigFile, realConfigSettings);
+                var configFileFromDisk = File
+                                            .ReadAllText(realConfigFile)
+                                            .Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\n")
+                                            .TrimEnd('\n');
+                var configFileText = configFile
+                                            .ToString()
+                                            .Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\n")
+                                            .TrimEnd('\n');
+                Assert.Equal(configFileText, configFileFromDisk);
             });
         }
     }
