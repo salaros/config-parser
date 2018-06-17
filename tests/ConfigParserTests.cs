@@ -98,6 +98,45 @@ namespace Salaros.Config.Tests
         }
 
         /// <summary>
+        /// Checks if indented files are parsed correctly.
+        /// </summary>
+        [Fact]
+        public void IndentedFilesAreParsedCorrectly()
+        {
+            var indentedFilePath = StructureSampleFiles.FirstOrDefault(f => f.EndsWith("indented.ini", StringComparison.OrdinalIgnoreCase));
+            Assert.NotNull(indentedFilePath);
+
+            var configFile = new ConfigParser(indentedFilePath, new ConfigParserSettings(MultiLineValues.Simple));
+            Assert.All(configFile.Sections, section =>
+            {
+                Assert.Equal(section.Key, section.Key.Trim());
+            });
+
+            Assert.All(configFile.Sections.SelectMany(s => s.Value.Keys), key =>
+            {
+                Assert.Equal(key.Name, key.Name.Trim());
+            });
+
+            var purposeKey = configFile.GetValue("Sections Can Be Indented", "purpose", string.Empty);
+            Assert.Equal(
+                "formatting for readability",
+                purposeKey
+            );
+
+            var sectionName = configFile.Sections?.FirstOrDefault().Key;
+            Assert.Equal(
+                "Sections Can Be Indented",
+                sectionName
+            );
+
+            var lastComment = configFile.Lines.Last(l => l is ConfigComment) as ConfigComment;
+            Assert.Equal(
+                "Did I mention we can indent comments, too?",
+                lastComment?.Comment
+            );
+        }
+
+        /// <summary>
         /// Gets the settings for file.
         /// </summary>
         /// <param name="pathToConfigFile">The path to configuration file.</param>
