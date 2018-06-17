@@ -1,13 +1,32 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFrameworks>net45;netstandard2.0;net40</TargetFrameworks>
-        <RootNamespace>Salaros.Config</RootNamespace>
-        <AssemblyName>ConfigParser</AssemblyName>
+        <OutputPath>..\bin\$(Configuration)\</OutputPath>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup>
-        <OutputPath>..\bin\$(Configuration)\</OutputPath>
+        <RootNamespace>Salaros.Config</RootNamespace>
+        <AssemblyName>ConfigParser</AssemblyName>
+        <Title>ConfigParser</Title>
+        <Description>A slim, fully managed C# library for reading/writing .ini, .conf, .cfg etc configuration files.</Description>
+        <Version>1.0.0</Version>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
+        <FileVersion>1.0.0</FileVersion>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <Product>ConfigParser</Product>
+        <Company>Salaros</Company>
+        <Authors>Zhmayev Yaroslav aka Salaros</Authors>
+        <Copyright>Copyright 2015 (c) Salaros</Copyright>
+        <PackageLicenseUrl>https://raw.githubusercontent.com/salaros/ConfigParser/master/LICENSE</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/salaros/ConfigParser</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/salaros/ConfigParser</RepositoryUrl>
+        <RepositoryType>Git</RepositoryType>
+        <PackageTags>configuration,configuration-files,file,configuration-file,config,ini,cfg,configs,conf,mono,dotnet,managed,csharp</PackageTags>
+        <NeutralLanguage>English</NeutralLanguage>
+        <PackageReleaseNotes></PackageReleaseNotes>
     </PropertyGroup>
 
     <!-- A workaround for "full" .NET Framework targets to try to fallback on Mono before failing -->
@@ -15,7 +34,7 @@
         <!-- Look up for Mono installations on Linux or macOS -->
         <MonoPath Condition="'$(MonoPath)' == '' And Exists('/usr/lib/mono')">/usr/lib/mono</MonoPath>
         <MonoPath Condition="'$(MonoPath)' == '' And Exists('/Library/Frameworks/Mono.framework/Versions/Current/lib/mono')">/Library/Frameworks/Mono.framework/Versions/Current/lib/mono</MonoPath>
-        <!-- Try to apply framework override fo supported targets if Mono was found -->
+        <!-- Try to apply framework override for supported targets if Mono was found -->
         <FrameworkPathOverride Condition="'$(MonoPath)' != '' And '$(TargetFramework)' == 'net40'">$(MonoPath)/4.0-api</FrameworkPathOverride>
         <FrameworkPathOverride Condition="'$(MonoPath)' != '' And '$(TargetFramework)' == 'net45'">$(MonoPath)/4.5-api</FrameworkPathOverride>
     </PropertyGroup>
@@ -42,8 +61,13 @@
         <DefineConstants>TRACE;DEBUG;LIBLOG_PUBLIC</DefineConstants>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|AnyCPU'">
-      <LangVersion>latest</LangVersion>
-    </PropertyGroup>
-
+    <Target Name="CleanNuGetFiles" AfterTargets="Clean">
+        <ItemGroup>
+            <NuGetFilesBin Include="$(OutputPath)\..\*.nupkg" />
+        </ItemGroup>
+        <Message Text="Deleting NuGet files from $(OutputPath)\..\*.nupkg" Importance="high" />
+        <Delete Files="@(NuGetFilesBin)" />
+        <Delete Files="@(NuGetFilesProject)" />
+    </Target>
+  
 </Project>
