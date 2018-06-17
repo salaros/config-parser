@@ -223,7 +223,7 @@ namespace Salaros.Config
         /// <param name="defaultValue">The default array value.</param>
         /// <returns></returns>
         /// <exception cref="ConfigParserException"></exception>
-        public virtual string[] GetValue(string sectionName, string keyName, string[] defaultValue = null)
+        public virtual string[] GetValue(string sectionName, string keyName, string[] defaultValue)
         {
             var arrayRaw = GetRawValue(sectionName, keyName, string.Empty);
             if (string.IsNullOrWhiteSpace(arrayRaw))
@@ -245,6 +245,18 @@ namespace Salaros.Config
         }
 
         /// <summary>
+        /// Gets the array value.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="keyName">Name of the key.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns></returns>
+        public virtual string[] GetArrayValue(string sectionName, string keyName, string[] defaultValue = null)
+        {
+            return GetValue(sectionName, keyName, defaultValue);
+        }
+
+        /// <summary>
         /// Checks if value the is an array.
         /// </summary>
         /// <param name="sectionName">Name of the section.</param>
@@ -256,8 +268,8 @@ namespace Salaros.Config
             if (string.IsNullOrWhiteSpace(arrayRaw))
                 return false;
 
-            var values = arrayRaw.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-            return values.Any();
+            var values = arrayRaw.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            return values.Any() && string.IsNullOrWhiteSpace(values.First());
         }
 
         #endregion
