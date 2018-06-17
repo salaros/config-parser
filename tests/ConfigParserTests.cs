@@ -11,6 +11,7 @@ namespace Salaros.Config.Tests
     public class IniParserTests
     {
         private static readonly string[] RealWorldConfigFiles;
+        private static readonly string[] StructureSampleFiles;
 
         /// <summary>
         /// Initializes the <see cref="IniParserTests"/> class.
@@ -19,6 +20,11 @@ namespace Salaros.Config.Tests
         {
             RealWorldConfigFiles = Directory
                 .GetFiles(Path.Combine(Environment.CurrentDirectory, "Resources", "RealWorld"))
+                .Where(f => !f.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+
+            StructureSampleFiles = Directory
+                .GetFiles(Path.Combine(Environment.CurrentDirectory, "Resources", "Structure"))
                 .Where(f => !f.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
                 .ToArray();
         }
@@ -64,6 +70,29 @@ namespace Salaros.Config.Tests
                                             .TrimEnd('\n');
                 Assert.Equal(configFileText, configFileFromDisk);
             });
+        }
+
+        /// <summary>
+        /// Checks if array values are parsed correctly.
+        /// </summary>
+        [Fact]
+        public void ArrayValuesAreParsedCorrectly()
+        {
+            var arraySampleFilePath = StructureSampleFiles.FirstOrDefault(f => f.EndsWith("array-values.cnf", StringComparison.OrdinalIgnoreCase));
+            Assert.NotNull(arraySampleFilePath);
+
+            var configFile = new ConfigParser(arraySampleFilePath, new ConfigParserSettings(MultiLineValues.Simple));
+            var excludeArray = new[]
+            {
+                "^/var/",
+                "^/tmp/",
+                "^/private/",
+                "COMMIT_EDITMSG$",
+                "PULLREQ_EDITMSG$",
+                "MERGE_MSG$",
+            };
+            var excludeArrayFromFile = configFile.GetValue("settings", "exclude", new string[] {});
+            Assert.Equal(excludeArrayFromFile, excludeArray);
         }
 
         /// <summary>
