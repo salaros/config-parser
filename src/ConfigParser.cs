@@ -244,6 +244,22 @@ namespace Salaros.Config
                 .ToArray();
         }
 
+        /// <summary>
+        /// Checks if value the is an array.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="keyName">Name of the key.</param>
+        /// <returns></returns>
+        public virtual bool ValueIsArray(string sectionName, string keyName)
+        {
+            var arrayRaw = GetRawValue(sectionName, keyName, string.Empty);
+            if (string.IsNullOrWhiteSpace(arrayRaw))
+                return false;
+
+            var values = arrayRaw.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            return values.Any();
+        }
+
         #endregion
 
         #region SetValue

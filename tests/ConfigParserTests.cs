@@ -82,6 +82,8 @@ namespace Salaros.Config.Tests
             Assert.NotNull(arraySampleFilePath);
 
             var configFile = new ConfigParser(arraySampleFilePath, new ConfigParserSettings(MultiLineValues.Simple));
+            Assert.True(configFile.ValueIsArray("settings", "exclude"));
+
             var excludeArray = new[]
             {
                 "^/var/",
