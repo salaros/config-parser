@@ -502,11 +502,6 @@ namespace Salaros.Config
 
             switch (Settings.MultiLineValues)
             {
-                case var _ when Settings.MultiLineValues.HasFlag(MultiLineValues.Arrays):
-                    if (!string.IsNullOrWhiteSpace(value?.Trim()))
-                        throw new ConfigParserException("Arrays must start from a new line and not after the key!", lineNumber);
-                    break;
-
                 case var _ when Settings.MultiLineValues.HasFlag(MultiLineValues.NotAllowed) ||
                                 Settings.MultiLineValues.HasFlag(MultiLineValues.Simple):
                     // Do nothing add with quotes if any
