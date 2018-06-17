@@ -487,7 +487,7 @@ namespace Salaros.Config
                             ReadEmptyLine(ref currentSection, ref currentLine, lineRaw, lineNumber);
                             continue;
 
-                        case var _ when Settings.SectionMatcher.IsMatch(lineRaw):
+                        case var _ when ConfigParserSettings.SectionMatcher.IsMatch(lineRaw):
                             ReadSection(ref currentSection, ref currentLine, lineRaw, lineNumber);
                             break;
 
@@ -641,7 +641,7 @@ namespace Salaros.Config
             if (null != currentSection)
                 sections.Add(currentSection.SectionName, currentSection);
 
-            var sectionMatch = Settings.SectionMatcher.Match(lineRaw);
+            var sectionMatch = ConfigParserSettings.SectionMatcher.Match(lineRaw);
             var sectionName = sectionMatch.Groups["name"]?.Value;
             var indentation = sectionMatch.Groups["indentation"]?.Value;
             var comment = sectionMatch.Groups["comment"]?.Value;

@@ -8,6 +8,14 @@ namespace Salaros.Config
     public class ConfigParserSettings
     {
         /// <summary>
+        /// Initializes the <see cref="ConfigParserSettings"/> class.
+        /// </summary>
+        static ConfigParserSettings()
+        {
+            SectionMatcher = new Regex(@"^(?<indentation>(\s+)?)\[(?<name>.*?)\](?<comment>.*)$", RegexOptions.Compiled);
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ConfigParserSettings"/> class.
         /// </summary>
         /// <param name="multiLineValues">The multi line values.</param>
@@ -26,7 +34,6 @@ namespace Salaros.Config
             KeyValueSeparator = keyValueSeparator ?? "=";
             CommentCharacters = commentCharacters ?? new [] { "#", ";" };
 
-            SectionMatcher = new Regex(@"^(?<indentation>(\s+)?)\[(?<name>.*?)\](?<comment>.*)$", RegexOptions.Compiled);
             KeyMatcher = new Regex($@"^(?<key>.*?)(?<separator>(\s+)?{Regex.Escape(KeyValueSeparator)}(\s+)?)", RegexOptions.Compiled);
             CommentMatcher = new Regex(
                 $@"^(?<delimiter>(\s+)?({string.Join("|", CommentCharacters.Select(c => c.ToString()))})+(\s+)?)(?<comment>(\s+)?.*?)$",
@@ -82,7 +89,7 @@ namespace Salaros.Config
         /// <value>
         /// The section matcher.
         /// </value>
-        internal Regex SectionMatcher { get; }
+        internal static Regex SectionMatcher { get; }
 
         /// <summary>
         /// Gets the comment matcher.
