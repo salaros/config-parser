@@ -1,9 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using Koopman.CheckPoint.Json;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Xunit;
 
 namespace Salaros.Config.Tests
@@ -127,6 +125,12 @@ namespace Salaros.Config.Tests
             Assert.Equal(
                 "Sections Can Be Indented",
                 sectionName
+            );
+
+            var emptyLine = configFile.Lines.Last(l => string.IsNullOrWhiteSpace(l.ToString()));
+            Assert.Equal(
+                "\t\t",
+                emptyLine.Content
             );
 
             var lastComment = configFile.Lines.Last(l => l is ConfigComment) as ConfigComment;
