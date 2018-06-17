@@ -276,17 +276,17 @@ namespace Salaros.Config
 
         #endregion
 
-            #region SetValue
+        #region SetValue
 
-            /// <summary>
-            /// Sets the value.
-            /// </summary>
-            /// <param name="sectionName">Name of the section.</param>
-            /// <param name="keyName">Name of the key.</param>
-            /// <param name="value">The value.</param>
-            /// <returns></returns>
-            /// <exception cref="InvalidOperationException"></exception>
-            public bool SetValue(string sectionName, string keyName, string value)
+        /// <summary>
+        /// Sets the value.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="keyName">Name of the key.</param>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        public bool SetValue(string sectionName, string keyName, string value)
         {
             if (string.IsNullOrWhiteSpace(sectionName))
                 throw new ArgumentNullException(nameof(sectionName));
