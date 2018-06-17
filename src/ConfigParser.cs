@@ -334,10 +334,6 @@ namespace Salaros.Config
             if (null == fileInfo)
                 throw new InvalidOperationException("Configuration file cannot be saved, it doesn't have a file path assigned. Please specify one.");
 
-            var fileLines = new StringBuilder();
-            foreach (var line in Lines.ToList())
-                fileLines.AppendLine(line.ToString(Settings.MultiLineValues));
-
             try
             {
                 using (var fileWriter = new FileStream(fileInfo.FullName, FileMode.OpenOrCreate, FileAccess.Write))
@@ -352,7 +348,7 @@ namespace Salaros.Config
                         )
                     )
                     {
-                        writer.Write(fileLines);
+                        writer.Write(ToString());
                     }
                 }
                 return true;
@@ -363,6 +359,20 @@ namespace Salaros.Config
                 throw new ConfigParserException(
                     $"Failed to write IniParser content to the following file: '{fileInfo.FullName}'", -1, ex);
             }
+        }
+
+        /// <summary>
+        /// Returns a <see cref="string" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="string" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            var fileLines = new StringBuilder();
+            foreach (var line in Lines.ToList())
+                fileLines.AppendLine(line.ToString(Settings.MultiLineValues));
+            return fileLines.ToString();
         }
 
         #endregion
