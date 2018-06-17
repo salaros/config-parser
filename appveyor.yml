@@ -109,7 +109,7 @@ deploy:
     skip_symbols: false
     symbol_server:      # remove to push symbols to SymbolSource.org
     on: 
-      appveyor_repo_tag: true
+      appveyor_repo_tag: false
 
   -
     provider: NuGet
