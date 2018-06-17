@@ -541,8 +541,6 @@ namespace Salaros.Config
                 lineRaw = lineRaw.Substring(keyMatch.Captures[0].Value.Length);
 
             var valueMatch = Settings.ValueMatcher.Match(lineRaw);
-            var quote1 = valueMatch.Groups["quote1"]?.Value;
-            var quote2 = valueMatch.Groups["quote2"]?.Value;
             var value = valueMatch.Groups["value"]?.Value;
 
             switch (Settings.MultiLineValues)
