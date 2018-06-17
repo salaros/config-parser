@@ -35,13 +35,13 @@ namespace Salaros.Config.Tests
                 try
                 {
                     var realConfigSettingsPath = $"{realConfigFile}.json";
-                    var jsonSettings = new JsonSerializerSettings
+                    var realConfigSettings = File.Exists(realConfigSettingsPath)
+                        ? JsonConvert.DeserializeObject<ConfigParserSettings>(
+                            File.ReadAllText(realConfigSettingsPath),
+                            new JsonSerializerSettings
                     {
                         ContractResolver = new MultiLineValuesResolver()
-                    };
-
-                    var realConfigSettings = File.Exists(realConfigSettingsPath)
-                        ? JsonConvert.DeserializeObject<ConfigParserSettings>(File.ReadAllText(realConfigSettingsPath), jsonSettings)
+                            })
                         : null;
 
                     config = new ConfigParser(realConfigFile, realConfigSettings);
