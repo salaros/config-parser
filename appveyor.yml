@@ -128,4 +128,5 @@ deploy:
 skip_non_tags: false
 
 # Tests shall stay off for now
-test: off
+test_script:
+    - cmd: dotnet test .\tests
