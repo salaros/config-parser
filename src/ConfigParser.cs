@@ -215,6 +215,35 @@ namespace Salaros.Config
             }
         }
 
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default array value.</param>
+        /// <returns></returns>
+        /// <exception cref="ConfigParserException"></exception>
+        public virtual string[] GetValue(string sectionName, string key, string[] defaultValue = null)
+        {
+            var arrayRaw = GetRawValue(sectionName, key, string.Empty);
+            if (string.IsNullOrWhiteSpace(arrayRaw))
+                return null;
+
+            var values = arrayRaw.Split(new[] {"\r\n", "\r", "\n"}, StringSplitOptions.None);
+            if (!values.Any())
+                return null;
+
+            if (!string.IsNullOrWhiteSpace(values.First()))
+                throw new ConfigParserException(
+                    $"Array values must start from the new line. The key [{sectionName}]{key} is malformed.");
+
+            return values
+                .SkipWhile(string.IsNullOrWhiteSpace)
+                .Where(l => !string.IsNullOrWhiteSpace(l))
+                .Select(l => l.Trim('\t', ' '))
+                .ToArray();
+        }
+
         #endregion
 
         #region SetValue
