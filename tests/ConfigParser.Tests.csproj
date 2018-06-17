@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-     <OutputPath>..\bin\$(Configuration)\</OutputPath>
+      <OutputPath>..\bin\$(Configuration)\</OutputPath>
+      <DebugType>full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>

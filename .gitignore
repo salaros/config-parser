@@ -194,3 +194,9 @@ ModelManifest.xml
 
 # Visual Studio settings folder
 .vs
+
+# Exclude dotnet/NuGet tools
+tools/
+
+# Exclude coverage results
+tests/coverage\.xml
