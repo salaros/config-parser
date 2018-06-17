@@ -1,0 +1,131 @@
+# Operating system (build VM template)
+os: Windows Server 2016
+
+# If the build configuration does not specify build worker image
+# then Visual Studio 2015 image is used.
+image: Visual Studio 2017
+
+# Restrict to Git branches below
+branches:
+  only:
+    - master
+
+# Build Configuration, i.e. Debug, Release, etc.
+configuration: Debug
+
+# Scripts that run after cloning repository
+install:
+  - cmd: dotnet restore
+  
+environment:
+  VERSION_SIMPLE: '{version}'
+  VERSION_INFORMATIONAL: '{version}'
+  VERSION_UNSTABLE_SUFFIX: '-preview-$(APPVEYOR_BUILD_NUMBER)'
+
+init:
+- ps: |
+    $env:VERSION_INFORMATIONAL = $env:APPVEYOR_BUILD_VERSION
+    $env:VERSION_SIMPLE = "$env:APPVEYOR_BUILD_VERSION.$env:APPVEYOR_BUILD_NUMBER"
+    $env:GITHUB_REPO_API = "https://api.github.com/repos/$env:APPVEYOR_REPO_NAME/tags"
+
+    if ($env:APPVEYOR_REPO_TAG -eq "true" -and $env:APPVEYOR_REPO_TAG_NAME) {
+        ### CHECK IF A IT'S A TAGGED BUILD
+        $git_current_tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
+        Write-Host "Building a tagged Git commit: $git_current_tag";
+
+        if ($git_current_tag -match '^([0-9]+\.[0-9]+\.[0-9]+)$' -Or $git_current_tag -match '([0-9]+[\.-][0-9]+[\.-][0-9]+-[-A-Za-z0-9]+)') {
+            $env:VERSION_INFORMATIONAL = "$git_current_tag"
+        }
+    } else {
+        ### OTHERWISE IT'S A REGULAR BUILD
+        try {
+            ### TRY TO GET VERSION FROM THE LATEST GITHUB TAG/REALEASE
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            $github_latest_tags=(Invoke-WebRequest -Uri $env:GITHUB_REPO_API) -join '`n' | ConvertFrom-Json
+            $github_last_tag=$github_latest_tags[0].name.TrimStart("v")
+            if ($github_last_tag -match '^([0-9]+\.[0-9]+\.[0-9]+)$') {
+                $github_tag_ver = [version]$github_last_tag
+                $github_last_tag = "{0}.{1}.{2}" -f $github_tag_ver.Major, $github_tag_ver.Minor, ($github_tag_ver.Build + 1)
+            }
+            $env:VERSION_INFORMATIONAL = $github_last_tag
+        } catch {
+            $env:VERSION_INFORMATIONAL = "1.0.0"
+            Write-Host "Failed to get version from the last GitHub release falling back on '$env:VERSION_INFORMATIONAL' base version";
+        }
+
+        $env:VERSION_INFORMATIONAL = "$env:VERSION_INFORMATIONAL$env:VERSION_UNSTABLE_SUFFIX"
+    }
+
+    ### MAKE CALCULATED INFORMATIONAL VERSION THE ACTUAL BUILD VERSION
+    Update-AppveyorBuild -Version $env:VERSION_INFORMATIONAL
+    Write-Host "Using build version: $env:APPVEYOR_BUILD_VERSION";
+
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  assembly_version: $(VERSION_SIMPLE)
+  file_version: $(VERSION_SIMPLE)
+  version: $(VERSION_INFORMATIONAL)
+  package_version: $(VERSION_INFORMATIONAL)
+  informational_version: $(VERSION_INFORMATIONAL)
+
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: $(VERSION_SIMPLE)
+  assembly_file_version: $(VERSION_SIMPLE)
+  assembly_informational_version: $(VERSION_INFORMATIONAL)
+
+# Run scripts below before
+before_build:
+  - cmd: where dotnet
+  - cmd: dotnet clean
+
+# Run scripts below before
+build_script:
+  - cmd: dotnet build
+
+# NuGet files qualified as artifacts
+artifacts:
+  - path: 'bin\**\*.nupkg' # find the NuGet files
+    name: NuGet_Files
+
+# Deploy to GitHub releases
+deploy: 
+  - 
+    provider: GitHub
+    auth_token: 
+      secure: 2+d0KgCbWQpUR8TZfzvUEzbi4NQP6F/Tt0PUwLn6jXZCyO8FnrFVFJPsFa0QBQFl
+    artifact: NuGet_Files
+    draft: false
+    force_update: true
+    prerelease: false
+    release: "$(APPVEYOR_PROJECT_NAME) v$(APPVEYOR_REPO_TAG_NAME)"
+    tag: $(APPVEYOR_REPO_TAG_NAME)
+    on: 
+      appveyor_repo_tag: true
+
+  - 
+    provider: NuGet
+    api_key: 
+      secure: TrtChQUTQ9rD8pffK1A9bjMYyN/8eQUjV+7IKVjS/C37TgXMae46Bzd527bZUVSb
+    artifact: NuGet_Files
+    server:             # remove to push to NuGet.org
+    skip_symbols: false
+    symbol_server:      # remove to push symbols to SymbolSource.org
+    on: 
+      appveyor_repo_tag: true
+
+  -
+    provider: NuGet
+    server: https://ci.appveyor.com/nuget/salaros/api/v2/package
+    symbol_server: https://ci.appveyor.com/nuget/salaros/api/v2/package
+    api_key:
+      secure: 3zmnmVBweTgdk4SBM/rWHdC9JOM9s0pxm1bw1d+WHDo=
+    artifact: NuGet_Files
+
+# Start builds on tags only (GitHub and BitBucket)
+skip_non_tags: false
+
+# Tests shall stay off for now
+test: off
