@@ -27,6 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ConfigParser.Tests.csproj.DotSettings" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Resources\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

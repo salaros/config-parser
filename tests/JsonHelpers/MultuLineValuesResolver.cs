@@ -6,6 +6,7 @@ namespace Salaros.Config.Tests
 {
     internal class MultiLineValuesResolver : DefaultContractResolver
     {
+        /// <inheritdoc />
         /// <summary>
         /// Creates a <see cref="T:Newtonsoft.Json.Serialization.JsonPrimitiveContract" /> for the given type.
         /// </summary>
