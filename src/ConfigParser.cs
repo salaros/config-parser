@@ -105,7 +105,7 @@ namespace Salaros.Config
             if (!sections.TryGetValue(sectionName, out var section))
                 return false;
 
-            var key = section.Keys.FirstOrDefault(k => k.Key.Equals(keyName));
+            var key = section.Keys.FirstOrDefault(k => Equals(keyName, k.Name));
             if (key == null)
                 return false;
 
@@ -138,7 +138,7 @@ namespace Salaros.Config
                 return defaultValue;
             }
 
-            var key = section.Keys.FirstOrDefault(k => k.Key.Equals(keyName));
+            var key = section.Keys.FirstOrDefault(k =>Equals(keyName, k.Name));
             return (key == null)
                 ? defaultValue
                 : (T)key.ValueRaw;
@@ -292,7 +292,7 @@ namespace Salaros.Config
             }
 
             var iniKey = section.Keys
-                .FirstOrDefault(k => k.Key.Equals(keyName));
+                .FirstOrDefault(k => Equals(keyName, k.Name));
 
             if (iniKey != null)
             {
@@ -605,8 +605,11 @@ namespace Salaros.Config
             if (null != currentSection)
                 sections.Add(currentSection.SectionName, currentSection);
 
-            var sectionName = Settings.SectionMatcher.Match(lineRaw).Groups["name"]?.Value;
-            currentSection = new ConfigSection(sectionName, lineNumber);
+            var sectionMatch = Settings.SectionMatcher.Match(lineRaw);
+            var sectionName = sectionMatch.Groups["name"]?.Value;
+            var indentation = sectionMatch.Groups["indentation"]?.Value;
+            var comment = sectionMatch.Groups["comment"]?.Value;
+            currentSection = new ConfigSection(sectionName, lineNumber, indentation, comment);
         }
 
         /// <summary>

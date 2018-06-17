@@ -4,27 +4,29 @@ namespace Salaros.Config
 {
     public class ConfigKeyValue<T> : ConfigLine, IConfigKeyValue
     {
+        protected string keyName;
+
         #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Salaros.Config.ConfigKeyValue`T" /> class.
         /// </summary>
-        /// <param name="key">Key.</param>
+        /// <param name="keyName">Name of the key.</param>
         /// <param name="separator">The separator.</param>
         /// <param name="value">Value.</param>
         /// <param name="lineNumber">Line number.</param>
         /// <exception cref="ArgumentNullException">key</exception>
         /// <inheritdoc />
-        public ConfigKeyValue(string key, string separator, T value, int lineNumber)
+        public ConfigKeyValue(string keyName, string separator, T value, int lineNumber)
             : base(lineNumber)
         {
-            if (string.IsNullOrWhiteSpace(key))
-                throw new ArgumentNullException(nameof(key));
+            if (string.IsNullOrWhiteSpace(keyName))
+                throw new ArgumentNullException(nameof(keyName));
 
             if (string.IsNullOrWhiteSpace(separator))
                 throw new ArgumentNullException(nameof(separator));
 
-            Key = key;
+            this.keyName = keyName;
             Separator = separator;
             Value = value;
         }
@@ -33,14 +35,14 @@ namespace Salaros.Config
 
         #region Properties
 
+        /// <inheritdoc />
         /// <summary>
-        /// Gets the key.
+        /// Gets the name of the key.
         /// </summary>
-        /// <value>The key.</value>
-        public string Key
-        {
-            get;
-        }
+        /// <value>
+        /// The name of the key.
+        /// </value>
+        public string Name => keyName.Trim();
 
         /// <summary>
         /// Gets or sets the separator.
@@ -123,10 +125,10 @@ namespace Salaros.Config
             switch (multiLineSettings)
             {
                 case MultiLineValues.AllowValuelessKeys when string.IsNullOrWhiteSpace(Content):
-                    return Key;
+                    return keyName;
 
                 default:
-                    return $"{Key}{Separator}{Content}";
+                    return $"{keyName}{Separator}{Content}";
             }
         }
 

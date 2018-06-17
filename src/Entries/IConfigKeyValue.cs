@@ -2,7 +2,13 @@
 {
     public interface IConfigKeyValue : IConfigLine
     {
-        string Key { get; }
+        /// <summary>
+        /// Gets the name of the key.
+        /// </summary>
+        /// <value>
+        /// The name of the key.
+        /// </value>
+        string Name { get; }
 
         /// <summary>
         /// Gets the value raw.

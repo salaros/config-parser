@@ -26,7 +26,7 @@ namespace Salaros.Config
             KeyValueSeparator = keyValueSeparator ?? "=";
             CommentCharacters = commentCharacters ?? new [] { "#", ";" };
 
-            SectionMatcher = new Regex(@"^(\s+)?\[(?<name>.*?)\].*$", RegexOptions.Compiled);
+            SectionMatcher = new Regex(@"^(?<indentation>(\s+)?)\[(?<name>.*?)\](?<comment>.*)$", RegexOptions.Compiled);
             KeyMatcher = new Regex($@"^(?<key>.*?)(?<separator>(\s+)?{Regex.Escape(KeyValueSeparator)}(\s+)?)", RegexOptions.Compiled);
             CommentMatcher = new Regex(
                 $@"^(?<delimiter>(\s+)?({string.Join("|", CommentCharacters.Select(c => c.ToString()))})+(\s+)?)(?<comment>(\s+)?.*?)$",

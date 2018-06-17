@@ -8,24 +8,29 @@ namespace Salaros.Config
     public class ConfigSection : IConfigLine
 	{
         protected int lineNumber;
-        protected string sectionName;
+	    protected string sectionName, indentation, comment;
         protected List<ConfigLine> lines;
 
         #region Constructors
 
-	    /// <inheritdoc />
-	    /// <summary>
-	    /// Initializes a new instance of the <see cref="T:Salaros.Config.ConfigSection" /> class.
-	    /// </summary>
-	    /// <param name="sectionName">Section name.</param>
-	    /// <param name="lineNumber">Line number.</param>
-	    public ConfigSection(string sectionName, int lineNumber = -1)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Salaros.Config.ConfigSection" /> class.
+        /// </summary>
+        /// <param name="sectionName">Section name.</param>
+        /// <param name="lineNumber">Line number.</param>
+        /// <param name="indentation">The indentation.</param>
+        /// <param name="comment">The comment.</param>
+        /// <exception cref="ArgumentNullException">sectionName</exception>
+        /// <inheritdoc />
+        public ConfigSection(string sectionName, int lineNumber = -1, string indentation = "", string comment = "")
             : this()
 	    {
 	        lines = new List<ConfigLine>();
 	        this.sectionName = sectionName ?? throw new ArgumentNullException(nameof(sectionName));
 	        this.lineNumber = lineNumber;
-	    }
+	        this.indentation = indentation;
+	        this.comment = comment;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigSection"/> class.
@@ -70,7 +75,7 @@ namespace Salaros.Config
 	    {
 	        return string.IsNullOrWhiteSpace(sectionName)
                 ? string.Empty
-                : $"[{sectionName}]";
+                : $"{indentation}[{sectionName}]{comment}";
 	    }
 
 	    /// <inheritdoc />
