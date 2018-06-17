@@ -203,10 +203,27 @@ namespace Salaros.Config.Tests
         }
 
         /// <summary>
-        /// Gets the settings for file.
+        /// Checks if index access works.
         /// </summary>
-        /// <param name="pathToConfigFile">The path to configuration file.</param>
-        /// <returns></returns>
+        [Fact]
+        public void IndexAccessWorks()
+        {
+            var indentedFilePath = StructureSampleFiles.FirstOrDefault(f => f.EndsWith("indented.ini", StringComparison.OrdinalIgnoreCase));
+            Assert.NotNull(indentedFilePath);
+
+            var configFile = new ConfigParser(indentedFilePath, new ConfigParserSettings(MultiLineValues.Simple));
+            var valueReadUsingIndexing = configFile["Sections Can Be Indented"]["can_values_be_as_well"] ?? string.Empty;
+            Assert.Equal(
+                "True",
+                valueReadUsingIndexing
+            );
+        }
+
+        /// <summary>
+            /// Gets the settings for file.
+            /// </summary>
+            /// <param name="pathToConfigFile">The path to configuration file.</param>
+            /// <returns></returns>
         private static ConfigParserSettings GetSettingsForFile(string pathToConfigFile)
         {
             var realConfigSettingsPath = $"{pathToConfigFile}.json";
