@@ -148,60 +148,60 @@ namespace Salaros.Config
         /// Gets the value.
         /// </summary>
         /// <param name="sectionName">Name of the section.</param>
-        /// <param name="key">The key.</param>
+        /// <param name="keyName">Name of the key.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <returns></returns>
-        public virtual string GetValue(string sectionName, string key, string defaultValue)
+        public virtual string GetValue(string sectionName, string keyName, string defaultValue)
         {
-            return GetRawValue(sectionName, key, defaultValue);
+            return GetRawValue(sectionName, keyName, defaultValue);
         }
 
         /// <summary>
         /// Gets the value.
         /// </summary>
         /// <param name="sectionName">Name of the section.</param>
-        /// <param name="key">The key.</param>
+        /// <param name="keyName">Name of the key.</param>
         /// <param name="defaultValue">if set to <c>true</c> [default value].</param>
         /// <returns></returns>
-        public virtual bool GetValue(string sectionName, string key, bool defaultValue)
+        public virtual bool GetValue(string sectionName, string keyName, bool defaultValue)
         {
-            return GetRawValue(sectionName, key, (defaultValue ? "1" : "0")) == "1";
+            return GetRawValue(sectionName, keyName, (defaultValue ? "1" : "0")) == "1";
         }
 
         /// <summary>
         /// Gets the value.
         /// </summary>
         /// <param name="sectionName">Name of the section.</param>
-        /// <param name="key">The key.</param>
+        /// <param name="keyName">Name of the key.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <returns></returns>
-        public virtual int GetValue(string sectionName, string key, int defaultValue)
+        public virtual int GetValue(string sectionName, string keyName, int defaultValue)
         {
-            return GetRawValue(sectionName, key, defaultValue);
+            return GetRawValue(sectionName, keyName, defaultValue);
         }
 
         /// <summary>
         /// Gets the value.
         /// </summary>
         /// <param name="sectionName">Name of the section.</param>
-        /// <param name="key">The key.</param>
+        /// <param name="keyName">Name of the key.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <returns></returns>
-        public virtual double GetValue(string sectionName, string key, double defaultValue)
+        public virtual double GetValue(string sectionName, string keyName, double defaultValue)
         {
-            return GetRawValue(sectionName, key, defaultValue);
+            return GetRawValue(sectionName, keyName, defaultValue);
         }
 
         /// <summary>
         /// Gets the value.
         /// </summary>
         /// <param name="sectionName">Name of the section.</param>
-        /// <param name="key">The key.</param>
+        /// <param name="keyName">Name of the key.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <returns></returns>
-        public virtual byte[] GetValue(string sectionName, string key, byte[] defaultValue)
+        public virtual byte[] GetValue(string sectionName, string keyName, byte[] defaultValue)
         {
-            var stringValue = GetRawValue(sectionName, key, string.Empty);
+            var stringValue = GetRawValue(sectionName, keyName, string.Empty);
             try
             {
                 return (string.IsNullOrWhiteSpace(stringValue))
@@ -219,13 +219,13 @@ namespace Salaros.Config
         /// Gets the value.
         /// </summary>
         /// <param name="sectionName">Name of the section.</param>
-        /// <param name="key">The key.</param>
+        /// <param name="keyName">Name of the key.</param>
         /// <param name="defaultValue">The default array value.</param>
         /// <returns></returns>
         /// <exception cref="ConfigParserException"></exception>
-        public virtual string[] GetValue(string sectionName, string key, string[] defaultValue = null)
+        public virtual string[] GetValue(string sectionName, string keyName, string[] defaultValue = null)
         {
-            var arrayRaw = GetRawValue(sectionName, key, string.Empty);
+            var arrayRaw = GetRawValue(sectionName, keyName, string.Empty);
             if (string.IsNullOrWhiteSpace(arrayRaw))
                 return null;
 
@@ -235,7 +235,7 @@ namespace Salaros.Config
 
             if (!string.IsNullOrWhiteSpace(values.First()))
                 throw new ConfigParserException(
-                    $"Array values must start from the new line. The key [{sectionName}]{key} is malformed.");
+                    $"Array values must start from the new line. The key [{sectionName}]{keyName} is malformed.");
 
             return values
                 .SkipWhile(string.IsNullOrWhiteSpace)
@@ -262,17 +262,17 @@ namespace Salaros.Config
 
         #endregion
 
-        #region SetValue
+            #region SetValue
 
-        /// <summary>
-        /// Sets the value.
-        /// </summary>
-        /// <param name="sectionName">Name of the section.</param>
-        /// <param name="keyName">Name of the key.</param>
-        /// <param name="value">The value.</param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        public bool SetValue(string sectionName, string keyName, string value)
+            /// <summary>
+            /// Sets the value.
+            /// </summary>
+            /// <param name="sectionName">Name of the section.</param>
+            /// <param name="keyName">Name of the key.</param>
+            /// <param name="value">The value.</param>
+            /// <returns></returns>
+            /// <exception cref="InvalidOperationException"></exception>
+            public bool SetValue(string sectionName, string keyName, string value)
         {
             if (string.IsNullOrWhiteSpace(sectionName))
                 throw new ArgumentNullException(nameof(sectionName));
@@ -310,48 +310,48 @@ namespace Salaros.Config
         /// Sets the value.
         /// </summary>
         /// <param name="sectionName">Name of the section.</param>
-        /// <param name="key">The key.</param>
+        /// <param name="keyName">Name of the key.</param>
         /// <param name="value">if set to <c>true</c> [value].</param>
         /// <returns></returns>
-        public virtual bool SetValue(string sectionName, string key, bool value)
+        public virtual bool SetValue(string sectionName, string keyName, bool value)
         {
-            return SetValue(sectionName, key, (value) ? "1" : "0");
+            return SetValue(sectionName, keyName, (value) ? "1" : "0");
         }
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="sectionName">Name of the section.</param>
-        /// <param name="key">The key.</param>
+        /// <param name="keyName">Name of the key.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public virtual bool SetValue(string sectionName, string key, int value)
+        public virtual bool SetValue(string sectionName, string keyName, int value)
         {
-            return SetValue(sectionName, key, value.ToString(CultureInfo.InvariantCulture));
+            return SetValue(sectionName, keyName, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="sectionName">Name of the section.</param>
-        /// <param name="key">The key.</param>
+        /// <param name="keyName">Name of the key.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public virtual bool SetValue(string sectionName, string key, double value)
+        public virtual bool SetValue(string sectionName, string keyName, double value)
         {
-            return SetValue(sectionName, key, value.ToString(CultureInfo.InvariantCulture));
+            return SetValue(sectionName, keyName, value.ToString(CultureInfo.InvariantCulture));
         }
 
         /// <summary>
         /// Sets the value.
         /// </summary>
         /// <param name="sectionName">Name of the section.</param>
-        /// <param name="key">The key.</param>
+        /// <param name="keyName">Name of the key.</param>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        public virtual bool SetValue(string sectionName, string key, byte[] value)
+        public virtual bool SetValue(string sectionName, string keyName, byte[] value)
         {
-            return SetValue(sectionName, key, EncodeByteArray(value));
+            return SetValue(sectionName, keyName, EncodeByteArray(value));
         }
 
         #endregion
