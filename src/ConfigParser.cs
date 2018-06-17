@@ -547,19 +547,19 @@ namespace Salaros.Config
 
             switch (Settings.MultiLineValues)
             {
-                case var _ when Settings.MultiLineValues.HasFlag(MultiLineValues.NotAllowed) ||
-                                Settings.MultiLineValues.HasFlag(MultiLineValues.Simple):
-                    // Do nothing add with quotes if any
-                    break;
-
-                case var _ when Settings.MultiLineValues.HasFlag(MultiLineValues.OnlyDelimited):
+                case var _ when Settings.MultiLineValues.HasFlag(MultiLineValues.QuoteDelimitedValues):
                     if (!string.IsNullOrEmpty(value))
                     {
-                        if (Equals("\"", quote1) || Equals('"', value.First()))
+                        if (Equals('"', value.First()))
                             value = value.Substring(1);
-                        if (Equals("\"", quote2) || Equals('"', value.Last()))
+                        if (Equals('"', value.Last()))
                             value = value.Remove(value.Length - 1);
                     }
+                    break;
+
+                case var _ when Settings.MultiLineValues.HasFlag(MultiLineValues.NotAllowed) ||
+                                Settings.MultiLineValues.HasFlag(MultiLineValues.Simple):
+                    // Do nothing add with quotes if any 
                     break;
 
                 default:

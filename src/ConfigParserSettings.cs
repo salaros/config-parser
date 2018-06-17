@@ -31,7 +31,7 @@ namespace Salaros.Config
             CommentMatcher = new Regex(
                 $@"^(?<delimiter>(\s+)?({string.Join("|", CommentCharacters.Select(c => c.ToString()))})+(\s+)?)(?<comment>(\s+)?.*?)$",
                 RegexOptions.Compiled);
-            ValueMatcher = (multiLineValues.HasFlag(MultiLineValues.OnlyDelimited))
+            ValueMatcher = (multiLineValues.HasFlag(MultiLineValues.QuoteDelimitedValues))
                 ? new Regex(@"^(?<quote1>\"")?(?<value>[^\""]+)(?<quote2>\"")?(\s+)?$", RegexOptions.Compiled)
                 : new Regex(@"^(?<value>.*?)?$", RegexOptions.Compiled);
         }
@@ -117,7 +117,7 @@ namespace Salaros.Config
     {
         Simple = 0,
         NotAllowed = 1,
-        OnlyDelimited = 2,
+        QuoteDelimitedValues = 2,
         AllowValuelessKeys = 4,
         AllowEmptyTopSection = 8
     }
