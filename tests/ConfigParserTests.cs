@@ -180,6 +180,29 @@ namespace Salaros.Config.Tests
         }
 
         /// <summary>
+        /// Check if multi-line the values are not allowed with proper settings.
+        /// </summary>
+        [Fact]
+        public void MultilineValuesAreNotAllowed()
+        {
+            var multiLineDelimitedFilePath = StructureSampleFiles.FirstOrDefault(f =>
+                f.EndsWith("multi-line.ini", StringComparison.OrdinalIgnoreCase));
+            Assert.NotNull(multiLineDelimitedFilePath);
+
+            Exception multiLineException = Assert.Throws<ConfigParserException>(() =>
+            {
+                // ReSharper disable once ObjectCreationAsStatement
+                // ReSharper disable once RedundantArgumentDefaultValue
+                new ConfigParser(multiLineDelimitedFilePath, new ConfigParserSettings(MultiLineValues.NotAllowed));
+            });
+
+            Assert.True(
+                new [] { "Multi-line values", "disallowed" }
+                .All(s => multiLineException.Message?.Contains(s, StringComparison.InvariantCulture) ?? false)
+            );
+        }
+
+        /// <summary>
         /// Gets the settings for file.
         /// </summary>
         /// <param name="pathToConfigFile">The path to configuration file.</param>
