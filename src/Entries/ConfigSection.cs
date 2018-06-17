@@ -61,10 +61,14 @@ namespace Salaros.Config
                 : lines.IndexOf(line);
         }
 
-        protected internal void AddLine(ConfigLine iniLine)
+        /// <summary>
+        /// Adds a configuration file line.
+        /// </summary>
+        /// <param name="configLine">The configuration file line to add.</param>
+        protected internal void AddLine(ConfigLine configLine)
         {
-            lines.Add(iniLine);
-            iniLine.Section = this;
+            lines.Add(configLine);
+            configLine.Section = this;
         }
 
 	    /// <summary>
@@ -73,19 +77,17 @@ namespace Salaros.Config
 	    /// <returns>A <see cref="string"/> that represents the current <see cref="ConfigSection"/>.</returns>
 	    public override string ToString()
 	    {
-	        return string.IsNullOrWhiteSpace(sectionName)
-                ? string.Empty
-                : $"{indentation}[{sectionName}]{comment}";
+	        return Content;
 	    }
 
-	    /// <inheritdoc />
-	    /// <summary>
-	    /// Returns a <see cref="T:System.String" /> that represents this instance.
-	    /// </summary>
-	    /// <param name="multiLineSettings">The multi line settings.</param>
-	    /// <returns>
-	    /// A <see cref="T:System.String" /> that represents this instance.
-	    /// </returns>
+        /// <inheritdoc />
+        /// <summary>
+        /// Returns a <see cref="T:System.String" /> that represents this instance.
+        /// </summary>
+        /// <param name="multiLineSettings">The multi line settings.</param>
+        /// <returns>
+        /// A <see cref="T:System.String" /> that represents this instance.
+        /// </returns>
         public string ToString(MultiLineValues multiLineSettings)
 	    {
 	        return ToString();
@@ -140,6 +142,17 @@ namespace Salaros.Config
             }
         }
 
-        #endregion
-	}
+	    /// <summary>
+	    /// Gets the raw content of the line.
+	    /// </summary>
+	    /// <value>
+	    /// The raw content of the line.
+	    /// </value>
+	    /// ReSharper disable once InheritdocConsiderUsage
+	    public string Content => string.IsNullOrWhiteSpace(sectionName)
+	        ? string.Empty
+	        : $"{indentation}[{sectionName}]{comment}";
+
+	    #endregion
+    }
 }

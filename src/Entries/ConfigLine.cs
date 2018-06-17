@@ -41,6 +41,7 @@
             }
         }
 
+        /// <inheritdoc />
         /// <summary>
         /// Gets the raw content of the line.
         /// </summary>
