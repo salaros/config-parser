@@ -41,11 +41,6 @@
         <FrameworkPathOverride Condition="'$(MonoPath)' != '' And '$(TargetFramework)' == 'net45'">$(MonoPath)/4.5-api</FrameworkPathOverride>
     </PropertyGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)' != 'net40'">
-        <Compile Remove="Polyfills.cs" />
-        <None Include="Helpers\Polyfills.cs" />
-    </ItemGroup>
-
     <ItemGroup>
       <None Remove="ConfigParser.csproj.DotSettings" />
     </ItemGroup>

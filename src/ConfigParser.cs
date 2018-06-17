@@ -56,11 +56,13 @@ namespace Salaros.Config
         /// </value>
         public ConfigParserSettings Settings { get; }
 
-#if NET40
-        public ReadOnlyDictionary<string, ConfigSection> Sections => new ReadOnlyDictionary<string, ConfigSection>(sections);
-#else
-        public IReadOnlyDictionary<string, ConfigSection> Sections => sections;
-#endif
+        /// <summary>
+        /// Gets the sections.
+        /// </summary>
+        /// <value>
+        /// The sections.
+        /// </value>
+        public ReadOnlyCollection<ConfigSection> Sections => new ReadOnlyCollection<ConfigSection>(sections.Values.ToArray());
 
         /// <summary>
         /// Gets configuration file's lines.

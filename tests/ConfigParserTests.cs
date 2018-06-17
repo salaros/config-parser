@@ -107,10 +107,10 @@ namespace Salaros.Config.Tests
             var configFile = new ConfigParser(indentedFilePath, new ConfigParserSettings(MultiLineValues.Simple));
             Assert.All(configFile.Sections, section =>
             {
-                Assert.Equal(section.Key, section.Key.Trim());
+                Assert.Equal(section.SectionName, section.SectionName.Trim());
             });
 
-            Assert.All(configFile.Sections.SelectMany(s => s.Value.Keys), key =>
+            Assert.All(configFile.Sections.SelectMany(s => s.Keys), key =>
             {
                 Assert.Equal(key.Name, key.Name.Trim());
             });
@@ -121,7 +121,7 @@ namespace Salaros.Config.Tests
                 purposeKey
             );
 
-            var sectionName = configFile.Sections?.FirstOrDefault().Key;
+            var sectionName = configFile.Sections?.FirstOrDefault()?.SectionName;
             Assert.Equal(
                 "Sections Can Be Indented",
                 sectionName
