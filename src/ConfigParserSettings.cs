@@ -9,6 +9,8 @@ namespace Salaros.Config
 {
     public class ConfigParserSettings
     {
+        protected Regex keyMatcher, commentMatcher, valueMatcher;
+
         /// <summary>
         /// Initializes the <see cref="ConfigParserSettings"/> class.
         /// </summary>
@@ -18,43 +20,12 @@ namespace Salaros.Config
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConfigParserSettings" /> class.
-        /// </summary>
-        /// <param name="multiLineValues">The multi line values.</param>
-        /// <param name="encoding">The encoding.</param>
-        /// <param name="keyValueSeparator">The key value separator.</param>
-        /// <param name="commentCharacters">The comment characters.</param>
-        /// <param name="culture">The culture used for reading boolean, decimal values etc.
-        public ConfigParserSettings(
-            MultiLineValues multiLineValues = MultiLineValues.NotAllowed,
-            Encoding encoding = null,
-            string keyValueSeparator = null,
-            string[] commentCharacters = null,
-            CultureInfo culture = null
-        )
-        {
-            MultiLineValues = multiLineValues;
-            Encoding = encoding;
-            KeyValueSeparator = keyValueSeparator ?? "=";
-            CommentCharacters = commentCharacters ?? new [] { "#", ";" };
-            Culture = culture ?? Thread.CurrentThread.CurrentCulture;
-
-            KeyMatcher = new Regex($@"^(?<key>.*?)(?<separator>(\s+)?{Regex.Escape(KeyValueSeparator)}(\s+)?)", RegexOptions.Compiled);
-            CommentMatcher = new Regex(
-                $@"^(?<delimiter>(\s+)?({string.Join("|", CommentCharacters.Select(c => c.ToString()))})+(\s+)?)(?<comment>(\s+)?.*?)$",
-                RegexOptions.Compiled);
-            ValueMatcher = (multiLineValues.HasFlag(MultiLineValues.QuoteDelimitedValues))
-                ? new Regex(@"^(?<quote1>\"")?(?<value>[^\""]+)(?<quote2>\"")?(\s+)?$", RegexOptions.Compiled)
-                : new Regex(@"^(?<value>.*?)?$", RegexOptions.Compiled);
-        }
-
-        /// <summary>
         /// Gets the culture used for reading boolean, decimal values etc.
         /// </summary>
         /// <value>
         /// The culture used for reading boolean, decimal values etc.
         /// </value>
-        public CultureInfo Culture { get; }
+        public CultureInfo Culture { get; set; } = Thread.CurrentThread.CurrentCulture;
 
         /// <summary>
         /// Gets the multi-line value-related settings.
@@ -62,7 +33,7 @@ namespace Salaros.Config
         /// <value>
         /// The multi-line value-related settings.
         /// </value>
-        public MultiLineValues MultiLineValues { get; }
+        public MultiLineValues MultiLineValues { get; set; } = MultiLineValues.NotAllowed;
 
         /// <summary>
         /// Gets the encoding.
@@ -70,7 +41,7 @@ namespace Salaros.Config
         /// <value>
         /// The encoding.
         /// </value>
-        public Encoding Encoding { get; internal set; }
+        public Encoding Encoding { get; set; } = null;
 
         /// <summary>
         /// Gets the new line string.
@@ -78,7 +49,7 @@ namespace Salaros.Config
         /// <value>
         /// The new line string.
         /// </value>
-        public string NewLine { get; internal set; } = Environment.NewLine;
+        public string NewLine { get; set; } = Environment.NewLine;
 
         /// <summary>
         /// Gets the key value separator.
@@ -86,7 +57,7 @@ namespace Salaros.Config
         /// <value>
         /// The key value separator.
         /// </value>
-        public string KeyValueSeparator { get; }
+        public string KeyValueSeparator { get; set; } = "=";
 
         /// <summary>
         /// Gets the comment characters.
@@ -94,7 +65,7 @@ namespace Salaros.Config
         /// <value>
         /// The comment characters.
         /// </value>
-        public string[] CommentCharacters { get; }
+        public string[] CommentCharacters { get; set; } = { "#", ";" };
 
         /// <summary>
         /// Gets the section matcher.
@@ -102,7 +73,7 @@ namespace Salaros.Config
         /// <value>
         /// The section matcher.
         /// </value>
-        internal static Regex SectionMatcher { get; }
+        internal static Regex SectionMatcher { get; set; }
 
         /// <summary>
         /// Gets the comment matcher.
@@ -110,7 +81,10 @@ namespace Salaros.Config
         /// <value>
         /// The comment matcher.
         /// </value>
-        internal Regex CommentMatcher { get; }
+        internal Regex CommentMatcher => commentMatcher ?? (commentMatcher =
+                    new Regex(
+                        $@"^(?<delimiter>(\s+)?({string.Join("|", CommentCharacters.Select(c => c.ToString()))})+(\s+)?)(?<comment>(\s+)?.*?)$",
+                        RegexOptions.Compiled));
 
         /// <summary>
         /// Gets the key matcher.
@@ -118,7 +92,9 @@ namespace Salaros.Config
         /// <value>
         /// The key matcher.
         /// </value>
-        internal Regex KeyMatcher { get; }
+        internal Regex KeyMatcher => keyMatcher ?? (keyMatcher =
+                                         new Regex($@"^(?<key>.*?)(?<separator>(\s+)?{Regex.Escape(KeyValueSeparator)}(\s+)?)",
+                                             RegexOptions.Compiled));
 
         /// <summary>
         /// Gets the value matcher.
@@ -126,7 +102,9 @@ namespace Salaros.Config
         /// <value>
         /// The value matcher.
         /// </value>
-        internal Regex ValueMatcher { get; }
+        internal Regex ValueMatcher => valueMatcher ?? (valueMatcher = MultiLineValues.HasFlag(MultiLineValues.QuoteDelimitedValues)
+                ? new Regex(@"^(?<quote1>\"")?(?<value>[^\""]+)(?<quote2>\"")?(\s+)?$", RegexOptions.Compiled)
+                : new Regex(@"^(?<value>.*?)?$", RegexOptions.Compiled));
     }
 
     /// <summary>

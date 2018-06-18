@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -87,7 +88,10 @@ namespace Salaros.Config.Tests
             var arraySampleFilePath = ValuesSampleFiles.FirstOrDefault(f => f.EndsWith("array.cnf", StringComparison.OrdinalIgnoreCase));
             Assert.NotNull(arraySampleFilePath);
 
-            var configFile = new ConfigParser(arraySampleFilePath, new ConfigParserSettings(MultiLineValues.Simple));
+            var configFile = new ConfigParser(arraySampleFilePath, new ConfigParserSettings
+            {
+                MultiLineValues = MultiLineValues.Simple
+            });
             Assert.True(configFile.ValueIsArray("settings", "exclude"));
 
             var excludeArray = new[]
@@ -112,7 +116,10 @@ namespace Salaros.Config.Tests
             var indentedFilePath = StructureSampleFiles.FirstOrDefault(f => f.EndsWith("indented.ini", StringComparison.OrdinalIgnoreCase));
             Assert.NotNull(indentedFilePath);
 
-            var configFile = new ConfigParser(indentedFilePath, new ConfigParserSettings(MultiLineValues.Simple));
+            var configFile = new ConfigParser(indentedFilePath, new ConfigParserSettings
+            {
+                MultiLineValues = MultiLineValues.Simple
+            });
             Assert.All(configFile.Sections, section =>
             {
                 Assert.Equal(section.SectionName, section.SectionName.Trim());
@@ -158,7 +165,10 @@ namespace Salaros.Config.Tests
                 f.EndsWith("multi-line.ini", StringComparison.OrdinalIgnoreCase));
             Assert.NotNull(multiLineDelimitedFilePath);
 
-            var configFile = new ConfigParser(multiLineDelimitedFilePath, new ConfigParserSettings(MultiLineValues.Simple));
+            var configFile = new ConfigParser(multiLineDelimitedFilePath, new ConfigParserSettings
+            {
+                MultiLineValues = MultiLineValues.Simple
+            });
             var multiLineDelimitedValue = configFile.GetValue("Multiline Values", "chorus", string.Empty);
             Assert.Equal(
                 "I'm a lumberjack, and I'm okay\n" +
@@ -177,7 +187,10 @@ namespace Salaros.Config.Tests
                 f.EndsWith("multi-line-delimited.ini", StringComparison.OrdinalIgnoreCase));
             Assert.NotNull(multiLineDelimitedFilePath);
 
-            var configFile = new ConfigParser(multiLineDelimitedFilePath, new ConfigParserSettings(MultiLineValues.QuoteDelimitedValues));
+            var configFile = new ConfigParser(multiLineDelimitedFilePath, new ConfigParserSettings
+            {
+                MultiLineValues = MultiLineValues.QuoteDelimitedValues
+            });
             var multiLineDelimitedValue = configFile.GetValue("Multiline Values", "chorus", string.Empty);
             Assert.Equal(
                 "I'm a lumberjack, and I'm okay\n" +
@@ -201,7 +214,10 @@ namespace Salaros.Config.Tests
             {
                 // ReSharper disable once ObjectCreationAsStatement
                 // ReSharper disable once RedundantArgumentDefaultValue
-                new ConfigParser(multiLineDelimitedFilePath, new ConfigParserSettings(MultiLineValues.NotAllowed));
+                new ConfigParser(multiLineDelimitedFilePath, new ConfigParserSettings
+                {
+                    MultiLineValues = MultiLineValues.NotAllowed
+                });
             });
 
             Assert.True(
@@ -219,7 +235,10 @@ namespace Salaros.Config.Tests
             var indentedFilePath = StructureSampleFiles.FirstOrDefault(f => f.EndsWith("indented.ini", StringComparison.OrdinalIgnoreCase));
             Assert.NotNull(indentedFilePath);
 
-            var configFile = new ConfigParser(indentedFilePath, new ConfigParserSettings(MultiLineValues.Simple));
+            var configFile = new ConfigParser(indentedFilePath, new ConfigParserSettings
+            {
+                MultiLineValues = MultiLineValues.Simple
+            });
             var valueReadUsingIndexing = configFile["Sections Can Be Indented"]["can_values_be_as_well"] ?? string.Empty;
             Assert.Equal(
                 "True",
@@ -237,37 +256,38 @@ namespace Salaros.Config.Tests
                 f.EndsWith("boolean.ini", StringComparison.OrdinalIgnoreCase));
             Assert.NotNull(booleanValues);
 
-            var configFileEnglish = new ConfigParser(booleanValues, new ConfigParserSettings(
-                MultiLineValues.QuoteDelimitedValues,
-                Encoding.UTF8,
-                null, null,
-                // if some day Boolean.ToString(IFormatProvider) will work 
-                // https://msdn.microsoft.com/en-us/library/s802ct92(v=vs.110).aspx#Anchor_1
-                new CultureInfo("en-US")
-            ));
+            var configFileEnglish = new ConfigParser(booleanValues, new ConfigParserSettings
+                {
+                    MultiLineValues = MultiLineValues.QuoteDelimitedValues,
+                    Encoding = Encoding.UTF8,
+                    // if some day Boolean.ToString(IFormatProvider) will work 
+                    // https://msdn.microsoft.com/en-us/library/s802ct92(v=vs.110).aspx#Anchor_1
+                    Culture = new CultureInfo("en-US")
+                }
+            );
 
-            const string simpleSection = "Simple"; // [Simple]
-            Assert.False(configFileEnglish.GetValue(simpleSection, "empty", false));         // empty=
-            Assert.True(configFileEnglish.GetValue(simpleSection, "numericTrue", false));    // numericTrue=1
-            Assert.False(configFileEnglish.GetValue(simpleSection, "numericFalse", true));   // numericFalse=0
-            Assert.True(configFileEnglish.GetValue(simpleSection, "textTrue", false));       // textTrue = true
-            Assert.False(configFileEnglish.GetValue(simpleSection, "textFalse", true));      // textFalse = false
+            const string simpleSection = "Simple";                                                      // [Simple]
+            Assert.False(configFileEnglish.GetValue(simpleSection, "empty", false));                    // empty=
+            Assert.True(configFileEnglish.GetValue(simpleSection, "numericTrue", false));               // numericTrue=1
+            Assert.False(configFileEnglish.GetValue(simpleSection, "numericFalse", true));              // numericFalse=0
+            Assert.True(configFileEnglish.GetValue(simpleSection, "textTrue", false));                  // textTrue = true
+            Assert.False(configFileEnglish.GetValue(simpleSection, "textFalse", true));                 // textFalse = false
 
             // ReSharper disable once RedundantArgumentDefaultValue
             var yesNoConverter = new YesNoConverter("yes", "no");
-            const string yesNoSection = "YesNo"; // [YesNo]
+            const string yesNoSection = "YesNo";                                                        // [YesNo]
             Assert.True(configFileEnglish.GetValue(yesNoSection, "sampleYes", false, yesNoConverter));  // sampleYes=Yes
             Assert.False(configFileEnglish.GetValue(yesNoSection, "sampleNo", true, yesNoConverter));   // sampleNo=no
 
             var onOffConverter = new YesNoConverter("on", "off");
-            const string onOffSection = "OnOff"; // [OnOff]
-            Assert.True(configFileEnglish.GetValue(onOffSection, "sampleOn", false, onOffConverter));    // sampleOn=on
-            Assert.False(configFileEnglish.GetValue(onOffSection, "sampleOff", true, onOffConverter));   // sampleOff=Off
+            const string onOffSection = "OnOff";                                                        // [OnOff]
+            Assert.True(configFileEnglish.GetValue(onOffSection, "sampleOn", false, onOffConverter));   // sampleOn=on
+            Assert.False(configFileEnglish.GetValue(onOffSection, "sampleOff", true, onOffConverter));  // sampleOff=Off
 
             var enDisConverter = new YesNoConverter("Enabled", "Disabled");
-            const string enDisSection = "EnabledDisabled"; // [EnabledDisabled]
-            Assert.True(configFileEnglish.GetValue(enDisSection, "sampleOn", false, enDisConverter));    // sampleOn=on
-            Assert.False(configFileEnglish.GetValue(enDisSection, "sampleOff", true, enDisConverter));   // sampleOff=Off
+            const string enDisSection = "EnabledDisabled";                                              // [EnabledDisabled]
+            Assert.True(configFileEnglish.GetValue(enDisSection, "sampleOn", false, enDisConverter));   // sampleOn=on
+            Assert.False(configFileEnglish.GetValue(enDisSection, "sampleOff", true, enDisConverter));  // sampleOff=Off
         }
 
         /// <summary>
@@ -290,8 +310,9 @@ namespace Salaros.Config.Tests
                         ContractResolver = new MultiLineValuesResolver()
                     });
             }
-            catch
+            catch(Exception ex)
             {
+                Debug.Assert(null == ex.Message);
                 return null;
             }
         }
