@@ -1,6 +1,8 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -10,6 +12,7 @@ namespace Salaros.Config.Tests
     {
         private static readonly string[] RealWorldConfigFiles;
         private static readonly string[] StructureSampleFiles;
+        private static readonly string[] ValuesSampleFiles;
 
         /// <summary>
         /// Initializes the <see cref="IniParserTests"/> class.
@@ -23,6 +26,11 @@ namespace Salaros.Config.Tests
 
             StructureSampleFiles = Directory
                 .GetFiles(Path.Combine(Environment.CurrentDirectory, "Resources", "Structure"))
+                .Where(f => !f.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+
+            ValuesSampleFiles = Directory
+                .GetFiles(Path.Combine(Environment.CurrentDirectory, "Resources", "Values"))
                 .Where(f => !f.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
                 .ToArray();
         }
@@ -220,10 +228,51 @@ namespace Salaros.Config.Tests
         }
 
         /// <summary>
-            /// Gets the settings for file.
-            /// </summary>
-            /// <param name="pathToConfigFile">The path to configuration file.</param>
-            /// <returns></returns>
+        /// Checks if <see cref="bool"/> values are parsed correctly.
+        /// </summary>
+        [Fact]
+        public void BooleanValuesAreParsedCorrectly()
+        {
+            var booleanValues = ValuesSampleFiles.FirstOrDefault(f =>
+                f.EndsWith("boolean.ini", StringComparison.OrdinalIgnoreCase));
+            Assert.NotNull(booleanValues);
+
+            var configFileEnglish = new ConfigParser(booleanValues, new ConfigParserSettings(
+                MultiLineValues.QuoteDelimitedValues,
+                Encoding.UTF8,
+                null, null,
+                new CultureInfo("en-US")
+            ));
+
+            const string simpleSection = "Simple"; // [Simple]
+            Assert.False(configFileEnglish.GetValue(simpleSection, "empty", false));         // empty=
+            Assert.True(configFileEnglish.GetValue(simpleSection, "numericTrue", false));    // numericTrue=1
+            Assert.False(configFileEnglish.GetValue(simpleSection, "numericFalse", true));   // numericFalse=0
+            Assert.True(configFileEnglish.GetValue(simpleSection, "textTrue", false));       // textTrue = true
+            Assert.False(configFileEnglish.GetValue(simpleSection, "textFalse", true));      // textFalse = false
+
+            // ReSharper disable once RedundantArgumentDefaultValue
+            var yesNoConverter = new YesNoConverter("yes", "no");
+            const string yesNoSection = "YesNo"; // [YesNo]
+            Assert.True(configFileEnglish.GetValue(yesNoSection, "sampleYes", false, yesNoConverter));  // sampleYes=Yes
+            Assert.False(configFileEnglish.GetValue(yesNoSection, "sampleNo", true, yesNoConverter));   // sampleNo=no
+
+            var onOffConverter = new YesNoConverter("on", "off");
+            const string onOffSection = "OnOff"; // [OnOff]
+            Assert.True(configFileEnglish.GetValue(onOffSection, "sampleOn", false, onOffConverter));    // sampleOn=on
+            Assert.False(configFileEnglish.GetValue(onOffSection, "sampleOff", true, onOffConverter));   // sampleOff=Off
+
+            var enDisConverter = new YesNoConverter("Enabled", "Disabled");
+            const string enDisSection = "EnabledDisabled"; // [EnabledDisabled]
+            Assert.True(configFileEnglish.GetValue(enDisSection, "sampleOn", false, enDisConverter));    // sampleOn=on
+            Assert.False(configFileEnglish.GetValue(enDisSection, "sampleOff", true, enDisConverter));   // sampleOff=Off
+        }
+
+        /// <summary>
+        /// Gets the settings for file.
+        /// </summary>
+        /// <param name="pathToConfigFile">The path to configuration file.</param>
+        /// <returns></returns>
         private static ConfigParserSettings GetSettingsForFile(string pathToConfigFile)
         {
             var realConfigSettingsPath = $"{pathToConfigFile}.json";
