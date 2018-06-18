@@ -216,10 +216,31 @@ namespace Salaros.Config
         /// <param name="sectionName">Name of the section.</param>
         /// <param name="keyName">Name of the key.</param>
         /// <param name="defaultValue">The default value.</param>
+        /// <param name="numberStyles">The number styles.</param>
         /// <returns></returns>
-        public virtual double GetValue(string sectionName, string keyName, double defaultValue)
+        public virtual double GetValue(
+            string sectionName,
+            string keyName,
+            double defaultValue,
+            NumberStyles numberStyles = NumberStyles.Float | NumberStyles.AllowThousands
+        )
         {
-            return GetRawValue(sectionName, keyName, defaultValue);
+            if (!(numberStyles.HasFlag(NumberStyles.Float) || numberStyles.HasFlag(NumberStyles.AllowThousands)))
+                numberStyles |= NumberStyles.AllowThousands | NumberStyles.Float;
+
+            var doubleRaw = GetRawValue<string>(sectionName, keyName, null);
+            if (string.IsNullOrWhiteSpace(doubleRaw))
+            {
+                SetValue(sectionName, keyName, defaultValue);
+                return defaultValue;
+            }
+
+            if(doubleRaw.Contains("E") && !numberStyles.HasFlag(NumberStyles.AllowExponent))
+                numberStyles = numberStyles | NumberStyles.AllowExponent;
+
+            return double.TryParse(doubleRaw.TrimEnd('d','D','f','F'), numberStyles, Settings.Culture, out var parsedDouble)
+                    ? parsedDouble
+                    : double.Parse(doubleRaw); // yeah, throws format exception by design
         }
 
         /// <summary>
