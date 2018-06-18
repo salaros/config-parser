@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Salaros.Config
 {
@@ -16,23 +18,26 @@ namespace Salaros.Config
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConfigParserSettings"/> class.
+        /// Initializes a new instance of the <see cref="ConfigParserSettings" /> class.
         /// </summary>
         /// <param name="multiLineValues">The multi line values.</param>
         /// <param name="encoding">The encoding.</param>
         /// <param name="keyValueSeparator">The key value separator.</param>
         /// <param name="commentCharacters">The comment characters.</param>
+        /// <param name="culture">The culture used for reading boolean, decimal values etc.
         public ConfigParserSettings(
             MultiLineValues multiLineValues = MultiLineValues.NotAllowed,
             Encoding encoding = null,
             string keyValueSeparator = null,
-            string[] commentCharacters = null
+            string[] commentCharacters = null,
+            CultureInfo culture = null
         )
         {
             MultiLineValues = multiLineValues;
             Encoding = encoding;
             KeyValueSeparator = keyValueSeparator ?? "=";
             CommentCharacters = commentCharacters ?? new [] { "#", ";" };
+            Culture = culture ?? Thread.CurrentThread.CurrentCulture;
 
             KeyMatcher = new Regex($@"^(?<key>.*?)(?<separator>(\s+)?{Regex.Escape(KeyValueSeparator)}(\s+)?)", RegexOptions.Compiled);
             CommentMatcher = new Regex(
@@ -42,6 +47,14 @@ namespace Salaros.Config
                 ? new Regex(@"^(?<quote1>\"")?(?<value>[^\""]+)(?<quote2>\"")?(\s+)?$", RegexOptions.Compiled)
                 : new Regex(@"^(?<value>.*?)?$", RegexOptions.Compiled);
         }
+
+        /// <summary>
+        /// Gets the culture used for reading boolean, decimal values etc.
+        /// </summary>
+        /// <value>
+        /// The culture used for reading boolean, decimal values etc.
+        /// </value>
+        public CultureInfo Culture { get; }
 
         /// <summary>
         /// Gets the multi-line value-related settings.

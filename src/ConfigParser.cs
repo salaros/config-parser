@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -164,10 +165,33 @@ namespace Salaros.Config
         /// <param name="sectionName">Name of the section.</param>
         /// <param name="keyName">Name of the key.</param>
         /// <param name="defaultValue">if set to <c>true</c> [default value].</param>
+        /// <param name="booleanConverter">The boolean converter.</param>
         /// <returns></returns>
-        public virtual bool GetValue(string sectionName, string keyName, bool defaultValue)
+        public virtual bool GetValue(string sectionName, string keyName, bool defaultValue, BooleanConverter booleanConverter = null)
         {
-            return GetRawValue(sectionName, keyName, (defaultValue ? "1" : "0")) == "1";
+            var booleanValue = GetRawValue<string>(sectionName, keyName, null);
+            if (string.IsNullOrWhiteSpace(booleanValue))
+            {
+                SetValue(sectionName, keyName,
+                    null == booleanConverter
+                        ? defaultValue.ToString(Settings.Culture).ToLowerInvariant()
+                        : booleanConverter.ConvertToString(defaultValue));
+                return defaultValue;
+            }
+
+            if (booleanConverter != null && booleanConverter.CanConvertFrom(typeof(string)))
+            {
+                var value = booleanConverter.ConvertFrom(booleanValue);
+                if (value is bool convertedBoolean)
+                    return convertedBoolean;
+            }
+
+            if (Equals("0", booleanValue) || Equals("1", booleanValue))
+                return Equals("1", booleanValue);
+
+            return bool.TryParse(booleanValue, out var parseBoolean)
+                ? parseBoolean
+                : Equals(booleanValue, true.ToString(Settings.Culture).ToLowerInvariant());
         }
 
         /// <summary>
