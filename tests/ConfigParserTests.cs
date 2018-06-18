@@ -291,6 +291,42 @@ namespace Salaros.Config.Tests
         }
 
         /// <summary>
+        /// Checks if double values are parsed correctly.
+        /// </summary>
+        [Fact]
+        public void DoubleValuesAreParsedCorrectly()
+        {
+            var booleanValues = ValuesSampleFiles.FirstOrDefault(f =>
+                f.EndsWith("double.conf", StringComparison.OrdinalIgnoreCase));
+            Assert.NotNull(booleanValues);
+
+            var configFileUsEnglish = new ConfigParser(booleanValues, new ConfigParserSettings
+            {
+                Culture = new CultureInfo("en-US")
+            });
+
+            const string worksSection = "Works";                                                        // [Works]
+            Assert.Equal(0D, configFileUsEnglish.GetValue(worksSection, "empty", 0D));                  // empty=
+            Assert.Equal(1.0, configFileUsEnglish.GetValue(worksSection, "integer", 0D));               // integer=1
+            Assert.Equal(1E-06, configFileUsEnglish.GetValue(worksSection, "usual", 0D));               // usual=0.000001
+            Assert.Equal(6E-01, configFileUsEnglish.GetValue(worksSection, "withD", 0D));               // withD=0.6D
+            Assert.Equal(1700D, configFileUsEnglish.GetValue(worksSection, "engineeringNotation", 0D)); // engineeringNotation = 1.7E+3
+            Assert.Equal(45E-01, configFileUsEnglish.GetValue(worksSection, "float", 0D));              // float = 4.5f
+            Assert.Equal(1000D, configFileUsEnglish.GetValue(worksSection, "thousands", 0D));           // thousands=1,000
+            Assert.Equal(2999D, configFileUsEnglish.GetValue(worksSection, "dollars", 0D,               // dollars=$2,999
+                NumberStyles.AllowCurrencySymbol));
+
+            Assert.Throws<FormatException>(() =>
+            {                                                                                           // [DoesntWork]
+                Assert.Equal(0D, configFileUsEnglish.GetValue("DoesntWork", "random", 0D));             // random = sdgfery56d
+            });
+
+            var configFileItalian = new ConfigParser(booleanValues, new ConfigParserSettings
+                { Culture = new CultureInfo("it-IT") });                                                // [ItalianLocalized]
+            Assert.Equal(9.3D, configFileItalian.GetValue("ItalianLocalized", "withComa", 0D));         // withComa = 9,3
+        }
+
+        /// <summary>
         /// Gets the settings for file.
         /// </summary>
         /// <param name="pathToConfigFile">The path to configuration file.</param>
