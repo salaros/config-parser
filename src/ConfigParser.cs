@@ -188,8 +188,10 @@ namespace Salaros.Config
                     return convertedBoolean;
             }
 
-            if (Equals("0", booleanValue) || Equals("1", booleanValue))
+#pragma warning disable IDE0046 // Convert to conditional expression
+            if (Equals("0", booleanValue.Trim()) || Equals("1", booleanValue.Trim()))
                 return Equals("1", booleanValue);
+#pragma warning restore IDE0046 // Convert to conditional expression
 
             return bool.TryParse(booleanValue, out var parseBoolean)
                 ? parseBoolean
