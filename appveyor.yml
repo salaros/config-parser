@@ -20,7 +20,7 @@ install:
 environment:
   VERSION_SIMPLE: '{version}'
   VERSION_INFORMATIONAL: '{version}'
-  VERSION_UNSTABLE_SUFFIX: '-preview$(APPVEYOR_BUILD_NUMBER)'
+  VERSION_UNSTABLE_SUFFIX: 'preview'
   COVERALLS_REPO_TOKEN:
     secure: 9iA9d5GcWja7EnS3gFvbTMrhyKrzjW3pcYuQ/HHaEJjjMY5VR/e4mQ0uNk+fWaAA
   APPVEYOR_TOKEN:
@@ -28,36 +28,23 @@ environment:
 
 init:
 - ps: |
-    $env:VERSION_INFORMATIONAL = "$env:APPVEYOR_BUILD_VERSION"
-    $env:VERSION_SIMPLE = "$env:APPVEYOR_BUILD_VERSION"
+    $env:VERSION_SIMPLE = $env:APPVEYOR_BUILD_VERSION.TrimStart("v")
+    $env:VERSION_INFORMATIONAL = "$env:VERSION_SIMPLE"
     $env:GITHUB_REPO_API = "https://api.github.com/repos/$env:APPVEYOR_REPO_NAME/tags"
 
     if ($env:APPVEYOR_REPO_TAG -eq "true" -and $env:APPVEYOR_REPO_TAG_NAME) {
         ### CHECK IF A IT'S A TAGGED BUILD
-        $git_current_tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
+        $env:APPVEYOR_REPO_TAG_NAME = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
         Write-Host "Building a tagged Git commit: $git_current_tag";
-
-        if ($git_current_tag -match '^([0-9]+\.[0-9]+\.[0-9]+)$' -Or $git_current_tag -match '([0-9]+[\.-][0-9]+[\.-][0-9]+-[-A-Za-z0-9]+)') {
-            $env:VERSION_INFORMATIONAL = "$git_current_tag"
+        if ($env:APPVEYOR_REPO_TAG_NAME -match '^([0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?)$') {
+            $tag_ver = [version]$env:APPVEYOR_REPO_TAG_NAME
+            $env:VERSION_INFORMATIONAL = "{0}.{1}.{2}" -f $tag_ver.Major, $tag_ver.Minor, $tag_ver.Build
+            $env:VERSION_SIMPLE = "$env:VERSION_INFORMATIONAL.$env:APPVEYOR_BUILD_NUMBER"
         }
-    } else {
-        ### OTHERWISE IT'S A REGULAR BUILD
-        try {
-            ### TRY TO GET VERSION FROM THE LATEST GITHUB TAG/REALEASE
-            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-            $github_latest_tags=(Invoke-WebRequest -Uri $env:GITHUB_REPO_API) -join '`n' | ConvertFrom-Json
-            $github_last_tag=$github_latest_tags[0].name.TrimStart("v")
-            if ($github_last_tag -match '^([0-9]+\.[0-9]+\.[0-9]+)$') {
-                $github_tag_ver = [version]$github_last_tag
-                $github_last_tag = "{0}.{1}.{2}" -f $github_tag_ver.Major, $github_tag_ver.Minor, ($github_tag_ver.Build + 1)
-            }
-            $env:VERSION_INFORMATIONAL = $github_last_tag
-        } catch {
-            $env:VERSION_INFORMATIONAL = "0.1.0"
-            Write-Host "Failed to get version from the last GitHub release falling back on '$env:VERSION_INFORMATIONAL' base version";
-        }
-
-        $env:VERSION_INFORMATIONAL = "$env:VERSION_INFORMATIONAL$env:VERSION_UNSTABLE_SUFFIX"
+    } elseif ($env:VERSION_INFORMATIONAL -match '^([0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?)$') {
+        $current_ver = [version]$env:VERSION_INFORMATIONAL
+        $env:VERSION_INFORMATIONAL = "{0}.{1}.{2}" -f $current_ver.Major, $current_ver.Minor, $current_ver.Build
+        $env:VERSION_INFORMATIONAL = "{0}-{1}{2}" -f $env:VERSION_INFORMATIONAL, $env:VERSION_UNSTABLE_SUFFIX, $env:APPVEYOR_BUILD_NUMBER
     }
 
     ### MAKE CALCULATED INFORMATIONAL VERSION THE ACTUAL BUILD VERSION
@@ -130,10 +117,10 @@ after_deploy:
             }
             Invoke-RestMethod -Method Put "$apiUrl/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/settings/build-number" -Body '{"nextBuildNumber": 1 }' -Headers $headers
             
-            $current_tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
-            if ($current_tag -match '^([0-9]+\.[0-9]+\.[0-9]+)$' -Or $current_tag -match '([0-9]+[\.-][0-9]+[\.-][0-9]+-[-A-Za-z0-9]+)') {
-                $current_ver = [version]$current_tag
-                $ver_format = "version: {0}.{1}.{2}.{3}" -f $current_ver.Major, $current_ver.Minor, ($current_ver.Build + 1), '{build}'
+            $env:APPVEYOR_REPO_TAG_NAME = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
+            if ($env:APPVEYOR_REPO_TAG_NAME -match '^([0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?)$') {
+                $tag_ver = [version]$env:APPVEYOR_REPO_TAG_NAME
+                $ver_format = "version: {0}.{1}.{2}.{3}" -f $tag_ver.Major, $tag_ver.Minor, ($tag_ver.Build + 1), '{build}'
                 $headers."Content-type" = "text/plain";
                 Invoke-RestMethod -Method Put "$apiUrl/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/settings/yaml" -Body $ver_format -Headers $headers
             }
