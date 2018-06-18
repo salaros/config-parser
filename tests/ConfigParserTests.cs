@@ -241,6 +241,8 @@ namespace Salaros.Config.Tests
                 MultiLineValues.QuoteDelimitedValues,
                 Encoding.UTF8,
                 null, null,
+                // if some day Boolean.ToString(IFormatProvider) will work 
+                // https://msdn.microsoft.com/en-us/library/s802ct92(v=vs.110).aspx#Anchor_1
                 new CultureInfo("en-US")
             ));
 

@@ -174,6 +174,8 @@ namespace Salaros.Config
             {
                 SetValue(sectionName, keyName,
                     null == booleanConverter
+                        // if some day Boolean.ToString(IFormatProvider) will work 
+                        // https://msdn.microsoft.com/en-us/library/s802ct92(v=vs.110).aspx#Anchor_1
                         ? defaultValue.ToString(Settings.Culture).ToLowerInvariant()
                         : booleanConverter.ConvertToString(defaultValue));
                 return defaultValue;
@@ -191,6 +193,8 @@ namespace Salaros.Config
 
             return bool.TryParse(booleanValue, out var parseBoolean)
                 ? parseBoolean
+                // if some day Boolean.ToString(IFormatProvider) will work 
+                // https://msdn.microsoft.com/en-us/library/s802ct92(v=vs.110).aspx#Anchor_1
                 : Equals(booleanValue, true.ToString(Settings.Culture).ToLowerInvariant());
         }
 
