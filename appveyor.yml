@@ -28,8 +28,8 @@ environment:
 
 init:
 - ps: |
-    $env:VERSION_INFORMATIONAL = $env:APPVEYOR_BUILD_VERSION
-    $env:VERSION_SIMPLE = "$env:APPVEYOR_BUILD_VERSION.$env:APPVEYOR_BUILD_NUMBER"
+    $env:VERSION_INFORMATIONAL = "$env:APPVEYOR_BUILD_VERSION"
+    $env:VERSION_SIMPLE = "$env:APPVEYOR_BUILD_VERSION"
     $env:GITHUB_REPO_API = "https://api.github.com/repos/$env:APPVEYOR_REPO_NAME/tags"
 
     if ($env:APPVEYOR_REPO_TAG -eq "true" -and $env:APPVEYOR_REPO_TAG_NAME) {
@@ -53,7 +53,7 @@ init:
             }
             $env:VERSION_INFORMATIONAL = $github_last_tag
         } catch {
-            $env:VERSION_INFORMATIONAL = "1.0.0"
+            $env:VERSION_INFORMATIONAL = "0.1.0"
             Write-Host "Failed to get version from the last GitHub release falling back on '$env:VERSION_INFORMATIONAL' base version";
         }
 
@@ -62,7 +62,8 @@ init:
 
     ### MAKE CALCULATED INFORMATIONAL VERSION THE ACTUAL BUILD VERSION
     Update-AppveyorBuild -Version $env:VERSION_INFORMATIONAL
-    Write-Host "Using build version: $env:APPVEYOR_BUILD_VERSION";
+    Write-Host "Using build version: $env:VERSION_SIMPLE"
+    Write-Host "Using (informational) build version: $env:VERSION_INFORMATIONAL"
 
 dotnet_csproj:
   patch: true
@@ -132,9 +133,9 @@ after_deploy:
             $current_tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
             if ($current_tag -match '^([0-9]+\.[0-9]+\.[0-9]+)$' -Or $current_tag -match '([0-9]+[\.-][0-9]+[\.-][0-9]+-[-A-Za-z0-9]+)') {
                 $current_ver = [version]$current_tag
-                $ver_format = "{0}.{1}.{2}-preview{3}" -f $current_ver.Major, $current_ver.Minor, ($current_ver.Build + 1), "{build}"
+                $ver_format = "version: {0}.{1}.{2}.{3}" -f $current_ver.Major, $current_ver.Minor, ($current_ver.Build + 1), '{build}'
                 $headers."Content-type" = "text/plain";
-                Invoke-RestMethod -Method Put "$apiUrl/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/settings/yaml" -Body 'version: $ver_format' -Headers $headers
+                Invoke-RestMethod -Method Put "$apiUrl/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/settings/yaml" -Body $ver_format -Headers $headers
             }
         }
 
