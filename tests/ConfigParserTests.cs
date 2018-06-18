@@ -84,7 +84,7 @@ namespace Salaros.Config.Tests
         [Fact]
         public void ArrayValuesAreParsedCorrectly()
         {
-            var arraySampleFilePath = StructureSampleFiles.FirstOrDefault(f => f.EndsWith("array-values.cnf", StringComparison.OrdinalIgnoreCase));
+            var arraySampleFilePath = ValuesSampleFiles.FirstOrDefault(f => f.EndsWith("array.cnf", StringComparison.OrdinalIgnoreCase));
             Assert.NotNull(arraySampleFilePath);
 
             var configFile = new ConfigParser(arraySampleFilePath, new ConfigParserSettings(MultiLineValues.Simple));
