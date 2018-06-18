@@ -129,12 +129,12 @@ after_deploy:
             }
             Invoke-RestMethod -Method Put "$apiUrl/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/settings/build-number" -Body '{"nextBuildNumber": 1 }' -Headers $headers
             
-            $git_current_tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
-            if ($git_current_tag -match '^([0-9]+\.[0-9]+\.[0-9]+)$' -Or $git_current_tag -match '([0-9]+[\.-][0-9]+[\.-][0-9]+-[-A-Za-z0-9]+)') {
-                $git_current_ver = [version]$git_current_tag
-                $verFormat = "{0}.{1}.{2}" -f $git_current_ver.Major, $git_current_ver.Minor, "{build}"
+            $current_tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
+            if ($current_tag -match '^([0-9]+\.[0-9]+\.[0-9]+)$' -Or $current_tag -match '([0-9]+[\.-][0-9]+[\.-][0-9]+-[-A-Za-z0-9]+)') {
+                $current_ver = [version]$current_tag
+                $ver_format = "{0}.{1}.{2}-preview{3}" -f $current_ver.Major, $current_ver.Minor, ($current_ver.Build + 1), "{build}"
                 $headers."Content-type" = "text/plain";
-                Invoke-RestMethod -Method Put "$apiUrl/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/settings/yaml" -Body 'version: $verFormat' -Headers $headers
+                Invoke-RestMethod -Method Put "$apiUrl/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/settings/yaml" -Body 'version: $ver_format' -Headers $headers
             }
         }
 
