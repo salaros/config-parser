@@ -396,7 +396,7 @@ namespace Salaros.Config
         /// <returns></returns>
         public virtual bool SetValue(string sectionName, string keyName, int value)
         {
-            return SetValue(sectionName, keyName, value.ToString(CultureInfo.InvariantCulture));
+            return SetValue(sectionName, keyName, value.ToString(Settings.Culture ?? CultureInfo.InvariantCulture));
         }
 
         /// <summary>
