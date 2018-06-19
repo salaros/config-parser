@@ -14,6 +14,7 @@ namespace Salaros.Config.Tests
         private static readonly string[] RealWorldConfigFiles;
         private static readonly string[] StructureSampleFiles;
         private static readonly string[] ValuesSampleFiles;
+        private static readonly string[] EncodingSampleFiles;
 
         /// <summary>
         /// Initializes the <see cref="IniParserTests"/> class.
@@ -35,6 +36,11 @@ namespace Salaros.Config.Tests
 
             ValuesSampleFiles = Directory
                 .GetFiles(Path.Combine(Environment.CurrentDirectory, "Resources", "Values"))
+                .Where(f => !f.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+
+            EncodingSampleFiles = Directory
+                .GetFiles(Path.Combine(Environment.CurrentDirectory, "Resources", "Encoding"))
                 .Where(f => !f.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
                 .ToArray();
         }
@@ -277,7 +283,11 @@ namespace Salaros.Config.Tests
             Assert.False(configFileEnglish.GetValue(simpleSection, "textFalse", true));                 // textFalse = false
 
             // ReSharper disable once RedundantArgumentDefaultValue
-            var yesNoConverter = new YesNoConverter("yes", "no");
+            var yesNoConverter = new YesNoConverter(
+                "yes",
+                // ReSharper disable once RedundantArgumentDefaultValue
+                "no"
+            );
             const string yesNoSection = "YesNo";                                                        // [YesNo]
             Assert.True(configFileEnglish.GetValue(yesNoSection, "sampleYes", false, yesNoConverter));  // sampleYes=Yes
             Assert.False(configFileEnglish.GetValue(yesNoSection, "sampleNo", true, yesNoConverter));   // sampleNo=no
@@ -327,6 +337,74 @@ namespace Salaros.Config.Tests
             var configFileItalian = new ConfigParser(booleanValues, new ConfigParserSettings
                 { Culture = new CultureInfo("it-IT") });                                                // [ItalianLocalized]
             Assert.Equal(9.3D, configFileItalian.GetValue("ItalianLocalized", "withComa", 0D));         // withComa = 9,3
+        }
+
+        [Fact]
+        public void EncodingSettingWorksCorrectly()
+        {
+            // All kinds of UTF* work
+            Assert.All(EncodingSampleFiles.Where(f => Path.GetFileName(f).StartsWith("UTF", StringComparison.InvariantCultureIgnoreCase)), encodingSampleFile =>
+            {
+                var settings = GetSettingsForFile(encodingSampleFile);
+                var encodingConfigFile = new ConfigParser(encodingSampleFile, settings);
+
+                Assert.Equal("국민경제의 발전을 위한 중요정책의 수립에 관하여 대통령의 자문에 응하기 위하여 국민경제자문회의를 둘 수 있다.",
+                    encodingConfigFile["LoremIpsum"]["한국어"]);
+
+                Assert.Equal("είναι απλά ένα κείμενο χωρίς νόημα για τους επαγγελματίες της τυπογραφίας και στοιχειοθεσίας",
+                    encodingConfigFile["LoremIpsum"]["Ελληνικά"]);
+
+                Assert.Equal("也称乱数假文或者哑元文本， 是印刷及排版领域所常用的虚拟文字。",
+                    encodingConfigFile["LoremIpsum"]["中文"]);
+
+                Assert.Equal("旅ロ京青利セムレ弱改フヨス波府かばぼ意送でぼ調掲察たス日西重ケアナ住橋ユムミク順待ふかんぼ人奨貯鏡すびそ。",
+                    encodingConfigFile["LoremIpsum"]["日本語"]);
+
+                Assert.Equal("छपाई और अक्षर योजना उद्योग का एक साधारण डमी पाठ है",
+                    encodingConfigFile["LoremIpsum"]["हिंदी"]);
+
+                Assert.Equal("זוהי עובדה מבוססת שדעתו של הקורא תהיה מוסחת על ידי טקטס קריא כאשר הוא יביט בפריסתו",
+                    encodingConfigFile["LoremIpsum"]["אנגלית"]);
+
+                Assert.Equal("Lorem ipsum – псевдо-латинский текст, который используется для веб дизайна, типографии",
+                    encodingConfigFile["LoremIpsum"]["Русский"]);
+            });
+
+            // ANSI Cyrillic - works
+            var ansiCyrillicFilePath = EncodingSampleFiles.FirstOrDefault(f =>
+                f.EndsWith("ANSI Cyrillic.txt", StringComparison.OrdinalIgnoreCase));
+            Assert.NotNull(ansiCyrillicFilePath);
+            var ansiCyrillicFile = new ConfigParser(ansiCyrillicFilePath, new ConfigParserSettings
+            {
+                Encoding = Encoding.GetEncoding(1251)
+            });
+            Assert.Equal("Значение", ansiCyrillicFile["Тест"]["Ключ"]);
+
+            // ANSI Cyrillic - encoding is misspecified
+            Assert.Throws<DecoderFallbackException>(() =>
+            {
+                // ReSharper disable once UnusedVariable
+                var willNeverWork = new ConfigParser(ansiCyrillicFilePath, new ConfigParserSettings
+                {
+                    Encoding = new UTF8Encoding(true, true)
+                });
+            });
+            var invalidDataException = Assert.Throws<InvalidDataException>(() =>
+            {
+                // ReSharper disable once UnusedVariable
+                var willNeverWork = new ConfigParser(ansiCyrillicFilePath, null);
+            });
+            Assert.True(invalidDataException.Message?.Contains("detect encoding", StringComparison.OrdinalIgnoreCase));
+
+            // ANSI Latin1 - works
+            var ansiLatin1FilePath = EncodingSampleFiles.FirstOrDefault(f =>
+                f.EndsWith("ANSI Latin1.txt", StringComparison.OrdinalIgnoreCase));
+            Assert.NotNull(ansiLatin1FilePath);
+            var ansiLatin1File = new ConfigParser(ansiLatin1FilePath, new ConfigParserSettings
+            {
+                Encoding = Encoding.GetEncoding(1252)
+            });
+            Assert.Equal("información", ansiLatin1File["sección"]["configuración"]);
         }
 
         /// <summary>
