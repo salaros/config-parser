@@ -206,10 +206,25 @@ namespace Salaros.Config
         /// <param name="sectionName">Name of the section.</param>
         /// <param name="keyName">Name of the key.</param>
         /// <param name="defaultValue">The default value.</param>
+        /// <param name="numberStyles">The number styles.</param>
         /// <returns></returns>
-        public virtual int GetValue(string sectionName, string keyName, int defaultValue)
-        {
-            return GetRawValue(sectionName, keyName, defaultValue);
+        public virtual int GetValue(
+            string sectionName,
+            string keyName,
+            int defaultValue,
+            NumberStyles numberStyles = NumberStyles.Number
+        ){
+            if (!numberStyles.HasFlag(NumberStyles.Number))
+                numberStyles |= NumberStyles.Number;
+
+            var integerRaw = GetRawValue<string>(sectionName, keyName, null);
+            if (!string.IsNullOrWhiteSpace(integerRaw))
+                return int.TryParse(integerRaw, numberStyles, Settings.Culture, out var integerParsed)
+                    ? integerParsed
+                    : int.Parse(integerRaw); // yeah, throws format exception by design
+
+            SetValue(sectionName, keyName, defaultValue);
+            return defaultValue;
         }
 
         /// <summary>
@@ -393,10 +408,13 @@ namespace Salaros.Config
         /// <param name="sectionName">Name of the section.</param>
         /// <param name="keyName">Name of the key.</param>
         /// <param name="value">The value.</param>
+        /// <param name="customFormat">The custom format.</param>
         /// <returns></returns>
-        public virtual bool SetValue(string sectionName, string keyName, int value)
+        public virtual bool SetValue(string sectionName, string keyName, int value, string customFormat = null)
         {
-            return SetValue(sectionName, keyName, value.ToString(Settings.Culture ?? CultureInfo.InvariantCulture));
+            return string.IsNullOrWhiteSpace(customFormat)
+                ? SetValue(sectionName, keyName, value.ToString(Settings.Culture ?? CultureInfo.InvariantCulture))
+                : SetValue(sectionName, keyName, value.ToString(customFormat));
         }
 
         /// <summary>
