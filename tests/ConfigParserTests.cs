@@ -76,14 +76,24 @@ namespace Salaros.Config.Tests
             {
                 var settings = GetSettingsForFile(realConfigFile);
                 var configFile = new ConfigParser(realConfigFile, settings);
-                var configFileFromDisk = File
-                                            .ReadAllText(realConfigFile)
-                                            .Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\n")
-                                            .TrimEnd('\n');
+                var configFileFromDisk =File
+                                        .ReadAllText(realConfigFile)
+                                        .Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\n")
+                                        .TrimEnd('\n');
                 var configFileText = configFile
-                                            .ToString()
-                                            .Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\n")
-                                            .TrimEnd('\n');
+                                        .ToString()
+                                        .Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\n")
+                                        .TrimEnd('\n');
+
+                Assert.Equal(configFileText, configFileFromDisk);
+
+                var tempConfigFilePath = Path.GetTempFileName();
+                configFile.Save(tempConfigFilePath);
+                configFileFromDisk = File
+                                        .ReadAllText(tempConfigFilePath)
+                                        .Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\n")
+                                        .TrimEnd('\n');
+
                 Assert.Equal(configFileText, configFileFromDisk);
             });
         }
