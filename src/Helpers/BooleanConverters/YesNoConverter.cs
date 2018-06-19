@@ -70,5 +70,21 @@ namespace Salaros.Config
                 ? true 
                 : base.ConvertFrom(context, culture, value);
         }
+
+        /// <summary>
+        /// Gets the value of Yes / True.
+        /// </summary>
+        /// <value>
+        /// The yes.
+        /// </value>
+        public string Yes => yes;
+
+        /// <summary>
+        /// Gets the value of No / False.
+        /// </summary>
+        /// <value>
+        /// The no.
+        /// </value>
+        public string No => no;
     }
 }

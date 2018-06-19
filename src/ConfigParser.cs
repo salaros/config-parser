@@ -17,7 +17,23 @@ namespace Salaros.Config
         protected readonly Dictionary<string, ConfigSection> sections;
         protected FileInfo fileInfo;
 
+        private static readonly YesNoConverter[] YesNoBoolConverters;
+
         #region Constructor
+
+        /// <summary>
+        /// Initializes the <see cref="ConfigParser"/> class.
+        /// </summary>
+        static ConfigParser()
+        {
+            YesNoBoolConverters = new[]
+            {
+                new YesNoConverter(),
+                new YesNoConverter("1", "0"),
+                new YesNoConverter("on", "off"),
+                new YesNoConverter("enabled", "disabled")
+            };
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigParser" /> class.
@@ -189,15 +205,24 @@ namespace Salaros.Config
             }
 
 #pragma warning disable IDE0046 // Convert to conditional expression
-            if (Equals("0", booleanValue.Trim()) || Equals("1", booleanValue.Trim()))
-                return Equals("1", booleanValue);
+            foreach (var converter in YesNoBoolConverters)
+            {
+                if (converter.Yes.Equals(booleanValue.Trim(), StringComparison.InvariantCultureIgnoreCase) ||
+                    converter.No.Equals(booleanValue.Trim(), StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return converter.Yes.Equals(booleanValue, StringComparison.InvariantCultureIgnoreCase);
+                }
+            }
 #pragma warning restore IDE0046 // Convert to conditional expression
 
             return bool.TryParse(booleanValue, out var parseBoolean)
                 ? parseBoolean
                 // if some day Boolean.ToString(IFormatProvider) will work 
                 // https://msdn.microsoft.com/en-us/library/s802ct92(v=vs.110).aspx#Anchor_1
-                : Equals(booleanValue, true.ToString(Settings.Culture).ToLowerInvariant());
+                : true.ToString(Settings.Culture).ToLowerInvariant().Equals(
+                    booleanValue,
+                    StringComparison.InvariantCultureIgnoreCase
+                );
         }
 
         /// <summary>
