@@ -103,7 +103,9 @@ namespace Salaros.Config
             if (string.IsNullOrWhiteSpace(keyName))
                 throw new ArgumentNullException(nameof(keyName));
 
+#pragma warning disable IDE0034 // Simplify 'default' expression
             value = default(T);
+#pragma warning restore IDE0034 // Simplify 'default' expression
 
             if (!sections.TryGetValue(sectionName, out var section))
                 return false;
