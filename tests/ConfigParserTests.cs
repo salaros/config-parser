@@ -324,6 +324,32 @@ namespace Salaros.Config.Tests
             Assert.False(configFileEnglish.GetValue(enDisSection, "sampleOff", true));                  // sampleOff=Off
         }
 
+        [Fact]
+        public void BooleanValuesAreWrittenCorrectly()
+        {
+            var configBooleanSampleFilePath = Path.GetTempFileName();
+            var configFileEnglish = new ConfigParser(configBooleanSampleFilePath);
+
+            // Test "normal" and auto-magic set value
+            const string yesNoSection = "YesNo", sampleYes = "sampleYesNo";
+            configFileEnglish.SetValue(yesNoSection, sampleYes, true, new YesNoConverter());    // set to "yes"
+            Assert.True(configFileEnglish.GetValue(yesNoSection, sampleYes, false));            // check if gets true ("yes")
+
+            configFileEnglish.SetValue(yesNoSection, sampleYes, false);                         // set to false ("no")
+            Assert.Equal("no", configFileEnglish.GetValue(yesNoSection, sampleYes, "yes"));     // check if gets "no" (false)
+            Assert.False(configFileEnglish.GetValue(yesNoSection, sampleYes, true));            // check if gets false ("no")
+
+
+            // Test "normal" and auto-magic set value
+            const string intSection = "Integer", sampleInt = "sample0and1";
+            configFileEnglish.SetValue(intSection, sampleInt, false, new YesNoConverter("1", "0")); // set to "1"
+            Assert.False(configFileEnglish.GetValue(intSection, sampleInt, true));              // check if gets true ("1")
+
+            configFileEnglish.SetValue(intSection, sampleInt, true);                            // set to true ("1")
+            Assert.Equal("1", configFileEnglish.GetValue(intSection, sampleInt, "0"));          // check if gets "1" (true)
+            Assert.True(configFileEnglish.GetValue(intSection, sampleInt, false));              // check if gets true ("1")
+        }
+
         /// <summary>
         /// Checks if double values are parsed correctly.
         /// </summary>
