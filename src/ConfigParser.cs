@@ -63,19 +63,16 @@ namespace Salaros.Config
         /// <value>
         /// The sections.
         /// </value>
-        public ReadOnlyCollection<ConfigSection> Sections => new ReadOnlyCollection<ConfigSection>(sections.Values.ToArray());
+        public ReadOnlyCollection<ConfigSection> Sections =>
+            new ReadOnlyCollection<ConfigSection>(sections.Values.ToArray());
 
         /// <summary>
         /// Gets configuration file's lines.
         /// </summary>
         /// <value>The lines.</value>
         public ReadOnlyCollection<IConfigLine> Lines
-        {
-            get
-            {
-                return new ReadOnlyCollection<IConfigLine>(fileHeader.Lines.Concat(sections.Values.SelectMany(s => s.Lines)).ToArray());
-            }
-        }
+            => new ReadOnlyCollection<IConfigLine>(fileHeader.Lines.Concat(sections.Values.SelectMany(s => s.Lines))
+                .ToArray());
 
         #endregion Properties
 
@@ -143,10 +140,10 @@ namespace Salaros.Config
                 return defaultValue;
             }
 
-            var key = section.Keys.FirstOrDefault(k =>Equals(keyName, k.Name));
+            var key = section.Keys.FirstOrDefault(k => Equals(keyName, k.Name));
             return (key == null)
                 ? defaultValue
-                : (T)key.ValueRaw;
+                : (T) key.ValueRaw;
         }
 
         /// <summary>
@@ -169,7 +166,8 @@ namespace Salaros.Config
         /// <param name="defaultValue">if set to <c>true</c> [default value].</param>
         /// <param name="booleanConverter">The boolean converter.</param>
         /// <returns></returns>
-        public virtual bool GetValue(string sectionName, string keyName, bool defaultValue, BooleanConverter booleanConverter = null)
+        public virtual bool GetValue(string sectionName, string keyName, bool defaultValue,
+            BooleanConverter booleanConverter = null)
         {
             var booleanValue = GetRawValue<string>(sectionName, keyName, null);
             if (string.IsNullOrWhiteSpace(booleanValue))
@@ -215,7 +213,8 @@ namespace Salaros.Config
             string keyName,
             int defaultValue,
             NumberStyles numberStyles = NumberStyles.Number
-        ){
+        )
+        {
             if (!numberStyles.HasFlag(NumberStyles.Number))
                 numberStyles |= NumberStyles.Number;
 
@@ -254,12 +253,13 @@ namespace Salaros.Config
                 return defaultValue;
             }
 
-            if(doubleRaw.Contains("E") && !numberStyles.HasFlag(NumberStyles.AllowExponent))
+            if (doubleRaw.Contains("E") && !numberStyles.HasFlag(NumberStyles.AllowExponent))
                 numberStyles = numberStyles | NumberStyles.AllowExponent;
 
-            return double.TryParse(doubleRaw.TrimEnd('d','D','f','F'), numberStyles, Settings.Culture, out var parsedDouble)
-                    ? parsedDouble
-                    : double.Parse(doubleRaw); // yeah, throws format exception by design
+            return double.TryParse(doubleRaw.TrimEnd('d', 'D', 'f', 'F'), numberStyles, Settings.Culture,
+                out var parsedDouble)
+                ? parsedDouble
+                : double.Parse(doubleRaw); // yeah, throws format exception by design
         }
 
         /// <summary>
@@ -338,7 +338,7 @@ namespace Salaros.Config
             if (string.IsNullOrWhiteSpace(arrayRaw))
                 return false;
 
-            var values = arrayRaw.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            var values = arrayRaw.Split(new[] {"\r\n", "\r", "\n"}, StringSplitOptions.None);
             return values.Any() && string.IsNullOrWhiteSpace(values.First());
         }
 
@@ -383,7 +383,7 @@ namespace Salaros.Config
             else
             {
                 iniKey = new ConfigKeyValue<string>(keyName, Settings.KeyValueSeparator, value, -1);
-                section.AddLine((ConfigLine)iniKey);
+                section.AddLine((ConfigLine) iniKey);
             }
             return true;
         }
@@ -396,9 +396,10 @@ namespace Salaros.Config
         /// <param name="value">if set to <c>true</c> [value].</param>
         /// <param name="booleanConverter">The boolean converter.</param>
         /// <returns></returns>
-        public virtual bool SetValue(string sectionName, string keyName, bool value, BooleanConverter booleanConverter = null)
+        public virtual bool SetValue(string sectionName, string keyName, bool value,
+            BooleanConverter booleanConverter = null)
         {
-            return SetValue(sectionName, keyName, (null == booleanConverter) 
+            return SetValue(sectionName, keyName, (null == booleanConverter)
                 ? value.ToString(Settings.Culture ?? CultureInfo.InvariantCulture).ToLowerInvariant()
                 : booleanConverter.ConvertToString(value)
             );
@@ -465,8 +466,8 @@ namespace Salaros.Config
                 return (null == sectionName)
                     ? null
                     : sections
-                        ?.FirstOrDefault(s => sectionName.Equals(s.Key, StringComparison.InvariantCultureIgnoreCase))
-                        .Value ?? new ConfigSection(sectionName);
+                          ?.FirstOrDefault(s => sectionName.Equals(s.Key, StringComparison.InvariantCultureIgnoreCase))
+                          .Value ?? new ConfigSection(sectionName);
             }
         }
 
@@ -486,14 +487,16 @@ namespace Salaros.Config
             if (string.IsNullOrWhiteSpace(configFilePath) || Path.GetInvalidPathChars().Any(configFilePath.Contains) ||
                 Path.GetInvalidFileNameChars().Any(Path.GetFileName(configFilePath).Contains))
             {
-                throw new ArgumentException($"{nameof(configFilePath)} must contain a valid path to a file", nameof(configFilePath));
+                throw new ArgumentException($"{nameof(configFilePath)} must contain a valid path to a file",
+                    nameof(configFilePath));
             }
 
             if (!string.IsNullOrWhiteSpace(configFilePath))
                 fileInfo = new FileInfo(configFilePath);
 
             if (null == fileInfo)
-                throw new InvalidOperationException("Configuration file cannot be saved, it doesn't have a file path assigned. Please specify one.");
+                throw new InvalidOperationException(
+                    "Configuration file cannot be saved, it doesn't have a file path assigned. Please specify one.");
 
             try
             {
@@ -504,7 +507,7 @@ namespace Salaros.Config
                             Settings.Encoding ?? new UTF8Encoding(false, false),
                             4096
 #if !NET40
-                        , true
+                            , true
 #endif
                         )
                     )
@@ -604,7 +607,8 @@ namespace Salaros.Config
         /// <param name="currentLine">The current line.</param>
         /// <param name="lineRaw">The line raw.</param>
         /// <param name="lineNumber">The line number.</param>
-        private void ReadValuelessKey(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw, int lineNumber)
+        private void ReadValuelessKey(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw,
+            int lineNumber)
         {
             if (null != currentLine)
                 BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
@@ -620,11 +624,14 @@ namespace Salaros.Config
         /// <param name="lineRaw">The line raw.</param>
         /// <param name="lineNumber">The line number.</param>
         /// <exception cref="NotImplementedException"></exception>
-        private void AppendValueToKey(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw, int lineNumber)
+        private void AppendValueToKey(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw,
+            int lineNumber)
         {
-            if (MultiLineValues.NotAllowed == Settings.MultiLineValues || Settings.MultiLineValues.HasFlag(MultiLineValues.NotAllowed))
+            if (MultiLineValues.NotAllowed == Settings.MultiLineValues ||
+                Settings.MultiLineValues.HasFlag(MultiLineValues.NotAllowed))
                 throw new ConfigParserException(
-                    "Multi-line values are explicitly disallowed by parser settings. Please consider changing them.", lineNumber);
+                    "Multi-line values are explicitly disallowed by parser settings. Please consider changing them.",
+                    lineNumber);
 
             ReadKeyAndValue(ref currentSection, ref currentLine, lineRaw, lineNumber, true);
         }
@@ -640,7 +647,8 @@ namespace Salaros.Config
         /// <exception cref="ConfigParserException">Arrays must start from a new line and not after the key!
         /// or</exception>
         /// <exception cref="NotImplementedException"></exception>
-        private void ReadKeyAndValue(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw, int lineNumber, bool append = false)
+        private void ReadKeyAndValue(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw,
+            int lineNumber, bool append = false)
         {
             if (null != currentLine && !append)
                 BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
@@ -651,8 +659,8 @@ namespace Salaros.Config
             var keyMatch = Settings.KeyMatcher.Match(lineRaw);
             var keyName = keyMatch.Groups["key"]?.Value;
             var separator = (string.IsNullOrWhiteSpace(keyMatch.Groups["separator"]?.Value))
-               ? Settings.KeyValueSeparator
-               : keyMatch.Groups["separator"]?.Value;
+                ? Settings.KeyValueSeparator
+                : keyMatch.Groups["separator"]?.Value;
             if (keyMatch.Success && keyMatch.Captures.Count > 0)
                 lineRaw = lineRaw.Substring(keyMatch.Captures[0].Value.Length);
 
@@ -693,7 +701,8 @@ namespace Salaros.Config
         /// <param name="currentLine">The current line.</param>
         /// <param name="lineRaw">The line raw.</param>
         /// <param name="lineNumber">The line number.</param>
-        private void ReadComment(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw, int lineNumber)
+        private void ReadComment(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw,
+            int lineNumber)
         {
             if (null != currentLine)
                 BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
@@ -711,7 +720,8 @@ namespace Salaros.Config
         /// <param name="currentLine">The current line.</param>
         /// <param name="lineRaw">The line raw.</param>
         /// <param name="lineNumber">The line number.</param>
-        private void ReadSection(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw, int lineNumber)
+        private void ReadSection(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw,
+            int lineNumber)
         {
             if (null != currentLine)
                 BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
@@ -734,7 +744,8 @@ namespace Salaros.Config
         /// <param name="lineRaw">The line raw.</param>
         /// <param name="lineNumber">The line number.</param>
         /// <exception cref="ConfigParserException"></exception>
-        private void ReadEmptyLine(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw, int lineNumber)
+        private void ReadEmptyLine(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw,
+            int lineNumber)
         {
             if (null != currentLine)
                 BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
@@ -753,7 +764,8 @@ namespace Salaros.Config
         {
             if (null == currentSection)
             {
-                if (currentLine is IConfigKeyValue && !Settings.MultiLineValues.HasFlag(MultiLineValues.AllowEmptyTopSection))
+                if (currentLine is IConfigKeyValue &&
+                    !Settings.MultiLineValues.HasFlag(MultiLineValues.AllowEmptyTopSection))
                     throw new ConfigParserException(
                         "This key value pair is orphan, all the keys must be preceded by a section.", lineNumber);
 
