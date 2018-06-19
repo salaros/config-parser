@@ -58,6 +58,7 @@ namespace Salaros.Config
             }
 
             configFile = File.ReadAllText(configFile, Settings.Encoding);
+            if (!string.IsNullOrWhiteSpace(configFile))
             Read(configFile);
         }
 
@@ -150,7 +151,7 @@ namespace Salaros.Config
 
             if (!sections.TryGetValue(sectionName, out var section))
             {
-                section = new ConfigSection(sectionName, Lines.Max(l => l.LineNumber));
+                section = new ConfigSection(sectionName, Lines.Any() ? Lines.Max(l => l.LineNumber) : 0);
                 sections.Add(sectionName, section);
                 section.AddLine(iniKey);
                 return defaultValue;

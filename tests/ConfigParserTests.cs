@@ -429,6 +429,24 @@ namespace Salaros.Config.Tests
         }
 
         /// <summary>
+        /// Checks if empty file initialization work.
+        /// </summary>
+        [Fact]
+        public void EmptyFileInitializationWork()
+        {
+            var configBooleanSampleFilePath = Path.GetTempFileName();
+            ConfigParser configFileEmpty = null;
+            try
+            {
+                configFileEmpty = new ConfigParser(configBooleanSampleFilePath);
+            }
+            finally
+            {
+                Assert.NotNull(configFileEmpty);
+            }
+        }
+
+        /// <summary>
         /// Gets the settings for file.
         /// </summary>
         /// <param name="pathToConfigFile">The path to configuration file.</param>
