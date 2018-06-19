@@ -392,7 +392,7 @@ namespace Salaros.Config.Tests
             var invalidDataException = Assert.Throws<InvalidDataException>(() =>
             {
                 // ReSharper disable once UnusedVariable
-                var willNeverWork = new ConfigParser(ansiCyrillicFilePath, null);
+                var willNeverWork = new ConfigParser(ansiCyrillicFilePath);
             });
             Assert.True(invalidDataException.Message?.Contains("detect encoding", StringComparison.OrdinalIgnoreCase));
 

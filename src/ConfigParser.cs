@@ -20,12 +20,12 @@ namespace Salaros.Config
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConfigParser"/> class.
+        /// Initializes a new instance of the <see cref="ConfigParser" /> class.
         /// </summary>
         /// <param name="configFile">The configuration file.</param>
         /// <param name="settings">The settings.</param>
         /// <exception cref="ArgumentException">configFile</exception>
-        public ConfigParser(string configFile, ConfigParserSettings settings)
+        public ConfigParser(string configFile, ConfigParserSettings settings = null)
         {
             if (string.IsNullOrWhiteSpace(configFile)) throw new ArgumentException(nameof(configFile));
 
