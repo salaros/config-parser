@@ -439,7 +439,7 @@ namespace Salaros.Config
                     ? null
                     : sections
                         ?.FirstOrDefault(s => sectionName.Equals(s.Key, StringComparison.InvariantCultureIgnoreCase))
-                        .Value;
+                        .Value ?? new ConfigSection(sectionName);
             }
         }
 
