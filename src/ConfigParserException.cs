@@ -12,19 +12,25 @@ namespace Salaros.Config
         /// <param name="lineNumber">Line number.</param>
         /// <param name="innterException">Inner exception.</param>
         public ConfigParserException(string message, int lineNumber = -1, Exception innterException = null)
-            :base(message, innterException)
+            : base(message, innterException)
         {
             LineNumber = lineNumber;
+            Message = (lineNumber < 0)
+                ? message
+                : $"{message}. On the line no. #{lineNumber}.";
         }
 
         /// <summary>
         /// Gets the line number.
         /// </summary>
         /// <value>The line number.</value>
-        public int LineNumber
-        {
-            get;
-        }
+        public int LineNumber { get; }
+
+        /// <inheritdoc />
+        /// <summary>
+        /// Gets a message that describes the current exception.
+        /// </summary>
+        public override string Message { get; }
     }
 }
 

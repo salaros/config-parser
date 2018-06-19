@@ -629,7 +629,7 @@ namespace Salaros.Config
                             break;
 
                         default:
-                            throw new ConfigParserException($"Unknown element at line {lineNumber}", lineNumber);
+                            throw new ConfigParserException("Unknown element found!", lineNumber);
                     }
                 }
 
@@ -695,7 +695,7 @@ namespace Salaros.Config
                 BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
 
             if (append && null == currentLine)
-                throw new ConfigParserException($"You are trying to append value to a null line!", lineNumber);
+                throw new ConfigParserException("You are trying to append value to a null line!", lineNumber);
 
             var keyMatch = Settings.KeyMatcher.Match(lineRaw);
             var keyName = keyMatch.Groups["key"]?.Value;
@@ -726,7 +726,7 @@ namespace Salaros.Config
                     break;
 
                 default:
-                    throw new ConfigParserException($"Unknown key=value situation on {lineNumber} line", lineNumber);
+                    throw new ConfigParserException("Unknown key=value situation detected!", lineNumber);
             }
 
             if (append)
