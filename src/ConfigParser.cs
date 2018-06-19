@@ -37,7 +37,7 @@ namespace Salaros.Config
             if (File.Exists(configFile))
             {
                 fileInfo = new FileInfo(configFile);
-                Settings.Encoding = Settings.Encoding ?? fileInfo.GetEncoding();
+                Settings.Encoding = Settings.Encoding ?? fileInfo.GetEncoding() ?? new UTF8Encoding(false, false);
                 Settings.NewLine = fileInfo.DetectNewLine(configFile);
             }
 
@@ -474,7 +474,7 @@ namespace Salaros.Config
                 {
                     using (var writer = new StreamWriter(
                             fileWriter,
-                            Encoding.UTF8,
+                            Settings.Encoding ?? new UTF8Encoding(false, false),
                             4096
 #if !NET40
                         , true
