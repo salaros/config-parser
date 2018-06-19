@@ -59,7 +59,7 @@ namespace Salaros.Config
 
             configFile = File.ReadAllText(configFile, Settings.Encoding);
             if (!string.IsNullOrWhiteSpace(configFile))
-            Read(configFile);
+                Read(configFile);
         }
 
         #endregion Constructor
@@ -425,6 +425,18 @@ namespace Salaros.Config
         public virtual bool SetValue(string sectionName, string keyName, bool value,
             BooleanConverter booleanConverter = null)
         {
+            var booleanValue = GetRawValue<string>(sectionName, keyName, null);
+            // ReSharper disable once InvertIf
+            if (!string.IsNullOrWhiteSpace(booleanValue))
+            {
+                // Check if current value matches one of boolean converters
+                foreach (var converter in YesNoBoolConverters)
+                {
+                    if (Equals(converter.Yes, booleanValue.Trim()) || Equals(converter.No, booleanValue.Trim()))
+                        return SetValue(sectionName, keyName, value ? converter.Yes : converter.No);
+                }
+            }
+
             return SetValue(sectionName, keyName, (null == booleanConverter)
                 ? value.ToString(Settings.Culture ?? CultureInfo.InvariantCulture).ToLowerInvariant()
                 : booleanConverter.ConvertToString(value)
