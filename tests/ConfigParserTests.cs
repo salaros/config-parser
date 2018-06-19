@@ -324,6 +324,9 @@ namespace Salaros.Config.Tests
             Assert.False(configFileEnglish.GetValue(enDisSection, "sampleOff", true));                  // sampleOff=Off
         }
 
+        /// <summary>
+        /// Checks if boolean values are written correctly.
+        /// </summary>
         [Fact]
         public void BooleanValuesAreWrittenCorrectly()
         {
@@ -386,6 +389,9 @@ namespace Salaros.Config.Tests
             Assert.Equal(9.3D, configFileItalian.GetValue("ItalianLocalized", "withComa", 0D));         // withComa = 9,3
         }
 
+        /// <summary>
+        /// Checks if encoding setting works correctly.
+        /// </summary>
         [Fact]
         public void EncodingSettingWorksCorrectly()
         {
