@@ -562,7 +562,7 @@ namespace Salaros.Config
             {
                 Logger?.Fatal(ex.Message);
                 throw new ConfigParserException(
-                    $"Failed to write IniParser content to the following file: '{fileInfo.FullName}'", -1, ex);
+                    $"Failed to write {nameof(ConfigParser)} content to the following file: '{fileInfo.FullName}'", -1, ex);
             }
         }
 

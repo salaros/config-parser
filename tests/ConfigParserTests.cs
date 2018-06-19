@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Salaros.Config.Tests
 {
-    public class IniParserTests
+    public class ConfigParserTests
     {
         private static readonly string[] RealWorldConfigFiles;
         private static readonly string[] StructureSampleFiles;
@@ -17,9 +17,9 @@ namespace Salaros.Config.Tests
         private static readonly string[] EncodingSampleFiles;
 
         /// <summary>
-        /// Initializes the <see cref="IniParserTests"/> class.
+        /// Initializes the <see cref="ConfigParserTests"/> class.
         /// </summary>
-        static IniParserTests()
+        static ConfigParserTests()
         {
             // Allow the usage of ANSI encoding other than the default one 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
