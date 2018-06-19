@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -20,6 +20,9 @@ namespace Salaros.Config.Tests
         /// </summary>
         static IniParserTests()
         {
+            // Allow the usage of ANSI encoding other than the default one 
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             RealWorldConfigFiles = Directory
                 .GetFiles(Path.Combine(Environment.CurrentDirectory, "Resources", "RealWorld"))
                 .Where(f => !f.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
