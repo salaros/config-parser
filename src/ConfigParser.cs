@@ -186,6 +186,8 @@ namespace Salaros.Config
         public virtual bool GetValue(string sectionName, string keyName, bool defaultValue,
             BooleanConverter booleanConverter = null)
         {
+            booleanConverter = booleanConverter ?? Settings.BooleanConverter;
+
             var booleanValue = GetRawValue<string>(sectionName, keyName, null);
             if (string.IsNullOrWhiteSpace(booleanValue))
             {
@@ -196,13 +198,6 @@ namespace Salaros.Config
                         ? defaultValue.ToString(Settings.Culture).ToLowerInvariant()
                         : booleanConverter.ConvertToString(defaultValue));
                 return defaultValue;
-            }
-
-            if (booleanConverter != null && booleanConverter.CanConvertFrom(typeof(string)))
-            {
-                var value = booleanConverter.ConvertFrom(booleanValue);
-                if (value is bool convertedBoolean)
-                    return convertedBoolean;
             }
 
 #pragma warning disable IDE0046 // Convert to conditional expression
@@ -216,14 +211,21 @@ namespace Salaros.Config
             }
 #pragma warning restore IDE0046 // Convert to conditional expression
 
-            return bool.TryParse(booleanValue, out var parseBoolean)
-                ? parseBoolean
-                // if some day Boolean.ToString(IFormatProvider) will work 
-                // https://msdn.microsoft.com/en-us/library/s802ct92(v=vs.110).aspx#Anchor_1
-                : true.ToString(Settings.Culture).ToLowerInvariant().Equals(
-                    booleanValue,
-                    StringComparison.InvariantCultureIgnoreCase
-                );
+            if(bool.TryParse(booleanValue, out var parseBoolean))
+                return parseBoolean;
+
+            // if some day Boolean.ToString(IFormatProvider) will work 
+            // https://msdn.microsoft.com/en-us/library/s802ct92(v=vs.110).aspx#Anchor_1
+            if (true.ToString(Settings.Culture).ToLowerInvariant().Equals(booleanValue, StringComparison.InvariantCultureIgnoreCase))
+                return true;
+
+            if (booleanConverter == null || !booleanConverter.CanConvertFrom(typeof(string))) 
+                return defaultValue;
+
+            var value = booleanConverter.ConvertFrom(booleanValue);
+            return value is bool convertedBoolean
+                ? convertedBoolean
+                : defaultValue;
         }
 
         /// <summary>
@@ -437,6 +439,7 @@ namespace Salaros.Config
                 }
             }
 
+            booleanConverter = booleanConverter ?? Settings.BooleanConverter;
             return SetValue(sectionName, keyName, (null == booleanConverter)
                 ? value.ToString(Settings.Culture ?? CultureInfo.InvariantCulture).ToLowerInvariant()
                 : booleanConverter.ConvertToString(value)

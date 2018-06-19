@@ -281,9 +281,14 @@ namespace Salaros.Config.Tests
                     Encoding = Encoding.UTF8,
                     // if some day Boolean.ToString(IFormatProvider) will work 
                     // https://msdn.microsoft.com/en-us/library/s802ct92(v=vs.110).aspx#Anchor_1
-                    Culture = new CultureInfo("en-US")
+                    Culture = new CultureInfo("en-US"),
+                    BooleanConverter = new YesNoConverter("vero", "falso")
                 }
             );
+
+            const string valoriItaliani = "ValoriItaliani";                                             // [ValoriItaliani]
+            Assert.True(configFileEnglish.GetValue(valoriItaliani, "positivo", false));                 // positivo = vero
+            Assert.False(configFileEnglish.GetValue(valoriItaliani, "sampleOff", true));                // sampleOff = falso
 
             const string simpleSection = "Simple";                                                      // [Simple]
             Assert.False(configFileEnglish.GetValue(simpleSection, "empty", false));                    // empty=

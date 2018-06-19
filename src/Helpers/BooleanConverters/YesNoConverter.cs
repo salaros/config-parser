@@ -64,11 +64,13 @@ namespace Salaros.Config
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             var booleanText = value as string;
-            return no.Equals(booleanText, StringComparison.OrdinalIgnoreCase) 
-                ? false 
-                : yes.Equals(booleanText, StringComparison.OrdinalIgnoreCase)
-                ? true 
-                : base.ConvertFrom(context, culture, value);
+            if (no.Equals(booleanText, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            if (yes.Equals(booleanText, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return null;
         }
 
         /// <summary>

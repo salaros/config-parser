@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -42,6 +43,14 @@ namespace Salaros.Config
         /// The encoding.
         /// </value>
         public Encoding Encoding { get; set; } = null;
+
+        /// <summary>
+        /// Gets or sets the boolean converter.
+        /// </summary>
+        /// <value>
+        /// The boolean converter.
+        /// </value>
+        public BooleanConverter BooleanConverter { get; set; } = null;
 
         /// <summary>
         /// Gets the new line string.
