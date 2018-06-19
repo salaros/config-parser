@@ -346,7 +346,8 @@ namespace Salaros.Config.Tests
                     File.ReadAllText(realConfigSettingsPath),
                     new JsonSerializerSettings
                     {
-                        ContractResolver = new MultiLineValuesResolver()
+                        ContractResolver = new ConfigParserSettingsResolver(),
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     });
             }
             catch(Exception ex)
