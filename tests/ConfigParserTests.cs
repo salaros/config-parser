@@ -294,23 +294,34 @@ namespace Salaros.Config.Tests
 
             // ReSharper disable once RedundantArgumentDefaultValue
             var yesNoConverter = new YesNoConverter(
-                "yes",
-                // ReSharper disable once RedundantArgumentDefaultValue
+                "yes", // ReSharper disable once RedundantArgumentDefaultValue
                 "no"
             );
             const string yesNoSection = "YesNo";                                                        // [YesNo]
             Assert.True(configFileEnglish.GetValue(yesNoSection, "sampleYes", false, yesNoConverter));  // sampleYes=Yes
             Assert.False(configFileEnglish.GetValue(yesNoSection, "sampleNo", true, yesNoConverter));   // sampleNo=no
-
             var onOffConverter = new YesNoConverter("on", "off");
             const string onOffSection = "OnOff";                                                        // [OnOff]
             Assert.True(configFileEnglish.GetValue(onOffSection, "sampleOn", false, onOffConverter));   // sampleOn=on
             Assert.False(configFileEnglish.GetValue(onOffSection, "sampleOff", true, onOffConverter));  // sampleOff=Off
-
             var enDisConverter = new YesNoConverter("Enabled", "Disabled");
             const string enDisSection = "EnabledDisabled";                                              // [EnabledDisabled]
             Assert.True(configFileEnglish.GetValue(enDisSection, "sampleOn", false, enDisConverter));   // sampleOn=on
             Assert.False(configFileEnglish.GetValue(enDisSection, "sampleOff", true, enDisConverter));  // sampleOff=Off
+
+            // =========================================================================================
+            // +++++++++   Wow, boolean values parsed auto-magically: look mum no converters   +++++++++
+            // =========================================================================================// [YesNo]
+            Assert.True(configFileEnglish.GetValue(yesNoSection, "sampleYes", false));                  // sampleYes=Yes
+            Assert.False(configFileEnglish.GetValue(yesNoSection, "sampleNo", true));                   // sampleNo=no
+
+            //                                                                                          // [OnOff]
+            Assert.True(configFileEnglish.GetValue(onOffSection, "sampleOn", false));                   // sampleOn=on
+            Assert.False(configFileEnglish.GetValue(onOffSection, "sampleOff", true));                  // sampleOff=Off
+
+            //                                                                                          // [EnabledDisabled]
+            Assert.True(configFileEnglish.GetValue(enDisSection, "sampleOn", false));                   // sampleOn=on
+            Assert.False(configFileEnglish.GetValue(enDisSection, "sampleOff", true));                  // sampleOff=Off
         }
 
         /// <summary>
