@@ -377,10 +377,14 @@ namespace Salaros.Config
         /// <param name="sectionName">Name of the section.</param>
         /// <param name="keyName">Name of the key.</param>
         /// <param name="value">if set to <c>true</c> [value].</param>
+        /// <param name="booleanConverter">The boolean converter.</param>
         /// <returns></returns>
-        public virtual bool SetValue(string sectionName, string keyName, bool value)
+        public virtual bool SetValue(string sectionName, string keyName, bool value, BooleanConverter booleanConverter = null)
         {
-            return SetValue(sectionName, keyName, (value) ? "1" : "0");
+            return SetValue(sectionName, keyName, (null == booleanConverter) 
+                ? value.ToString(Settings.Culture ?? CultureInfo.InvariantCulture)
+                : booleanConverter.ConvertToString(value)
+            );
         }
 
         /// <summary>
