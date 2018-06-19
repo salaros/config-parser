@@ -397,7 +397,7 @@ namespace Salaros.Config
         public virtual bool SetValue(string sectionName, string keyName, bool value, BooleanConverter booleanConverter = null)
         {
             return SetValue(sectionName, keyName, (null == booleanConverter) 
-                ? value.ToString(Settings.Culture ?? CultureInfo.InvariantCulture)
+                ? value.ToString(Settings.Culture ?? CultureInfo.InvariantCulture).ToLowerInvariant()
                 : booleanConverter.ConvertToString(value)
             );
         }
