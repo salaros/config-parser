@@ -37,7 +37,7 @@ namespace Salaros.Config
             if (File.Exists(configFile))
             {
                 fileInfo = new FileInfo(configFile);
-                Settings.Encoding = Settings.Encoding ?? fileInfo.GetEncoding() ?? new UTF8Encoding(false, false);
+                Settings.Encoding = Settings.Encoding ?? fileInfo.GetEncoding(true);
                 Settings.NewLine = fileInfo.DetectNewLine(configFile);
             }
 
