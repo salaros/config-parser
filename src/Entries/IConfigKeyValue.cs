@@ -19,14 +19,6 @@
         object ValueRaw { get; set; }
 
         /// <summary>
-        /// Gets the raw content of the line.
-        /// </summary>
-        /// <value>
-        /// The raw content of the line.
-        /// </value>
-        string Content { get; }
-
-        /// <summary>
         /// Gets the name of the section.
         /// </summary>
         /// <value>
