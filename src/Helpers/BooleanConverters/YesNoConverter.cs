@@ -10,14 +10,25 @@ namespace Salaros.Config
     {
         protected readonly string yes, no;
 
-        /// <inheritdoc />
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Salaros.Config.YesNoConverter" /> class.
         /// </summary>
         /// <param name="yes">The yes.</param>
         /// <param name="no">The no.</param>
+        /// <exception cref="ArgumentException">
+        /// yes
+        /// or
+        /// no
+        /// or
+        /// </exception>
+        /// <inheritdoc />
         public YesNoConverter(string yes = "yes", string no = "no")
         {
+            if (string.IsNullOrWhiteSpace(yes)) throw new ArgumentException(nameof(yes));
+            if (string.IsNullOrWhiteSpace(no)) throw new ArgumentException(nameof(no));
+            if (Equals(yes, no))
+                throw new ArgumentException($"Yes ({yes}) and No ({no}) values must be two different values!");
+
             this.yes = yes;
             this.no = no;
         }
