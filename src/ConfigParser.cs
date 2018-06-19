@@ -405,10 +405,13 @@ namespace Salaros.Config
         /// <param name="sectionName">Name of the section.</param>
         /// <param name="keyName">Name of the key.</param>
         /// <param name="value">The value.</param>
+        /// <param name="customFormat">The custom format.</param>
         /// <returns></returns>
-        public virtual bool SetValue(string sectionName, string keyName, double value)
+        public virtual bool SetValue(string sectionName, string keyName, double value, string customFormat = null)
         {
-            return SetValue(sectionName, keyName, value.ToString(CultureInfo.InvariantCulture));
+            return string.IsNullOrWhiteSpace(customFormat)
+                ? SetValue(sectionName, keyName, value.ToString(Settings.Culture ?? CultureInfo.InvariantCulture))
+                : SetValue(sectionName, keyName, value.ToString(customFormat));
         }
 
         /// <summary>
