@@ -50,16 +50,20 @@ namespace System.IO
                     encoding = Encoding.UTF7;
                     break;
 
-                case var utf32 when 0 == utf32[0] && 0 == utf32[1] && 0xFE == utf32[2] && 0xFF == utf32[3]:
-                    encoding = Encoding.UTF32;
+                case var utf32 when 0x00 == utf32[0] && 0x00 == utf32[1] && 0xFE == utf32[2] && 0xFF == utf32[3]:
+                    encoding = Encoding.GetEncoding(12001); // UTF-32, big endian byte order; available only to managed applications
+                    break;
+
+                case var utf32 when 0xFF == utf32[0] && 0xFE == utf32[1] && 0x00 == utf32[2] && 0x00 == utf32[3]:
+                    encoding = Encoding.GetEncoding(12000); // UTF-32, little endian byte order; available only to managed applications
                     break;
 
                 case var unicode when 0xFE == unicode[0] && 0xFF == unicode[1]:
-                    encoding = Encoding.GetEncoding(1201);  // 1201 unicodeFFFE Unicode (UTF-16BE)
+                    encoding = Encoding.GetEncoding(1201); // 1201 unicodeFFFE Unicode (UTF-16BE aka Unicode big endian)
                     break;
 
                 case var unicode when 0xFF == unicode[0] && 0xFE == unicode[1]:
-                    encoding = Encoding.GetEncoding(1200); // 1200 UTF-16 Unicode (UTF-16LE)
+                    encoding = Encoding.GetEncoding(1200); // 1200 UTF-16 Unicode (UTF-16LE aka Unicode little endian)
                     break;
 
                 case var utf8 when HasBomMarker(utf8):
@@ -71,7 +75,7 @@ namespace System.IO
                     break;
 
                 case var _ when file.IsInAnsiLatin1():
-                    encoding = Encoding.GetEncoding(1252); // UTF-8 without BOM
+                    encoding = Encoding.GetEncoding(1252); // ANSI Latin
                     break;
 
                 default:
