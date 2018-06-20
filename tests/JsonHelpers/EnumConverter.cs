@@ -52,7 +52,6 @@ namespace Koopman.CheckPoint.Json
     /// </summary>
     internal class EnumConverter : JsonConverter
     {
-        private Type type;
         #region Constructors
 
         /// <summary>
