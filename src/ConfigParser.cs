@@ -55,9 +55,9 @@ namespace Salaros.Config
                 fileInfo = new FileInfo(configFile);
                 Settings.Encoding = Settings.Encoding ?? fileInfo.GetEncoding(true);
                 Settings.NewLine = fileInfo.DetectNewLine(configFile);
+                configFile = File.ReadAllText(configFile, Settings.Encoding ?? Encoding.UTF8);
             }
 
-            configFile = File.ReadAllText(configFile, Settings.Encoding);
             if (!string.IsNullOrWhiteSpace(configFile))
                 Read(configFile);
         }
