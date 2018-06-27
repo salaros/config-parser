@@ -3,8 +3,6 @@
     public class ConfigLine : IConfigLine
     {
         protected int lineNumber;
-        protected string lineContent;
-        protected ConfigSection section;
 
         #region Constructor
 
@@ -15,7 +13,7 @@
         /// <param name="lineContent">Raw line content.</param>
         public ConfigLine(int lineNumber = -1, string lineContent = "")
         {
-            this.lineContent = lineContent;
+            Content = lineContent;
             this.lineNumber = lineNumber;
         }
 
@@ -46,23 +44,21 @@
         /// Gets the raw content of the line.
         /// </summary>
         /// <value>The raw content of the line.</value>
-        public virtual string Content
-        {
-            get => lineContent;
-            internal set => lineContent = value;
-        }
+        public string Content { get; internal set; }
 
         #endregion
 
-        #region IIniSectionLine implementation
-
+        /// <inheritdoc />
+        /// <summary>
+        /// Gets the section.
+        /// </summary>
+        /// <value>
+        /// The section.
+        /// </value>
         public ConfigSection Section
         {
-            get => section;
-            internal set => section = value;
+            get;  internal set;
         }
-
-        #endregion
 
         #endregion
 

@@ -82,6 +82,15 @@ namespace Salaros.Config
 
         /// <inheritdoc />
         /// <summary>
+        /// Gets the section.
+        /// </summary>
+        /// <value>
+        /// The section.
+        /// </value>
+        public ConfigSection Section => this;
+
+	    /// <inheritdoc />
+        /// <summary>
         /// Returns a <see cref="T:System.String" /> that represents this instance.
         /// </summary>
         /// <param name="multiLineSettings">The multi line settings.</param>

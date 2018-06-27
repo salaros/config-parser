@@ -71,21 +71,7 @@ namespace Salaros.Config
         /// </value>
         public object ValueRaw
         {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets the raw content of the line.
-        /// </summary>
-        /// <value>
-        /// The raw content of the line.
-        /// </value>
-        /// ReSharper disable once InheritdocConsiderUsage
-        public override string Content
-        {
-            get => ValueRaw?.ToString();
-            internal set => ValueRaw = value;
+            get; set;
         }
 
         /// <inheritdoc />
@@ -95,7 +81,20 @@ namespace Salaros.Config
         /// <value>
         /// The name of the section.
         /// </value>
-        public string SectionName => (Section == null) ? string.Empty : Section.SectionName;
+        public string SectionName => Section?.SectionName;
+
+        /// <summary>
+        /// Gets the raw content of the line.
+        /// </summary>
+        /// <value>
+        /// The raw content of the line.
+        /// </value>
+        /// ReSharper disable once InheritdocConsiderUsage
+        public new string Content
+        {
+            get => ValueRaw?.ToString();
+            internal set => ValueRaw = value;
+        }
 
         #endregion
 

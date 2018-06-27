@@ -15,6 +15,14 @@
         string Content { get; }
 
         /// <summary>
+        /// Gets the section.
+        /// </summary>
+        /// <value>
+        /// The section.
+        /// </value>
+        ConfigSection Section { get; }
+
+        /// <summary>
         /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <param name="multiLineSettings">The multi line settings.</param>
