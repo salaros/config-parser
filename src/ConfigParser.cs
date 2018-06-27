@@ -36,7 +36,7 @@ namespace Salaros.Config
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConfigParser" /> class.
+        /// Initializes a new instance of the <see cref="ConfigParser"/> class.
         /// </summary>
         /// <param name="settings">The settings.</param>
         public ConfigParser(ConfigParserSettings settings = null)
@@ -161,6 +161,8 @@ namespace Salaros.Config
             if (!sections.TryGetValue(sectionName, out var section))
             {
                 section = new ConfigSection(sectionName, Lines.Any() ? Lines.Max(l => l.LineNumber) : 0);
+                if (Sections.Any())
+                    Sections.Last().AddLine(new ConfigLine());
                 sections.Add(sectionName, section);
                 section.AddLine(iniKey);
                 return defaultValue;
