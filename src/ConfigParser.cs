@@ -38,17 +38,26 @@ namespace Salaros.Config
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigParser" /> class.
         /// </summary>
-        /// <param name="configFile">The configuration file.</param>
         /// <param name="settings">The settings.</param>
-        /// <exception cref="ArgumentException">configFile</exception>
-        public ConfigParser(string configFile, ConfigParserSettings settings = null)
+        public ConfigParser(ConfigParserSettings settings = null)
         {
-            if (string.IsNullOrWhiteSpace(configFile)) throw new ArgumentException(nameof(configFile));
+            Settings = settings ?? new ConfigParserSettings();
 
             fileHeader = new ConfigSection();
             sections = new Dictionary<string, ConfigSection>();
+        }
 
-            Settings = settings ?? new ConfigParserSettings();
+        /// <inheritdoc />
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Salaros.Config.ConfigParser" /> class.
+        /// </summary>
+        /// <param name="configFile">The configuration file.</param>
+        /// <param name="settings">The settings.</param>
+        /// <exception cref="T:System.ArgumentException">configFile</exception>
+        public ConfigParser(string configFile, ConfigParserSettings settings = null)
+            : this(settings)
+        {
+            if (string.IsNullOrWhiteSpace(configFile)) throw new ArgumentException(nameof(configFile));
 
             if (File.Exists(configFile))
             {
