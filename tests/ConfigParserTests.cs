@@ -539,6 +539,7 @@ namespace Salaros.Config.Tests
             {
                 Encoding = Encoding.Unicode,
                 NewLine = "\n",
+                Culture = CultureInfo.InvariantCulture
             });
 
             configFileFromMem.GetValue("section1", "string", "value");
@@ -548,7 +549,10 @@ namespace Salaros.Config.Tests
             var fromScratchFile = StructureSampleFiles
                 .FirstOrDefault(f => f.EndsWith("from-scratch.conf", StringComparison.OrdinalIgnoreCase));
             Assert.NotNull(fromScratchFile);
-            Assert.Equal(File.ReadAllText(fromScratchFile), configFileFromMem.ToString());
+
+            var configContentFromDisk = File.ReadAllText(fromScratchFile);
+            var configContentBuild = configFileFromMem.ToString();
+            Assert.Equal(configContentFromDisk, configContentBuild);
         }
 
         /// <summary>
