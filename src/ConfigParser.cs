@@ -604,10 +604,10 @@ namespace Salaros.Config
         /// </returns>
         public override string ToString()
         {
-            var fileLines = new StringBuilder();
-            foreach (var line in Lines.ToList())
-                fileLines.AppendLine(line.ToString(Settings.MultiLineValues));
-            return fileLines.ToString();
+            return string.Join(
+                Settings.NewLine ?? Environment.NewLine,
+                Lines.Select(l => l.ToString(Settings.MultiLineValues))
+            );
         }
 
         #endregion
