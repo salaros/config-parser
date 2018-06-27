@@ -551,5 +551,70 @@ namespace Salaros.Config.Tests
             Assert.Equal(File.ReadAllText(fromScratchFile), configFileFromMem.ToString());
         }
 
+        /// <summary>
+        /// Checks if configuration file parsed from string works.
+        /// </summary>
+        [Fact]
+        public void ParsingConfigFileStringWorks()
+        {
+            var configFileFromString = new ConfigParser(@"
+                [Strings]
+                    canBeIndented = value
+                andQuoted = ""quotes will be stripped""
+
+                [Numbers]
+                withD = 0.6D
+                dollars = $2,999
+
+                [boolean]
+                numericTrue = 1
+                textFalse = true
+                yesWorks = yes
+                upperCaseWorks = on
+                worksAsWell = Enabled
+
+                [Advanced]
+                arrayWorkToo =
+                    arrayElement1
+                    arrayElement2
+                valueLessKey",
+                new ConfigParserSettings
+                {
+                    MultiLineValues = MultiLineValues.Simple | MultiLineValues.AllowValuelessKeys | MultiLineValues.QuoteDelimitedValues,
+                    Culture = new CultureInfo("en-US"),
+                    
+                }
+            );
+
+            // value
+            Assert.Equal("value", configFileFromString.GetValue("Strings", "canBeIndented"));
+
+            // quotes will be stripped
+            Assert.Equal("quotes will be stripped", configFileFromString.GetValue("Strings", "andQuoted"));
+
+            // 0.6
+            Assert.Equal(0.6D, configFileFromString.GetValue("Numbers", "withD", 0D));
+
+            // 2999
+            Assert.Equal(2999D, configFileFromString.GetValue("Numbers", "dollars", 0D,
+                NumberStyles.AllowCurrencySymbol));
+
+            // $2,999
+            Assert.Equal("$2,999", configFileFromString.GetValue("Numbers", "dollars"));
+
+            // all "True"
+            Assert.True(configFileFromString.GetValue("boolean", "numericTrue", false));
+            Assert.True(configFileFromString.GetValue("boolean", "textFalse", false));
+            Assert.True(configFileFromString.GetValue("boolean", "yesWorks", false));
+            Assert.True(configFileFromString.GetValue("boolean", "upperCaseWorks", false));
+            Assert.True(configFileFromString.GetValue("boolean", "worksAsWell", false));
+
+            // ["arrayElement1","arrayElement2"]
+            Assert.Equal(new[] { "arrayElement1", "arrayElement2" },
+                configFileFromString.GetArrayValue("Advanced", "arrayWorkToo"));
+
+            // null
+            Assert.Null(configFileFromString.GetValue("Advanced", "valueLessKey"));
+        }
     }
 }
