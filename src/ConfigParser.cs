@@ -18,6 +18,7 @@ namespace Salaros.Config
         protected FileInfo fileInfo;
 
         private static readonly YesNoConverter[] YesNoBoolConverters;
+        public static readonly string[] InvalidConfigFileChars;
 
         #region Constructor
 
@@ -33,6 +34,11 @@ namespace Salaros.Config
                 new YesNoConverter("on", "off"),
                 new YesNoConverter("enabled", "disabled")
             };
+
+            InvalidConfigFileChars = new[] {"\r\n", "\n", "\r"}
+                .Concat(Path.GetInvalidPathChars().Select(c => c.ToString()))
+                .Distinct()
+                .ToArray();
         }
 
         /// <summary>
@@ -61,7 +67,8 @@ namespace Salaros.Config
 
             try
             {
-                fileInfo = new FileInfo(configFile);
+                if (!InvalidConfigFileChars.Any(c => configFile.Contains(c)))
+                    fileInfo = new FileInfo(configFile);
             }
             finally
             {
