@@ -82,27 +82,27 @@ Usage
 var configFileFromPath = new ConfigParser(@"path\to\configfile.cnf");
 
 // Parse text
-var configFileFromString = new ConfigParser(
-    "[Strings]\n" +
-    "   canBeIndented = value\n" +
-    "andQuoted = \"quotes will be stripped\"\n" +
-    "\n" +
-    "[Numbers]\n" +
-    "withD = 0.6D\n" +
-    "dollars = $2,999\n" +
-    // No space between sections
-    "[boolean]\n" +
-    "numericTrue = 1\n" +
-    "textFalse = true\n" +
-    "yesWorks = yes\n" +
-    "upperCaseWorks = on\n" +
-    "worksAsWell = Enabled\n" +
-    "\n" +
-    "[Advanced]\n" +
-    "arrayWorkToo =\n" +
-    "   arrayElement1\n" +
-    "   arrayElement2\n" +
-    "valueLessKey",
+var configFileFromString = new ConfigParser(@"
+    [Strings]
+        canBeIndented = value
+    andQuoted = ""quotes will be stripped""
+
+    [Numbers]
+    withD = 0.6D
+    dollars = $2,999
+
+    [boolean]
+    numericTrue = 1
+    textFalse = true
+    yesWorks = yes
+    upperCaseWorks = on
+    worksAsWell = Enabled
+
+    [Advanced]
+    arrayWorkToo =
+        arrayElement1
+        arrayElement2
+    valueLessKey",
     new ConfigParserSettings
     {
         MultiLineValues = MultiLineValues.Simple | MultiLineValues.AllowValuelessKeys | MultiLineValues.QuoteDelimitedValues,
