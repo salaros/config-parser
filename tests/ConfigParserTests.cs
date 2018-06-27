@@ -529,5 +529,27 @@ namespace Salaros.Config.Tests
             }
         }
 
+        /// <summary>
+        /// Checks if file built from scratch works.
+        /// </summary>
+        [Fact]
+        public void FileBuiltFromScratchWorks()
+        {
+            var configFileFromMem = new ConfigParser(new ConfigParserSettings
+            {
+                Encoding = Encoding.Unicode,
+                NewLine = "\n",
+            });
+
+            configFileFromMem.GetValue("section1", "string", "value");
+            configFileFromMem.GetValue("section2", "bool", true);
+            configFileFromMem.GetValue("section3", "doble", 00000.2);
+
+            var fromScratchFile = StructureSampleFiles
+                .FirstOrDefault(f => f.EndsWith("from-scratch.conf", StringComparison.OrdinalIgnoreCase));
+            Assert.NotNull(fromScratchFile);
+            Assert.Equal(File.ReadAllText(fromScratchFile), configFileFromMem.ToString());
+        }
+
     }
 }
