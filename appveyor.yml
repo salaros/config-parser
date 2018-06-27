@@ -22,7 +22,7 @@ environment:
   VERSION_INFORMATIONAL: '{version}'
   VERSION_UNSTABLE_SUFFIX: 'preview'
   COVERALLS_REPO_TOKEN:
-    secure: 9iA9d5GcWja7EnS3gFvbTMrhyKrzjW3pcYuQ/HHaEJjjMY5VR/e4mQ0uNk+fWaAA
+    secure: SwUOMUwmhBrcTwFa+ySSMLZ9c6G9nD/J2TJzYt/ZPiR9v2zGgKrN9UCswn1IIYKx
   APPVEYOR_TOKEN:
     secure: LtoVAPATN9iTCl1zkCvEktqP92QSEEngyS3vqG3GphE=
 
