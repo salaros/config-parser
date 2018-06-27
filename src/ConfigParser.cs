@@ -622,6 +622,13 @@ namespace Salaros.Config
                             ReadKeyAndValue(ref currentSection, ref currentLine, lineRaw, lineNumber);
                             break;
 
+                        case var _ when Settings.ValueMatcher.IsMatch(lineRaw) &&
+                                        Settings.MultiLineValues.HasFlag(MultiLineValues.AllowValuelessKeys) &&
+                                        Settings.MultiLineValues.HasFlag(MultiLineValues.Simple) &&
+                                        lineRaw.TrimStart(' ', '\t').Length != lineRaw.Length:
+                            AppendValueToKey(ref currentSection, ref currentLine, lineRaw, lineNumber);
+                            break;
+
                         case var _ when Settings.ValueMatcher.IsMatch(lineRaw):
                             if (Settings.MultiLineValues.HasFlag(MultiLineValues.AllowValuelessKeys))
                                 ReadValuelessKey(ref currentSection, ref currentLine, lineRaw, lineNumber);
