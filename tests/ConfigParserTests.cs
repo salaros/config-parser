@@ -510,5 +510,24 @@ namespace Salaros.Config.Tests
                 return null;
             }
         }
+
+        /// <summary>
+        /// Checks if non-existing file works.
+        /// </summary>
+        [Fact]
+        public void NonExistingFileWorks()
+        {
+            ConfigParser configFileFromMem = null;
+            try
+            {
+                var notExistingFilePath = $"{Path.GetTempFileName()}.conf";
+                configFileFromMem = new ConfigParser(notExistingFilePath);
+            }
+            finally
+            {
+                Assert.NotNull(configFileFromMem);
+            }
+        }
+
     }
 }

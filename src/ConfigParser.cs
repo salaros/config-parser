@@ -59,12 +59,23 @@ namespace Salaros.Config
         {
             if (string.IsNullOrWhiteSpace(configFile)) throw new ArgumentException(nameof(configFile));
 
-            if (File.Exists(configFile))
+            try
             {
                 fileInfo = new FileInfo(configFile);
-                Settings.Encoding = Settings.Encoding ?? fileInfo.GetEncoding(true);
-                Settings.NewLine = fileInfo.DetectNewLine(configFile);
-                configFile = File.ReadAllText(configFile, Settings.Encoding ?? Encoding.UTF8);
+            }
+            finally
+            {
+                if (null != fileInfo)
+                {
+                    if (fileInfo.Exists)
+                    {
+                        Settings.Encoding = Settings.Encoding ?? fileInfo.GetEncoding(true);
+                        Settings.NewLine = fileInfo.DetectNewLine(configFile);
+                        configFile = File.ReadAllText(configFile, Settings.Encoding ?? Encoding.UTF8);
+                    }
+                    else
+                        configFile = string.Empty;
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(configFile))
