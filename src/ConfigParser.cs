@@ -170,7 +170,7 @@ namespace Salaros.Config
         /// <param name="keyName">Name of the key.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <returns></returns>
-        public virtual string GetValue(string sectionName, string keyName, string defaultValue)
+        public virtual string GetValue(string sectionName, string keyName, string defaultValue = null)
         {
             return GetRawValue(sectionName, keyName, defaultValue);
         }
