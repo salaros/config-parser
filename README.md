@@ -33,7 +33,9 @@ Features
 
 ## Read and preserved
 
-- [x] comment lines
+- [x] file header comments
+- [x] config files with no sections (like in this [SectionName]) or even mixed: first section has no header, just keys
+- [x] comments in general
 - [x] section comments
 - [x] empty lines
 - [x] indented sections
