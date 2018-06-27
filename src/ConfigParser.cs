@@ -250,7 +250,7 @@ namespace Salaros.Config
             if (!string.IsNullOrWhiteSpace(integerRaw))
                 return int.TryParse(integerRaw, numberStyles, Settings.Culture, out var integerParsed)
                     ? integerParsed
-                    : int.Parse(integerRaw); // yeah, throws format exception by design
+                    : int.Parse(integerRaw, numberStyles, Settings.Culture); // yeah, throws format exception by design
 
             SetValue(sectionName, keyName, defaultValue);
             return defaultValue;
@@ -284,10 +284,11 @@ namespace Salaros.Config
             if (doubleRaw.Contains("E") && !numberStyles.HasFlag(NumberStyles.AllowExponent))
                 numberStyles = numberStyles | NumberStyles.AllowExponent;
 
-            return double.TryParse(doubleRaw.TrimEnd('d', 'D', 'f', 'F'), numberStyles, Settings.Culture,
+            doubleRaw = doubleRaw.TrimEnd('d', 'D', 'f', 'F');
+            return double.TryParse(doubleRaw, numberStyles, Settings.Culture,
                 out var parsedDouble)
                 ? parsedDouble
-                : double.Parse(doubleRaw); // yeah, throws format exception by design
+                : double.Parse(doubleRaw, numberStyles, Settings.Culture); // yeah, throws format exception by design
         }
 
         /// <summary>
