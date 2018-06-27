@@ -8,7 +8,7 @@ namespace Salaros.Config
     public class ConfigSection : IConfigLine
 	{
         protected int lineNumber;
-	    protected string sectionName, indentation, comment;
+	    protected string sectionName, comment;
         protected List<ConfigLine> lines;
 
         #region Constructors
@@ -26,10 +26,12 @@ namespace Salaros.Config
             : this()
 	    {
 	        lines = new List<ConfigLine>();
+
 	        this.sectionName = sectionName ?? throw new ArgumentNullException(nameof(sectionName));
 	        this.lineNumber = lineNumber;
-	        this.indentation = indentation;
 	        this.comment = comment;
+
+	        Indentation = indentation;
         }
 
         /// <summary>
@@ -80,15 +82,6 @@ namespace Salaros.Config
 	        return Content;
 	    }
 
-        /// <inheritdoc />
-        /// <summary>
-        /// Gets the section.
-        /// </summary>
-        /// <value>
-        /// The section.
-        /// </value>
-        public ConfigSection Section => this;
-
 	    /// <inheritdoc />
         /// <summary>
         /// Returns a <see cref="T:System.String" /> that represents this instance.
@@ -107,6 +100,16 @@ namespace Salaros.Config
         #region Properties
 
         #region IConfigLine implementation
+
+	    /// <inheritdoc />
+	    /// <summary>
+	    /// Gets the section.
+	    /// </summary>
+	    /// <value>
+	    /// The section.
+	    /// </value>
+	    public ConfigSection Section => this;
+
 
         /// <inheritdoc />
         /// <summary>
@@ -160,9 +163,22 @@ namespace Salaros.Config
 	    /// ReSharper disable once InheritdocConsiderUsage
 	    public string Content => string.IsNullOrWhiteSpace(sectionName)
 	        ? string.Empty
-	        : $"{indentation}[{sectionName}]{comment}";
+	        : $"{Indentation}[{sectionName}]{comment}";
 
-        #endregion
+	    /// <inheritdoc />
+	    /// <summary>
+	    /// Gets the indentation.
+	    /// </summary>
+	    /// <value>
+	    /// The indentation.
+	    /// </value>
+	    /// <exception cref="T:System.NotImplementedException"></exception>
+	    public string Indentation
+	    {
+	        get;
+	    }
+
+	    #endregion
 
         #region Indexing
 

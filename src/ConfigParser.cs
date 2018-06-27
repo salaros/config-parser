@@ -634,11 +634,12 @@ namespace Salaros.Config
                             break;
 
                         // Multi-line + allow value-less option on
-                        case var _ when Settings.ValueMatcher.IsMatch(lineRaw) &&
-                                        Settings.KeyMatcher.IsMatch(currentLine?.ToString() ?? string.Empty) &&
+                        case var _ when Settings.ValueMatcher.IsMatch(lineRaw) && currentLine != null &&
+                                        Settings.KeyMatcher.IsMatch(currentLine.ToString()) &&
                                         Settings.MultiLineValues.HasFlag(MultiLineValues.AllowValuelessKeys) &&
                                         Settings.MultiLineValues.HasFlag(MultiLineValues.Simple) &&
-                                        lineRaw.TrimStart(' ', '\t').Length != lineRaw.Length:
+                                        ConfigLine.IndentationMatcher.IsMatch(lineRaw) &&
+                                        !Equals(currentLine.Indentation, ConfigLine.IndentationMatcher.Match(lineRaw).Value):
                             AppendValueToKey(ref currentSection, ref currentLine, lineRaw, lineNumber);
                             break;
 

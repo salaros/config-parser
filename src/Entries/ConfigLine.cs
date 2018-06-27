@@ -1,10 +1,20 @@
-﻿namespace Salaros.Config
+﻿using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace Salaros.Config
 {
     public class ConfigLine : IConfigLine
     {
         protected int lineNumber;
+        private string lineContent;
+        internal static readonly Regex IndentationMatcher;
 
         #region Constructor
+
+        static ConfigLine()
+        {
+            IndentationMatcher = new Regex(@"^(\s+)", RegexOptions.Compiled | RegexOptions.Singleline);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigLine"/> class.
@@ -13,7 +23,7 @@
         /// <param name="lineContent">Raw line content.</param>
         public ConfigLine(int lineNumber = -1, string lineContent = "")
         {
-            Content = lineContent;
+            this.lineContent = lineContent;
             this.lineNumber = lineNumber;
         }
 
@@ -44,7 +54,11 @@
         /// Gets the raw content of the line.
         /// </summary>
         /// <value>The raw content of the line.</value>
-        public string Content { get; internal set; }
+        public virtual string Content
+        {
+            get => lineContent;
+            set => lineContent = value;
+        }
 
         #endregion
 
@@ -59,6 +73,15 @@
         {
             get;  internal set;
         }
+
+        /// <inheritdoc />
+        /// <summary>
+        /// Gets the indentation.
+        /// </summary>
+        /// <value>
+        /// The indentation.
+        /// </value>
+        public string Indentation => IndentationMatcher?.Match(ToString()).Value;
 
         #endregion
 

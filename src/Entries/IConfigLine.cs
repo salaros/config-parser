@@ -21,6 +21,14 @@
         /// The section.
         /// </value>
         ConfigSection Section { get; }
+        
+        /// <summary>
+        /// Gets the indentation.
+        /// </summary>
+        /// <value>
+        /// The indentation.
+        /// </value>
+        string Indentation { get; }
 
         /// <summary>
         /// Returns a <see cref="string" /> that represents this instance.

@@ -90,10 +90,10 @@ namespace Salaros.Config
         /// The raw content of the line.
         /// </value>
         /// ReSharper disable once InheritdocConsiderUsage
-        public new string Content
+        public override string Content
         {
             get => ValueRaw?.ToString();
-            internal set => ValueRaw = value;
+            set => ValueRaw = value;
         }
 
         #endregion
