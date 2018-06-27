@@ -622,7 +622,9 @@ namespace Salaros.Config
                             ReadKeyAndValue(ref currentSection, ref currentLine, lineRaw, lineNumber);
                             break;
 
+                        // Multi-line + allow value-less option on
                         case var _ when Settings.ValueMatcher.IsMatch(lineRaw) &&
+                                        Settings.KeyMatcher.IsMatch(currentLine?.ToString() ?? string.Empty) &&
                                         Settings.MultiLineValues.HasFlag(MultiLineValues.AllowValuelessKeys) &&
                                         Settings.MultiLineValues.HasFlag(MultiLineValues.Simple) &&
                                         lineRaw.TrimStart(' ', '\t').Length != lineRaw.Length:
