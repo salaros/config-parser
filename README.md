@@ -165,5 +165,6 @@ However you have to include the content of [license](LICENSE) file in your sourc
 Here is why (part of [MIT license](LICENSE)):
 
 ```
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+The above copyright notice and this permission notice 
+shall be included in all copies or substantial portions of the Software.
 ```
