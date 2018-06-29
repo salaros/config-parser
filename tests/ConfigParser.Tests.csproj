@@ -3,12 +3,15 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <IsPackable>false</IsPackable>
-    <RootNamespace>Salaros.Config.Tests</RootNamespace>
+    <RootNamespace>Salaros.Configuration.Tests</RootNamespace>
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <PropertyGroup>
       <OutputPath>..\bin\$(Configuration)\</OutputPath>
+      <Company>Salaros</Company>
+      <Product>ConfigParser</Product>
+      <Authors>Zhmayev Yaroslav aka Salaros</Authors>
   </PropertyGroup>
 
   <ItemGroup>

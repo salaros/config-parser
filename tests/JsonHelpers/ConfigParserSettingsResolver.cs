@@ -4,7 +4,7 @@ using System.Text;
 using Koopman.CheckPoint.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Salaros.Config.Tests
+namespace Salaros.Configuration.Tests
 {
     internal class ConfigParserSettingsResolver : DefaultContractResolver
     {

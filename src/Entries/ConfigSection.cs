@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Salaros.Config
+namespace Salaros.Configuration
 {
     public class ConfigSection : IConfigLine
 	{
@@ -14,7 +14,7 @@ namespace Salaros.Config
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Salaros.Config.ConfigSection" /> class.
+        /// Initializes a new instance of the <see cref="T:Salaros.Configuration.ConfigSection" /> class.
         /// </summary>
         /// <param name="sectionName">Section name.</param>
         /// <param name="lineNumber">Line number.</param>

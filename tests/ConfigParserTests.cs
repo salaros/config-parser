@@ -7,7 +7,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace Salaros.Config.Tests
+namespace Salaros.Configuration.Tests
 {
     public class ConfigParserTests
     {
@@ -544,6 +544,8 @@ namespace Salaros.Config.Tests
 
             configFileFromMem.GetValue("section1", "string", "value");
             configFileFromMem.GetValue("section2", "bool", true);
+            configFileFromMem.SetValue("section2", "bool", false);
+            configFileFromMem.SetValue("section2", "bool", true);
             configFileFromMem.GetValue("section3", "doble", 00000.2);
 
             var fromScratchFile = StructureSampleFiles

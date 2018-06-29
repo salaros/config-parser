@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 
-namespace Salaros.Config.Tests
+namespace Salaros.Configuration.Tests
 {
     public class EncodingConverter : JsonConverter
     {

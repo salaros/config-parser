@@ -1,7 +1,6 @@
-﻿using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
-namespace Salaros.Config
+namespace Salaros.Configuration
 {
     public class ConfigLine : IConfigLine
     {

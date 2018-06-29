@@ -4,7 +4,7 @@
         <TargetFrameworks>netstandard2.0;net40;net45</TargetFrameworks>
         <OutputPath>..\bin\$(Configuration)\</OutputPath>
         <LangVersion>latest</LangVersion>
-        <RootNamespace>Salaros.Config</RootNamespace>
+        <RootNamespace>Salaros.Configuration</RootNamespace>
         <AssemblyName>ConfigParser</AssemblyName>
     </PropertyGroup>
 
@@ -22,9 +22,9 @@
         <AssemblyVersion>1.0.0</AssemblyVersion>
         <FileVersion>1.0.0</FileVersion>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-        <PackageLicenseUrl>https://raw.githubusercontent.com/salaros/ConfigParser/master/LICENSE</PackageLicenseUrl>
-        <PackageProjectUrl>https://github.com/salaros/ConfigParser</PackageProjectUrl>
-        <RepositoryUrl>https://github.com/salaros/ConfigParser</RepositoryUrl>
+        <PackageLicenseUrl>https://raw.githubusercontent.com/salaros/config-parser/master/LICENSE</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/salaros/config-parser</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/salaros/config-parser</RepositoryUrl>
         <RepositoryType>Git</RepositoryType>
         <PackageTags>configuration,configuration-files,file,configuration-file,config,ini,cfg,configs,conf,mono,dotnet,managed,csharp,cross-platform</PackageTags>
         <NeutralLanguage>English</NeutralLanguage>
@@ -49,7 +49,7 @@
         <PackageReference Include="Microsoft.CSharp" Version="4.5.0" Condition="'$(TargetFramework)' != 'net40'" />
         <Reference Include="Microsoft.CSharp" Version="4.0.0" Condition="'$(TargetFramework)' == 'net40'" />
     </ItemGroup>
-    
+
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <DefineConstants>TRACE;LIBLOG_PUBLIC</DefineConstants>
     </PropertyGroup>

@@ -2,16 +2,14 @@
 using System.ComponentModel;
 using System.Globalization;
 
-// ReSharper disable once CheckNamespace
-
-namespace Salaros.Config
+namespace Salaros.Configuration
 {
     public class YesNoConverter : BooleanConverter
     {
         protected readonly string yes, no;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Salaros.Config.YesNoConverter" /> class.
+        /// Initializes a new instance of the <see cref="T:Salaros.Configuration.Helpers.BooleanConverters.YesNoConverter" /> class.
         /// </summary>
         /// <param name="yes">The yes.</param>
         /// <param name="no">The no.</param>

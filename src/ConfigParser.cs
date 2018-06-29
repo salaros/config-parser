@@ -6,9 +6,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Salaros.Config.Logging;
+using Salaros.Configuration.Logging;
 
-namespace Salaros.Config
+namespace Salaros.Configuration
 {
     public class ConfigParser
     {
@@ -55,7 +55,7 @@ namespace Salaros.Config
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Salaros.Config.ConfigParser" /> class.
+        /// Initializes a new instance of the <see cref="T:Salaros.Configuration.ConfigParser" /> class.
         /// </summary>
         /// <param name="configFile">The configuration file.</param>
         /// <param name="settings">The settings.</param>

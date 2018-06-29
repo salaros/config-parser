@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace Salaros.Config
+namespace Salaros.Configuration
 {
     public class ConfigParserSettings
     {

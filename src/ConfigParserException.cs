@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace Salaros.Config
+namespace Salaros.Configuration
 {
     public class ConfigParserException : Exception
     {
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Salaros.Config.ConfigParserException" /> class.
+        /// Initializes a new instance of the <see cref="T:Salaros.Configuration.ConfigParserException" /> class.
         /// </summary>
         /// <param name="message">Message.</param>
         /// <param name="lineNumber">Line number.</param>

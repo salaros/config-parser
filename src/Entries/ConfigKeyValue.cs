@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Salaros.Config
+namespace Salaros.Configuration
 {
     public class ConfigKeyValue<T> : ConfigLine, IConfigKeyValue
     {
