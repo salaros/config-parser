@@ -1,7 +1,7 @@
 ConfigParser
 [![Build status](https://ci.appveyor.com/api/projects/status/08aiy2tgs7n3y2fg?svg=true)](https://ci.appveyor.com/project/salaros/configparser)
 [![AppVeyor tests branch](https://img.shields.io/appveyor/tests/salaros/configparser/master.svg)](https://ci.appveyor.com/project/salaros/configparser/build/tests)
-[![Coverage Status](https://coveralls.io/repos/github/salaros/ConfigParser/badge.svg?branch=master)](https://coveralls.io/github/salaros/ConfigParser?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/salaros/config-parser/badge.svg?branch=master)](https://coveralls.io/github/salaros/config-parser?branch=master)
 =============
 
 ![GitHub top language](https://img.shields.io/github/languages/top/salaros/config-parser.svg?colorB=333333)
