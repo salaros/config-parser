@@ -67,7 +67,8 @@ namespace Salaros.Configuration
 
             try
             {
-                if (!InvalidConfigFileChars.Any(c => configFile.Contains(c)))
+                var file = configFile;
+                if (!InvalidConfigFileChars.Any(c => file.Contains(c)))
                     fileInfo = new FileInfo(configFile);
             }
             finally
