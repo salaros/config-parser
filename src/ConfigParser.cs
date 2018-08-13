@@ -422,7 +422,8 @@ namespace Salaros.Configuration
 
             if (!sections.TryGetValue(sectionName, out var section))
             {
-                section = new ConfigSection(sectionName, Lines.Max(l => l.LineNumber));
+                var lineNumber = (null != Lines && Lines.Any()) ? Lines.Max(l => l.LineNumber) : -1;
+                section = new ConfigSection(sectionName, lineNumber);
                 sections.Add(sectionName, section);
             }
 
