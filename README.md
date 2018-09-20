@@ -127,7 +127,7 @@ configFileFromString.GetValue("boolean", "yesWorks", false);        // True
 configFileFromString.GetValue("boolean", "upperCaseWorks", false);  // True
 configFileFromString.GetValue("boolean", "worksAsWell", false);     // True
 
-configFileFromString.GetArrayValue("Advanced", "arrayWorkToo");     // ["arrayElement1","arrayElement2"]
+configFileFromString.GetArrayValue("Advanced", "arraysWorkToo");     // ["arrayElement1","arrayElement2"]
 configFileFromString.GetValue("Advanced", "valueLessKey");          //
 ```
 
