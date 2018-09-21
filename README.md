@@ -14,6 +14,10 @@ ConfigParser
 [![NuGet Pre Release](https://img.shields.io/nuget/vpre/Salaros.ConfigParser.svg?label=NuGet%20pre-release&colorA=504880&colorB=CFC76B)](https://www.nuget.org/packages/Salaros.ConfigParser)
 [![NuGet](https://img.shields.io/nuget/dt/Salaros.ConfigParser.svg?colorA=004880&colorB=CFC76B)](https://www.nuget.org/packages/Salaros.ConfigParser)
 
+[![Donate Patreon](https://img.shields.io/badge/donate-Patreon-f96854.svg)](https://www.patreon.com/salaros/)
+[![Donate Paypal](https://img.shields.io/badge/donate-PayPal-009cde.svg)](https://paypal.me/salarosIT)
+[![Donate Liberapay](https://img.shields.io/badge/donate-Liberapay-ffc600.svg)](https://liberapay.com/salaros/)
+
 **ConfigParser** - is a slim, cross-platform, fully managed C# library for reading and writing .ini, .conf, .cfg etc configuration files.
 
 You could use it in your [Unity 3D](https://unity3d.com/), [Xamarin](http://xamarin.com) (iOS & Android), .NET Framework applications (even with old 4.0/4.5), .NET Core CLI and ASP.NET Core applications, [Mono](https://www.mono-project.com/) etc
