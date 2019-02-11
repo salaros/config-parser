@@ -62,7 +62,7 @@ and more...
 Installation
 ============
 
-**RevitLESS Toolkit** can be installed via [NuGet](https://www.nuget.org/packages/Salaros.ConfigParser)
+**Config Parser** can be installed via [NuGet](https://www.nuget.org/packages/Salaros.ConfigParser)
 by using Package Manager in your IDE, `dotnet` binary or Package Console
 
 ```bash
