@@ -183,14 +183,14 @@ namespace Salaros.Configuration
                 if (Sections.Any())
                     Sections.Last().AddLine(new ConfigLine());
                 sections.Add(sectionName, section);
-                section.AddLine(iniKey);
-                return defaultValue;
             }
 
             var key = section.Keys.FirstOrDefault(k => Equals(keyName, k.Name));
-            return (key == null)
-                ? defaultValue
-                : (T) key.ValueRaw;
+            if (key != null)
+                return (T)key.ValueRaw;
+
+            section.AddLine(iniKey);
+            return defaultValue;
         }
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace Salaros.Configuration
             {
                 SetValue(sectionName, keyName,
                     null == booleanConverter
-                        // if some day Boolean.ToString(IFormatProvider) will work 
+                        // if some day Boolean.ToString(IFormatProvider) will work
                         // https://msdn.microsoft.com/en-us/library/s802ct92(v=vs.110).aspx#Anchor_1
                         ? defaultValue.ToString(Settings.Culture).ToLowerInvariant()
                         : booleanConverter.ConvertToString(defaultValue));
@@ -244,12 +244,12 @@ namespace Salaros.Configuration
             if(bool.TryParse(booleanValue, out var parseBoolean))
                 return parseBoolean;
 
-            // if some day Boolean.ToString(IFormatProvider) will work 
+            // if some day Boolean.ToString(IFormatProvider) will work
             // https://msdn.microsoft.com/en-us/library/s802ct92(v=vs.110).aspx#Anchor_1
             if (true.ToString(Settings.Culture).ToLowerInvariant().Equals(booleanValue, StringComparison.InvariantCultureIgnoreCase))
                 return true;
 
-            if (booleanConverter == null || !booleanConverter.CanConvertFrom(typeof(string))) 
+            if (booleanConverter == null || !booleanConverter.CanConvertFrom(typeof(string)))
                 return defaultValue;
 
             var value = booleanConverter.ConvertFrom(booleanValue);
@@ -764,7 +764,7 @@ namespace Salaros.Configuration
 
                 case var _ when Settings.MultiLineValues.HasFlag(MultiLineValues.NotAllowed) ||
                                 Settings.MultiLineValues.HasFlag(MultiLineValues.Simple):
-                    // Do nothing add with quotes if any 
+                    // Do nothing add with quotes if any
                     break;
 
                 default:
