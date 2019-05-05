@@ -16,7 +16,7 @@ configuration: Debug
 # Scripts that run after cloning repository
 install:
   - cmd: dotnet restore
-  
+
 environment:
   VERSION_SIMPLE: '{version}'
   VERSION_INFORMATIONAL: '{version}'
@@ -76,10 +76,10 @@ artifacts:
     name: NuGet_Files
 
 # Deploy to GitHub releases
-deploy: 
-  - 
+deploy:
+  -
     provider: GitHub
-    auth_token: 
+    auth_token:
       secure: 2+d0KgCbWQpUR8TZfzvUEzbi4NQP6F/Tt0PUwLn6jXZCyO8FnrFVFJPsFa0QBQFl
     artifact: NuGet_Files
     draft: false
@@ -87,12 +87,12 @@ deploy:
     prerelease: false
     release: "$(APPVEYOR_PROJECT_NAME) v$(APPVEYOR_REPO_TAG_NAME)"
     tag: $(APPVEYOR_REPO_TAG_NAME)
-    on: 
+    on:
       appveyor_repo_tag: true
 
-  - 
+  -
     provider: NuGet
-    api_key: 
+    api_key:
       secure: i6oWn60J7ZOM4UuYcvxbuk9OAEp6or+Wq7izyJDPNlcLIhG2UKsxz7G/8erhdY3M
     artifact: NuGet_Files
     server:             # remove to push to NuGet.org
@@ -116,7 +116,6 @@ after_deploy:
                 "Content-type" = "application/json"
             }
             Invoke-RestMethod -Method Put "$apiUrl/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/settings/build-number" -Body '{"nextBuildNumber": 1 }' -Headers $headers
-            
             $env:APPVEYOR_REPO_TAG_NAME = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
             if ($env:APPVEYOR_REPO_TAG_NAME -match '^([0-9]+\.[0-9]+\.[0-9]+(\.[0-9]+)?)$') {
                 $tag_ver = [version]$env:APPVEYOR_REPO_TAG_NAME
@@ -139,7 +138,7 @@ after_test:
       # Install NuGet packages and tools
       nuget install  OpenCover  -Version 4.6.519  -OutputDirectory packages
       dotnet tool install coveralls.net --tool-path tools
-      
+
       # Set variables
       .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -target:dotnet.exe -targetargs:"test tests" -register:user -filter:"+[*]* -[xunit*]* -[*Tests]* -[*]*.Logging.*" -excludedirs:"src\obj;src\Helpers;Helpers" -output:"tests\coverage.xml" -oldStyle
       .\tools\csmacnz.Coveralls.exe --opencover -i .\tests\coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage "$env:APPVEYOR_REPO_COMMIT_MESSAGE" --jobId $env:APPVEYOR_JOB_ID
