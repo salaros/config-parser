@@ -21,7 +21,7 @@ namespace Salaros.Configuration.Tests
         /// </summary>
         static ConfigParserTests()
         {
-            // Allow the usage of ANSI encoding other than the default one 
+            // Allow the usage of ANSI encoding other than the default one
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             RealWorldConfigFiles = Directory
@@ -285,7 +285,7 @@ namespace Salaros.Configuration.Tests
                 {
                     MultiLineValues = MultiLineValues.QuoteDelimitedValues,
                     Encoding = Encoding.UTF8,
-                    // if some day Boolean.ToString(IFormatProvider) will work 
+                    // if some day Boolean.ToString(IFormatProvider) will work
                     // https://msdn.microsoft.com/en-us/library/s802ct92(v=vs.110).aspx#Anchor_1
                     Culture = new CultureInfo("en-US"),
                     BooleanConverter = new YesNoConverter("vero", "falso")
@@ -641,6 +641,45 @@ namespace Salaros.Configuration.Tests
 
             // null
             Assert.Null(configFileFromString.GetValue("Advanced", "valueLessKey"));
+        }
+
+
+        /// <summary>
+        /// Reading non-existing empty values, then writing, then re-reading config file again.
+        /// </summary>
+        [Fact]
+        public void ReadingWritingReadingConfigFile()
+        {
+            var configFilepath = $"{Path.GetTempFileName()}.wakatime.cfg";
+            var configParser = new ConfigParser(
+                configFilepath,
+                new ConfigParserSettings
+                {
+                    MultiLineValues = MultiLineValues.Simple | MultiLineValues.QuoteDelimitedValues,
+                    Encoding = new UTF8Encoding(false, false),
+                    NewLine = "\r\n",
+                }
+            );
+
+            configParser.GetValue("settings", "api_key", string.Empty);
+            configParser.GetValue("settings", "debug", false);
+            configParser.GetValue("settings", "proxy", string.Empty);
+
+            configParser.SetValue("settings", "api_key", new Guid("00000000-0000-0000-0000-000000000000").ToString());
+            configParser.SetValue("settings", "debug", true);
+            configParser.SetValue("settings", "proxy", string.Empty);
+
+            configParser.Save(configFilepath);
+
+            var configFileContent = File.ReadAllText(configFilepath, Encoding.UTF8);
+            var configExpectedBuilder = new StringBuilder();
+            configExpectedBuilder.AppendLine("[settings]");
+            configExpectedBuilder.AppendLine("api_key=00000000-0000-0000-0000-000000000000");
+            configExpectedBuilder.AppendLine("debug=true");
+            configExpectedBuilder.AppendLine("proxy=");
+            var configExpectedContent = configExpectedBuilder.ToString().TrimEnd(new char[] { '\r', '\n' });
+
+            Assert.Equal(configExpectedContent, configFileContent);
         }
     }
 }
