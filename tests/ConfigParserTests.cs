@@ -716,5 +716,37 @@ namespace Salaros.Configuration.Tests
             // Assert
             Assert.Equal(configParserString, configFromTextString, ignoreCase: true);
         }
+
+
+        [Fact]
+        public void IsCustomNumberFormatWorking_ThousandSeparator()
+        {
+            // Arrange
+            var tempConfigFilePath = Path.GetTempFileName();
+            var configParser = new ConfigParser(
+               tempConfigFilePath,
+               new ConfigParserSettings
+               {
+                   MultiLineValues = MultiLineValues.QuoteDelimitedValues,
+                   KeyValueSeparator = " = ",
+                   Encoding = new UTF8Encoding(false, false)
+               }
+            );
+
+            configParser.SetValue("FormatNumber", "test.int", "1_234_567");
+            configParser.SetValue("FormatNumber", "test.int2", "1_000");
+            configParser.SetValue("FormatNumber", "double", "991_228_224_617.445");
+
+            // Act
+            var numberFormatInfo = new NumberFormatInfo { NumberGroupSeparator = "_" };
+            var testInt1 = configParser.GetValue("FormatNumber", "test.int", 0, NumberStyles.Integer, numberFormatInfo);
+            var testInt2 = configParser.GetValue("FormatNumber", "test.int2", 0, NumberStyles.Integer, numberFormatInfo);
+            var testDouble = configParser.GetValue("FormatNumber", "double", 0D, NumberStyles.Currency, numberFormatInfo);
+
+            // Assert
+            Assert.Equal(1234567, testInt1);
+            Assert.Equal(1000, testInt2);
+            Assert.Equal(991228224617.445, testDouble);
+        }
     }
 }
