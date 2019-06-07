@@ -126,6 +126,9 @@ namespace Salaros.Configuration
                 case MultiLineValues.AllowValuelessKeys when string.IsNullOrWhiteSpace(Content):
                     return keyName;
 
+                case MultiLineValues.QuoteDelimitedValues:
+                    return $"{keyName}{Separator}\"{Content}\"";
+
                 default:
                     return $"{keyName}{Separator}{Content}";
             }

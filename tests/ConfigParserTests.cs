@@ -701,7 +701,6 @@ namespace Salaros.Configuration.Tests
                }
             );
 
-            // Act
             configParser.SetValue("Temp", "name", "Windows");
             configParser.SetValue("Temp", "name.company", "Microsoft \u00A9");
 
@@ -710,11 +709,12 @@ namespace Salaros.Configuration.Tests
             configFromText.AppendLine("name = \"Windows\"");
             configFromText.AppendLine("name.company = \"Microsoft ©\"");
 
+            // Act
+            var configParserString = configParser.ToString().TrimEnd(new char[] { '\r', '\n' });
+            var configFromTextString = configFromText.ToString().TrimEnd(new char[] { '\r', '\n' });
+
             // Assert
-            Assert.Equal(
-                configParser.ToString().TrimEnd(new char[] { '\r', '\n' }),
-                configFromText.ToString().TrimEnd(new char[] { '\r', '\n' }),
-                ignoreCase: true);
+            Assert.Equal(configParserString, configFromTextString, ignoreCase: true);
         }
     }
 }
