@@ -655,7 +655,7 @@ namespace Salaros.Configuration.Tests
                 configFilepath,
                 new ConfigParserSettings
                 {
-                    MultiLineValues = MultiLineValues.Simple | MultiLineValues.QuoteDelimitedValues,
+                    MultiLineValues = MultiLineValues.Simple,
                     Encoding = new UTF8Encoding(false, false),
                     NewLine = "\r\n",
                 }
