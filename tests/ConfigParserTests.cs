@@ -681,5 +681,40 @@ namespace Salaros.Configuration.Tests
 
             Assert.Equal(configExpectedContent, configFileContent);
         }
+
+
+        /// <summary>
+        /// Tests if the usage of unicode symbols is allowed.
+        /// </summary>
+        [Fact]
+        public void AreUnicodeSymbolsAllowed()
+        {
+            // Arrange
+            var tempConfigFilePath = Path.GetTempFileName();
+            var configParser = new ConfigParser(
+               tempConfigFilePath,
+               new ConfigParserSettings
+               {
+                   MultiLineValues = MultiLineValues.QuoteDelimitedValues,
+                   KeyValueSeparator = " = ",
+                   Encoding = new UTF8Encoding(false, false)
+               }
+            );
+
+            // Act
+            configParser.SetValue("Temp", "name", "Windows");
+            configParser.SetValue("Temp", "name.company", "Microsoft \u00A9");
+
+            var configFromText = new StringBuilder();
+            configFromText.AppendLine("[Temp]");
+            configFromText.AppendLine("name = \"Windows\"");
+            configFromText.AppendLine("name.company = \"Microsoft ©\"");
+
+            // Assert
+            Assert.Equal(
+                configParser.ToString().TrimEnd(new char[] { '\r', '\n' }),
+                configFromText.ToString().TrimEnd(new char[] { '\r', '\n' }),
+                ignoreCase: true);
+        }
     }
 }
