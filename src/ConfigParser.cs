@@ -259,18 +259,20 @@ namespace Salaros.Configuration
         }
 
         /// <summary>
-        /// Gets the value.
+        /// Gets integer value.
         /// </summary>
         /// <param name="sectionName">Name of the section.</param>
         /// <param name="keyName">Name of the key.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <param name="numberStyles">The number styles.</param>
+        /// <param name="numberFormatInfo">The number format information.</param>
         /// <returns></returns>
         public virtual int GetValue(
             string sectionName,
             string keyName,
             int defaultValue,
-            NumberStyles numberStyles = NumberStyles.Number
+            NumberStyles numberStyles = NumberStyles.Number,
+            NumberFormatInfo numberFormatInfo = null
         )
         {
             if (!numberStyles.HasFlag(NumberStyles.Number))
@@ -278,9 +280,9 @@ namespace Salaros.Configuration
 
             var integerRaw = GetRawValue<string>(sectionName, keyName, null);
             if (!string.IsNullOrWhiteSpace(integerRaw))
-                return int.TryParse(integerRaw, numberStyles, Settings.Culture, out var integerParsed)
+                return int.TryParse(integerRaw, numberStyles, (IFormatProvider)numberFormatInfo ?? Settings.Culture, out var integerParsed)
                     ? integerParsed
-                    : int.Parse(integerRaw, numberStyles, Settings.Culture); // yeah, throws format exception by design
+                    : int.Parse(integerRaw, numberStyles, (IFormatProvider)numberFormatInfo ?? Settings.Culture); // yeah, throws format exception by design
 
             SetValue(sectionName, keyName, defaultValue);
             return defaultValue;
@@ -293,12 +295,14 @@ namespace Salaros.Configuration
         /// <param name="keyName">Name of the key.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <param name="numberStyles">The number styles.</param>
+        /// <param name="numberFormatInfo">The number format information.</param>
         /// <returns></returns>
         public virtual double GetValue(
             string sectionName,
             string keyName,
             double defaultValue,
-            NumberStyles numberStyles = NumberStyles.Float | NumberStyles.AllowThousands
+            NumberStyles numberStyles = NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.Number,
+            NumberFormatInfo numberFormatInfo = null
         )
         {
             if (!(numberStyles.HasFlag(NumberStyles.Float) || numberStyles.HasFlag(NumberStyles.AllowThousands)))
@@ -315,10 +319,10 @@ namespace Salaros.Configuration
                 numberStyles = numberStyles | NumberStyles.AllowExponent;
 
             doubleRaw = doubleRaw.TrimEnd('d', 'D', 'f', 'F');
-            return double.TryParse(doubleRaw, numberStyles, Settings.Culture,
+            return double.TryParse(doubleRaw, numberStyles, (IFormatProvider)numberFormatInfo ?? Settings.Culture,
                 out var parsedDouble)
                 ? parsedDouble
-                : double.Parse(doubleRaw, numberStyles, Settings.Culture); // yeah, throws format exception by design
+                : double.Parse(doubleRaw, numberStyles, (IFormatProvider)numberFormatInfo ?? Settings.Culture); // yeah, throws format exception by design
         }
 
         /// <summary>
