@@ -316,7 +316,7 @@ namespace Salaros.Configuration
             }
 
             if (doubleRaw.Contains("E") && !numberStyles.HasFlag(NumberStyles.AllowExponent))
-                numberStyles = numberStyles | NumberStyles.AllowExponent;
+                numberStyles |= NumberStyles.AllowExponent;
 
             doubleRaw = doubleRaw.TrimEnd('d', 'D', 'f', 'F');
             return double.TryParse(doubleRaw, numberStyles, (IFormatProvider)numberFormatInfo ?? Settings.Culture,

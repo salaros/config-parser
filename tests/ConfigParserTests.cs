@@ -738,7 +738,11 @@ namespace Salaros.Configuration.Tests
             configParser.SetValue("FormatNumber", "double", "991_228_224_617.445");
 
             // Act
-            var numberFormatInfo = new NumberFormatInfo { NumberGroupSeparator = "_" };
+            var numberFormatInfo = new NumberFormatInfo {
+                NumberGroupSeparator = "_",
+                NumberDecimalSeparator = ".",
+                CurrencyDecimalSeparator = "."
+            };
             var testInt1 = configParser.GetValue("FormatNumber", "test.int", 0, NumberStyles.Integer, numberFormatInfo);
             var testInt2 = configParser.GetValue("FormatNumber", "test.int2", 0, NumberStyles.Integer, numberFormatInfo);
             var testDouble = configParser.GetValue("FormatNumber", "double", 0D, NumberStyles.Currency, numberFormatInfo);
