@@ -577,19 +577,15 @@ namespace Salaros.Configuration
 
             try
             {
-                using (var fileWriter = new FileStream(fileInfo.FullName, FileMode.OpenOrCreate, FileAccess.Write))
+                using (var fileWriter = new FileStream(fileInfo.FullName, FileMode.Create, FileAccess.Write))
                 {
                     using (var writer = new StreamWriter(
-                            fileWriter,
-                            Settings.Encoding ?? new UTF8Encoding(false, false),
-                            4096
-#if !NET40
-                            , true
-#endif
-                        )
-                    )
+                        fileWriter,
+                        Settings.Encoding ?? new UTF8Encoding(false, false)
+                    ))
                     {
-                        writer.Write(ToString());
+                        var fileContent = ToString();
+                        writer.Write(fileContent);
                     }
                 }
                 return true;
