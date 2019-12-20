@@ -1,4 +1,4 @@
-ConfigParser
+﻿ConfigParser
 [![Build status](https://ci.appveyor.com/api/projects/status/08aiy2tgs7n3y2fg?svg=true)](https://ci.appveyor.com/project/salaros/configparser)
 [![AppVeyor tests branch](https://img.shields.io/appveyor/tests/salaros/configparser/master.svg)](https://ci.appveyor.com/project/salaros/configparser/build/tests)
 [![Coverage Status](https://coveralls.io/repos/github/salaros/config-parser/badge.svg?branch=master)](https://coveralls.io/github/salaros/config-parser?branch=master)
@@ -58,6 +58,12 @@ Features
 - [x] smart boolean values (0/1, on/off, enabled/disabled work of the box)
 
 and more...
+
+## 🟊🟊🟊 Support this project 🟊🟊🟊
+
+You can support us in a small way, please consider starring and sharing this repo! It helps us getting known and grow the community.
+
+![star us](.github/assets/star_us.gif)
 
 Installation
 ============
