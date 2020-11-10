@@ -1,0 +1,51 @@
+<Project>
+
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+    <ResolveNuGetPackages>true</ResolveNuGetPackages>
+  </PropertyGroup>
+
+  <!-- Output-related settings -->
+  <PropertyGroup>
+    <Configurations>Debug;Release</Configurations>
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>true</AppendRuntimeIdentifierToOutputPath>
+    <SolutionDir Condition="'$(SolutionDir)'==''">$(MSBuildThisFileDirectory)</SolutionDir>
+    <OutputPath>$(SolutionDir)\bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+
+  <!-- Some tweaks for Unit Test projects, e.g. xUnit -->
+  <PropertyGroup>
+    <IsTestProject Condition="'$(IsTestProject)' == ''">$(MSBuildProjectName.Contains('.Test'))</IsTestProject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+    <!-- Changing output path for xUnit tests, so it won't break actual compiled code by shipping its Newtonsoft.Json v9.0.0 -->
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <!-- Mark the project as being a test project -->
+    <SonarQubeTestProject>true</SonarQubeTestProject>
+  </PropertyGroup>
+
+  <!-- Coverage-related settings -->
+  <PropertyGroup>
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutputFormat>opencover</CoverletOutputFormat>
+    <CoverletOutput>$(SolutionDir)/tests/coverage/</CoverletOutput>
+  </PropertyGroup>
+
+  <!-- Debug-related settings -->
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(Configuration.Contains('Debug'))">
+    <DefineConstants>$(DefineConstants);DEBUG</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT' And $(TargetFramework.Contains('net4'))">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <Import Project="$(SolutionDir)\CodeAnalyzers.targets" Condition="Exists('$(SolutionDir)\CodeAnalyzers.targets')" />
+
+</Project>
