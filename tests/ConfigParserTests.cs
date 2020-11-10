@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using Xunit;
 
 namespace Salaros.Configuration.Tests
@@ -32,12 +33,12 @@ namespace Salaros.Configuration.Tests
                 "[Baz]",
                 "Foo = bar"
             });
+            var dateModifiedOld = File.GetLastWriteTime(configFilePathTmp);
 
             var configFile = new ConfigParser(configFilePathTmp);
-            var dateTimeNow = DateTime.Now;
             configFile.Save();
 
-            Assert.True(File.GetLastWriteTime(configFilePathTmp).Ticks > dateTimeNow.Ticks);
+            Assert.True(File.GetLastWriteTime(configFilePathTmp).Ticks >= dateModifiedOld.Ticks);
         }
 
         [Fact]
