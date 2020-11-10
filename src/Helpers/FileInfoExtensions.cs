@@ -197,10 +197,8 @@ namespace System.IO
             {
                 using (var fileStream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read))
                 {
-                    using (var streamReader = new StreamReader(fileStream, new UTF8Encoding(file.HasBomMarker(), true), true))
-                    {
-                        streamReader.ReadToEnd();
-                    }
+                    using var streamReader = new StreamReader(fileStream, new UTF8Encoding(file.HasBomMarker(), true), true);
+                    streamReader.ReadToEnd();
                 }
                 return true;
             }

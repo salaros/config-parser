@@ -57,13 +57,16 @@ namespace Salaros.Configuration
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Salaros.Configuration.ConfigParser" /> class.
         /// </summary>
-        /// <param name="configFile">The configuration file.</param>
+        /// <param name="configFile">The configuration file (may be path or file content).</param>
         /// <param name="settings">The settings.</param>
-        /// <exception cref="T:System.ArgumentException">configFile</exception>
+        /// <exception cref="T:System.ArgumentException">configFilePath</exception>
         public ConfigParser(string configFile, ConfigParserSettings settings = null)
             : this(settings)
         {
-            if (string.IsNullOrWhiteSpace(configFile)) throw new ArgumentException(nameof(configFile));
+            if (string.IsNullOrWhiteSpace(configFile))
+            {
+                throw new ArgumentException($"{nameof(configFile)} must contain be a non-empty string.", nameof(configFile));
+            }
 
             try
             {
@@ -561,6 +564,8 @@ namespace Salaros.Configuration
         /// </exception>
         public bool Save(string configFilePath = null)
         {
+            configFilePath ??= fileInfo?.FullName;
+
             if (string.IsNullOrWhiteSpace(configFilePath) || Path.GetInvalidPathChars().Any(configFilePath.Contains) ||
                 Path.GetInvalidFileNameChars().Any(Path.GetFileName(configFilePath).Contains))
             {
@@ -577,17 +582,28 @@ namespace Salaros.Configuration
 
             try
             {
+                if (!(fileInfo.Directory?.Exists ?? false))
+                    Directory.CreateDirectory(fileInfo.Directory?.FullName);
+            }
+            catch (Exception ex)
+            {
+                Logger?.Fatal(ex.Message);
+                throw new ConfigParserException(
+                    $"Failed to create parent directory for {nameof(ConfigParser)} file to the following file: '{fileInfo.FullName}'", -1, ex);
+            }
+
+            try
+            {
                 using (var fileWriter = new FileStream(fileInfo.FullName, FileMode.Create, FileAccess.Write))
                 {
-                    using (var writer = new StreamWriter(
+                    using var writer = new StreamWriter(
                         fileWriter,
                         Settings.Encoding ?? new UTF8Encoding(false, false)
-                    ))
-                    {
-                        var fileContent = ToString();
-                        writer.Write(fileContent);
-                    }
+                    );
+                    var fileContent = ToString();
+                    writer.Write(fileContent);
                 }
+
                 return true;
             }
             catch (Exception ex)
@@ -625,62 +641,60 @@ namespace Salaros.Configuration
         {
             if (string.IsNullOrWhiteSpace(configContent)) throw new ArgumentException(nameof(configContent));
 
-            using (var stringReader = new StringReader(configContent))
+            using var stringReader = new StringReader(configContent);
+            string lineRaw;
+            var lineNumber = 0;
+            ConfigSection currentSection = null;
+            ConfigLine currentLine = null;
+            while (null != (lineRaw = stringReader.ReadLine()))
             {
-                string lineRaw;
-                var lineNumber = 0;
-                ConfigSection currentSection = null;
-                ConfigLine currentLine = null;
-                while (null != (lineRaw = stringReader.ReadLine()))
+                lineNumber++;
+
+                switch (lineRaw)
                 {
-                    lineNumber++;
+                    case var _ when string.IsNullOrWhiteSpace(lineRaw):
+                        ReadEmptyLine(ref currentSection, ref currentLine, lineRaw, lineNumber);
+                        continue;
 
-                    switch (lineRaw)
-                    {
-                        case var _ when string.IsNullOrWhiteSpace(lineRaw):
-                            ReadEmptyLine(ref currentSection, ref currentLine, lineRaw, lineNumber);
-                            continue;
+                    case var _ when ConfigParserSettings.SectionMatcher.IsMatch(lineRaw):
+                        ReadSection(ref currentSection, ref currentLine, lineRaw, lineNumber);
+                        break;
 
-                        case var _ when ConfigParserSettings.SectionMatcher.IsMatch(lineRaw):
-                            ReadSection(ref currentSection, ref currentLine, lineRaw, lineNumber);
-                            break;
+                    case var _ when Settings.CommentMatcher.IsMatch(lineRaw):
+                        ReadComment(ref currentSection, ref currentLine, lineRaw, lineNumber);
+                        break;
 
-                        case var _ when Settings.CommentMatcher.IsMatch(lineRaw):
-                            ReadComment(ref currentSection, ref currentLine, lineRaw, lineNumber);
-                            break;
+                    case var _ when Settings.KeyMatcher.IsMatch(lineRaw):
+                        ReadKeyAndValue(ref currentSection, ref currentLine, lineRaw, lineNumber);
+                        break;
 
-                        case var _ when Settings.KeyMatcher.IsMatch(lineRaw):
-                            ReadKeyAndValue(ref currentSection, ref currentLine, lineRaw, lineNumber);
-                            break;
+                    // Multi-line + allow value-less option on
+                    case var _ when Settings.ValueMatcher.IsMatch(lineRaw) && currentLine != null &&
+                                    Settings.KeyMatcher.IsMatch(currentLine.ToString()) &&
+                                    Settings.MultiLineValues.HasFlag(MultiLineValues.AllowValuelessKeys) &&
+                                    Settings.MultiLineValues.HasFlag(MultiLineValues.Simple) &&
+                                    ConfigLine.IndentationMatcher.IsMatch(lineRaw) &&
+                                    !Equals(currentLine.Indentation, ConfigLine.IndentationMatcher.Match(lineRaw).Value):
+                        AppendValueToKey(ref currentSection, ref currentLine, lineRaw, lineNumber);
+                        break;
 
-                        // Multi-line + allow value-less option on
-                        case var _ when Settings.ValueMatcher.IsMatch(lineRaw) && currentLine != null &&
-                                        Settings.KeyMatcher.IsMatch(currentLine.ToString()) &&
-                                        Settings.MultiLineValues.HasFlag(MultiLineValues.AllowValuelessKeys) &&
-                                        Settings.MultiLineValues.HasFlag(MultiLineValues.Simple) &&
-                                        ConfigLine.IndentationMatcher.IsMatch(lineRaw) &&
-                                        !Equals(currentLine.Indentation, ConfigLine.IndentationMatcher.Match(lineRaw).Value):
+                    case var _ when Settings.ValueMatcher.IsMatch(lineRaw):
+                        if (Settings.MultiLineValues.HasFlag(MultiLineValues.AllowValuelessKeys))
+                            ReadValuelessKey(ref currentSection, ref currentLine, lineRaw, lineNumber);
+                        else
                             AppendValueToKey(ref currentSection, ref currentLine, lineRaw, lineNumber);
-                            break;
+                        break;
 
-                        case var _ when Settings.ValueMatcher.IsMatch(lineRaw):
-                            if (Settings.MultiLineValues.HasFlag(MultiLineValues.AllowValuelessKeys))
-                                ReadValuelessKey(ref currentSection, ref currentLine, lineRaw, lineNumber);
-                            else
-                                AppendValueToKey(ref currentSection, ref currentLine, lineRaw, lineNumber);
-                            break;
-
-                        default:
-                            throw new ConfigParserException("Unknown element found!", lineNumber);
-                    }
+                    default:
+                        throw new ConfigParserException("Unknown element found!", lineNumber);
                 }
-
-                if (null != currentLine)
-                    BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
-
-                if (null != currentSection)
-                    sections.Add(currentSection.SectionName, currentSection);
             }
+
+            if (null != currentLine)
+                BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
+
+            if (null != currentSection)
+                sections.Add(currentSection.SectionName, currentSection);
         }
 
         /// <summary>
