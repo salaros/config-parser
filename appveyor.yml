@@ -1,5 +1,5 @@
 # Operating system (build VM template)
-os: Windows Server 2016
+os: Windows Server 2019
 
 # If the build configuration does not specify build worker image
 # then Visual Studio 2015 image is used.
@@ -93,7 +93,7 @@ deploy:
   -
     provider: NuGet
     api_key:
-      secure: i6oWn60J7ZOM4UuYcvxbuk9OAEp6or+Wq7izyJDPNlcLIhG2UKsxz7G/8erhdY3M
+      secure: fLRrY6iKFQhPFD5fHraib6Ot+0x3eKiVWoBCiKT5zPRCqxWxLAycIO8lJWg3o43r
     artifact: NuGet_Files
     server:             # remove to push to NuGet.org
     skip_symbols: false

@@ -10,7 +10,7 @@ namespace Salaros.Configuration
 {
     public class ConfigParserSettings
     {
-        protected Regex keyMatcher, commentMatcher, valueMatcher;
+        protected Regex keyMatcher, commentMatcher, valueMatcher, arrayStartMatcher;
 
         /// <summary>
         /// Initializes the <see cref="ConfigParserSettings"/> class.
@@ -83,6 +83,11 @@ namespace Salaros.Configuration
         /// The section matcher.
         /// </value>
         internal static Regex SectionMatcher { get; set; }
+
+        /// <summary>Gets the array value line matcher (matches the whitespaces at the beggining of each array value).</summary>
+        /// <value>The array start matcher.</value>
+        internal Regex ArrayStartMatcher => arrayStartMatcher ?? (arrayStartMatcher =
+                    new Regex(@"^(\s{1,})", RegexOptions.Compiled));
 
         /// <summary>
         /// Gets the comment matcher.

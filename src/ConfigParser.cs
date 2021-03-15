@@ -665,7 +665,10 @@ namespace Salaros.Configuration
                         break;
 
                     case var _ when Settings.KeyMatcher.IsMatch(lineRaw):
-                        ReadKeyAndValue(ref currentSection, ref currentLine, lineRaw, lineNumber);
+                        if (!Settings.MultiLineValues.HasFlag(MultiLineValues.NotAllowed) && IsKeyLikeArrayValue(currentLine?.Content, lineRaw))
+                            ReadKeyAndValue(ref currentSection, ref currentLine, lineRaw, lineNumber, append: true, forceIncludeKey: true);
+                        else
+                            ReadKeyAndValue(ref currentSection, ref currentLine, lineRaw, lineNumber);
                         break;
 
                     // Multi-line + allow value-less option on
@@ -697,6 +700,21 @@ namespace Salaros.Configuration
                 sections.Add(currentSection.SectionName, currentSection);
         }
 
+        private bool IsKeyLikeArrayValue(string currentLine, string lineRaw)
+        {
+            if (string.IsNullOrWhiteSpace(currentLine) || string.IsNullOrWhiteSpace(lineRaw))
+                return false;
+
+            var lastLine = currentLine?.Split(new string[] { Settings.NewLine }, StringSplitOptions.None)?.LastOrDefault();
+            var prevLineMatch = Settings.ArrayStartMatcher.Match(lastLine);
+            var curLineMatch = Settings.ArrayStartMatcher.Match(lineRaw);
+
+            if (!prevLineMatch.Success || !curLineMatch.Success)
+                return false;
+
+            return prevLineMatch.Groups[0].Value.Length == curLineMatch.Groups[0].Value.Length;
+        }
+
         /// <summary>
         /// Reads the valueless key.
         /// </summary>
@@ -726,9 +744,11 @@ namespace Salaros.Configuration
         {
             if (MultiLineValues.NotAllowed == Settings.MultiLineValues ||
                 Settings.MultiLineValues.HasFlag(MultiLineValues.NotAllowed))
+            {
                 throw new ConfigParserException(
                     "Multi-line values are explicitly disallowed by parser settings. Please consider changing them.",
                     lineNumber);
+            }
 
             ReadKeyAndValue(ref currentSection, ref currentLine, lineRaw, lineNumber, true);
         }
@@ -745,7 +765,7 @@ namespace Salaros.Configuration
         /// or</exception>
         /// <exception cref="NotImplementedException"></exception>
         private void ReadKeyAndValue(ref ConfigSection currentSection, ref ConfigLine currentLine, string lineRaw,
-            int lineNumber, bool append = false)
+            int lineNumber, bool append = false, bool forceIncludeKey = false)
         {
             if (null != currentLine && !append)
                 BackupCurrentLine(ref currentSection, ref currentLine, lineNumber);
@@ -758,7 +778,8 @@ namespace Salaros.Configuration
             var separator = (string.IsNullOrWhiteSpace(keyMatch.Groups["separator"]?.Value))
                 ? Settings.KeyValueSeparator
                 : keyMatch.Groups["separator"]?.Value;
-            if (keyMatch.Success && keyMatch.Captures.Count > 0)
+
+            if (!forceIncludeKey && keyMatch.Success && keyMatch.Captures.Count > 0)
                 lineRaw = lineRaw.Substring(keyMatch.Captures[0].Value.Length);
 
             var valueMatch = Settings.ValueMatcher.Match(lineRaw);

@@ -18,9 +18,9 @@
         <Copyright>Copyright 2015 (c) Salaros</Copyright>
         <Title>ConfigParser</Title>
         <Description>A slim, cross-platform, fully managed C# library for reading/writing .ini, .conf, .cfg etc configuration files.</Description>
-        <Version>1.0.0</Version>
-        <AssemblyVersion>1.0.0</AssemblyVersion>
-        <FileVersion>1.0.0</FileVersion>
+        <Version>0.3.7</Version>
+        <AssemblyVersion>0.3.7</AssemblyVersion>
+        <FileVersion>0.3.7</FileVersion>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageLicenseUrl>https://raw.githubusercontent.com/salaros/config-parser/master/LICENSE</PackageLicenseUrl>
         <PackageProjectUrl>https://github.com/salaros/config-parser</PackageProjectUrl>
@@ -67,5 +67,5 @@
         <Delete Files="@(NuGetFilesBin)" />
         <Delete Files="@(NuGetFilesProject)" />
     </Target>
-  
+
 </Project>

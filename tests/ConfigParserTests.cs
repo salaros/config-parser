@@ -57,5 +57,29 @@ namespace Salaros.Configuration.Tests
 
             Assert.True(File.Exists(configFilePathTmpNew));
         }
+
+        [Fact]
+        public void ArrayIsReadCorrectly()
+        {
+            // Set up
+            var settings = new ConfigParserSettings { MultiLineValues = MultiLineValues.Simple | MultiLineValues.QuoteDelimitedValues };
+            var configFile = new ConfigParser(
+                @"[Advanced]
+                Select =
+                     select * from
+                     from table
+                     where ID = '5'
+                ",
+                settings);
+
+            // Act
+            var arrayValues = configFile.GetArrayValue("Advanced", "Select");
+
+            // Assert
+            Assert.Equal(3, arrayValues?.Length ?? 0);
+            Assert.Equal("select * from", arrayValues[0]);
+            Assert.Equal("from table", arrayValues[1]);
+            Assert.Equal("where ID = '5'", arrayValues[2]);
+        }
     }
 }
