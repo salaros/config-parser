@@ -208,6 +208,19 @@ namespace Salaros.Configuration
             return GetRawValue(sectionName, keyName, defaultValue);
         }
 
+        /// <summary>Joins a multiline value using a separator.</summary>
+        /// <param name="sectionName">Name of the section.</param>
+        /// <param name="keyName">Name of the key.</param>
+        /// <param name="separator">The separator (defaults to whitespace).</param>
+        /// <returns>
+        ///   <br />
+        /// </returns>
+        public string JoinMultilineValue(string sectionName, string keyName, string separator = " ")
+        {
+            var multiLineVal = GetValue(sectionName, keyName);
+            return string.Join(separator, multiLineVal?.Split(new[] { Settings.NewLine }, StringSplitOptions.None));
+        }
+
         /// <summary>
         /// Gets the value.
         /// </summary>

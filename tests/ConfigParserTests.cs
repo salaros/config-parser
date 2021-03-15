@@ -81,5 +81,25 @@ namespace Salaros.Configuration.Tests
             Assert.Equal("from table", arrayValues[1]);
             Assert.Equal("where ID = '5'", arrayValues[2]);
         }
+
+        [Fact]
+        public void JoinMultilineValueWorks()
+        {
+            // Set up
+            var settings = new ConfigParserSettings { MultiLineValues = MultiLineValues.Simple };
+            var configFile = new ConfigParser(
+                @"[Advanced]
+ExampleValue = Lorem ipsum dolor sit amet
+consectetur adipiscing elit
+sed do eiusmod tempor incididunt
+                ",
+                settings);
+
+            // Act
+            var multiLineJoint = configFile.JoinMultilineValue("Advanced", "ExampleValue", " ");
+
+            // Assert
+            Assert.Equal("Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt", multiLineJoint);
+        }
     }
 }
