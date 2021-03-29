@@ -6,7 +6,7 @@
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:IniComment" /> class.
+        /// Initializes a new instance of the <see cref="IniComment" /> class.
         /// </summary>
         /// <param name="delimiter">Delimiter.</param>
         /// <param name="comment"></param>
@@ -39,9 +39,9 @@
 
         /// <inheritdoc />
         /// <summary>
-        /// Returns a <see cref="T:System.String" /> that represents the current <see cref="T:Salaros.Config.IniComment" />.
+        /// Returns a <see cref="System.String" /> that represents the current <see cref="Salaros.Config.IniComment" />.
         /// </summary>
-        /// <returns>A <see cref="T:System.String" /> that represents the current <see cref="T:Salaros.Config.IniComment" />.</returns>
+        /// <returns>A <see cref="System.String" /> that represents the current <see cref="Salaros.Config.IniComment" />.</returns>
         public override string ToString()
         {
             return (string.IsNullOrWhiteSpace(Comment))

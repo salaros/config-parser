@@ -5,16 +5,15 @@ using System.Linq;
 
 namespace Salaros.Configuration
 {
-    public class ConfigSection : IConfigLine
-	{
+    public class ConfigSection : ConfigSectionBase, IConfigLine
+    {
         protected int lineNumber;
-	    protected string sectionName, comment;
-        protected List<ConfigLine> lines;
+        protected string sectionName, comment;
 
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Salaros.Configuration.ConfigSection" /> class.
+        /// Initializes a new instance of the <see cref="Salaros.Configuration.ConfigSection" /> class.
         /// </summary>
         /// <param name="sectionName">Section name.</param>
         /// <param name="lineNumber">Line number.</param>
@@ -24,76 +23,53 @@ namespace Salaros.Configuration
         /// <inheritdoc />
         public ConfigSection(string sectionName, int lineNumber = -1, string indentation = "", string comment = "")
             : this()
-	    {
-	        lines = new List<ConfigLine>();
+        {
+            this.sectionName = sectionName ?? throw new ArgumentNullException(nameof(sectionName));
+            this.lineNumber = lineNumber;
+            this.comment = comment;
 
-	        this.sectionName = sectionName ?? throw new ArgumentNullException(nameof(sectionName));
-	        this.lineNumber = lineNumber;
-	        this.comment = comment;
-
-	        Indentation = indentation;
+            Indentation = indentation;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigSection"/> class.
         /// </summary>
         internal ConfigSection()
-	    {
-	        lines = new List<ConfigLine>();
-	        sectionName = string.Empty;
-	        lineNumber = 0;
-	    }
+            : base()
+        {
+            sectionName = string.Empty;
+            lineNumber = 0;
+        }
 
         #endregion
-        
+
         #region Methods
 
         /// <summary>
-        /// Gets the line number of the given line.
+        /// Returns a <see cref="string"/> that represents the current <see cref="ConfigSection"/>.
         /// </summary>
-        /// <returns>The line number.</returns>
-        /// <param name="line">Line.</param>
-        internal int GetLineNumber(ConfigLine line)
-        {
-            if (line == null)
-                throw new ArgumentNullException(nameof(line));
-            
-            return (lines == null || !lines.Any())
-                ? -1 
-                : lines.IndexOf(line);
-        }
+        /// <returns>A <see cref="string"/> that represents the current <see cref="ConfigSection"/>.</returns>
+        public override string ToString() => Content;
 
         /// <summary>
         /// Adds a configuration file line.
         /// </summary>
         /// <param name="configLine">The configuration file line to add.</param>
-        protected internal void AddLine(ConfigLine configLine)
+        internal override void AddLine(ConfigLine configLine)
         {
-            lines.Add(configLine);
+            base.AddLine(configLine);
             configLine.Section = this;
         }
 
-	    /// <summary>
-	    /// Returns a <see cref="string"/> that represents the current <see cref="ConfigSection"/>.
-	    /// </summary>
-	    /// <returns>A <see cref="string"/> that represents the current <see cref="ConfigSection"/>.</returns>
-	    public override string ToString()
-	    {
-	        return Content;
-	    }
-
-	    /// <inheritdoc />
+        /// <inheritdoc />
         /// <summary>
-        /// Returns a <see cref="T:System.String" /> that represents this instance.
+        /// Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
         /// <param name="multiLineSettings">The multi line settings.</param>
         /// <returns>
-        /// A <see cref="T:System.String" /> that represents this instance.
+        /// A <see cref="System.String" /> that represents this instance.
         /// </returns>
-        public string ToString(MultiLineValues multiLineSettings)
-	    {
-	        return ToString();
-	    }
+        public string ToString(MultiLineValues multiLineSettings) => ToString();
 
         #endregion
 
@@ -101,14 +77,14 @@ namespace Salaros.Configuration
 
         #region IConfigLine implementation
 
-	    /// <inheritdoc />
-	    /// <summary>
-	    /// Gets the section.
-	    /// </summary>
-	    /// <value>
-	    /// The section.
-	    /// </value>
-	    public ConfigSection Section => this;
+        /// <inheritdoc />
+        /// <summary>
+        /// Gets the section.
+        /// </summary>
+        /// <value>
+        /// The section.
+        /// </value>
+        public ConfigSection Section => this;
 
 
         /// <inheritdoc />
@@ -118,7 +94,7 @@ namespace Salaros.Configuration
         /// <value>The line number.</value>
         public virtual int LineNumber => lineNumber;
 
-	    #endregion
+        #endregion
 
         /// <summary>
         /// Gets the name of the section.
@@ -130,19 +106,24 @@ namespace Salaros.Configuration
         /// Gets the keys.
         /// </summary>
         /// <value>The keys.</value>
-        public ReadOnlyCollection<IConfigKeyValue> Keys
-        {
-            get
-            {
-                return new ReadOnlyCollection<IConfigKeyValue>(lines.OfType<IConfigKeyValue>().OrderBy(k => k.LineNumber).ToList());
-            }
-        }
+        public
+#if NET40
+        ReadOnlyCollection<IConfigKeyValue> Keys
+#else
+        IReadOnlyCollection<IConfigKeyValue> Keys
+#endif
+            => new ReadOnlyCollection<IConfigKeyValue>(lines.OfType<IConfigKeyValue>().OrderBy(k => k.LineNumber).ToList());
 
         /// <summary>
         /// Gets all the lines of the given section.
         /// </summary>
         /// <value>The lines.</value>
-        public ReadOnlyCollection<IConfigLine> Lines
+        public override
+#if NET40
+            ReadOnlyCollection<IConfigLine> Lines
+#else
+            IReadOnlyCollection<IConfigLine> Lines
+#endif
         {
             get
             {
@@ -154,31 +135,31 @@ namespace Salaros.Configuration
             }
         }
 
-	    /// <summary>
-	    /// Gets the raw content of the line.
-	    /// </summary>
-	    /// <value>
-	    /// The raw content of the line.
-	    /// </value>
-	    /// ReSharper disable once InheritdocConsiderUsage
-	    public string Content => string.IsNullOrWhiteSpace(sectionName)
-	        ? string.Empty
-	        : $"{Indentation}[{sectionName}]{comment}";
+        /// <summary>
+        /// Gets the raw content of the line.
+        /// </summary>
+        /// <value>
+        /// The raw content of the line.
+        /// </value>
+        /// ReSharper disable once InheritdocConsiderUsage
+        public string Content => string.IsNullOrWhiteSpace(sectionName)
+            ? string.Empty
+            : $"{Indentation}[{sectionName}]{comment}";
 
-	    /// <inheritdoc />
-	    /// <summary>
-	    /// Gets the indentation.
-	    /// </summary>
-	    /// <value>
-	    /// The indentation.
-	    /// </value>
-	    /// <exception cref="T:System.NotImplementedException"></exception>
-	    public string Indentation
-	    {
-	        get;
-	    }
+        /// <inheritdoc />
+        /// <summary>
+        /// Gets the indentation.
+        /// </summary>
+        /// <value>
+        /// The indentation.
+        /// </value>
+        /// <exception cref="System.NotImplementedException"></exception>
+        public string Indentation
+        {
+            get;
+        }
 
-	    #endregion
+        #endregion
 
         #region Indexing
 
@@ -189,18 +170,18 @@ namespace Salaros.Configuration
         /// The <see cref="string"/>.
         /// </value>
         /// <param name="keyName">Name of the key.</param>
-        /// <returns></returns>
-        public string this[string keyName]
-	    {
-	        get
-	        {
-	            return (null == keyName)
-	                ? null
-	                : Keys
-	                    ?.FirstOrDefault(s => keyName.Equals(s.Name, StringComparison.InvariantCultureIgnoreCase))
-	                    ?.ValueRaw as string;
-	        }
-	    }
+        /// <returns>Key value.</returns>
+        public override string this[string keyName]
+        {
+            get
+            {
+                return (keyName is null)
+                    ? null
+                    : Keys
+                        ?.FirstOrDefault(s => keyName.Equals(s.Name, StringComparison.InvariantCultureIgnoreCase))
+                        ?.ValueRaw as string;
+            }
+        }
 
         #endregion
     }

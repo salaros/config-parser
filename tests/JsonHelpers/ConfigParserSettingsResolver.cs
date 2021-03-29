@@ -10,11 +10,11 @@ namespace Salaros.Configuration.Tests
     {
         /// <inheritdoc />
         /// <summary>
-        /// Creates a <see cref="T:Newtonsoft.Json.Serialization.JsonPrimitiveContract" /> for the given type.
+        /// Creates a <see cref="Newtonsoft.Json.Serialization.JsonPrimitiveContract" /> for the given type.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
         /// <returns>
-        /// A <see cref="T:Newtonsoft.Json.Serialization.JsonPrimitiveContract" /> for the given type.
+        /// A <see cref="Newtonsoft.Json.Serialization.JsonPrimitiveContract" /> for the given type.
         /// </returns>
         protected override JsonPrimitiveContract CreatePrimitiveContract(Type objectType)
         {
@@ -28,11 +28,11 @@ namespace Salaros.Configuration.Tests
 
         /// <inheritdoc />
         /// <summary>
-        /// Creates a <see cref="T:Newtonsoft.Json.Serialization.JsonObjectContract" /> for the given type.
+        /// Creates a <see cref="Newtonsoft.Json.Serialization.JsonObjectContract" /> for the given type.
         /// </summary>
         /// <param name="objectType">Type of the object.</param>
         /// <returns>
-        /// A <see cref="T:Newtonsoft.Json.Serialization.JsonObjectContract" /> for the given type.
+        /// A <see cref="Newtonsoft.Json.Serialization.JsonObjectContract" /> for the given type.
         /// </returns>
         protected override JsonObjectContract CreateObjectContract(Type objectType)
         {

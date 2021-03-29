@@ -48,7 +48,7 @@ namespace Koopman.CheckPoint.Json
 {
     /// <inheritdoc />
     /// <summary>
-    /// Converts an <see cref="T:System.Enum" /> to and from its name string value.
+    /// Converts an <see cref="System.Enum" /> to and from its name string value.
     /// </summary>
     internal class EnumConverter : JsonConverter
     {

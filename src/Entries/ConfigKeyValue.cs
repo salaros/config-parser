@@ -9,7 +9,7 @@ namespace Salaros.Configuration
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Salaros.Config.ConfigKeyValue`T" /> class.
+        /// Initializes a new instance of the <see cref="Salaros.Config.ConfigKeyValue`T" /> class.
         /// </summary>
         /// <param name="keyName">Name of the key.</param>
         /// <param name="separator">The separator.</param>
@@ -23,7 +23,7 @@ namespace Salaros.Configuration
             if (string.IsNullOrWhiteSpace(keyName))
                 throw new ArgumentNullException(nameof(keyName));
 
-            if (string.IsNullOrWhiteSpace(separator))
+            if (separator is null)
                 throw new ArgumentNullException(nameof(separator));
 
             this.keyName = keyName;
@@ -102,9 +102,9 @@ namespace Salaros.Configuration
 
         /// <inheritdoc />
         /// <summary>
-        /// Returns a <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.ConfigKeyValue" />.
+        /// Returns a <see cref="string" /> that represents the current <see cref="Salaros.Config.ConfigKeyValue" />.
         /// </summary>
-        /// <returns>A <see cref="T:string" /> that represents the current <see cref="T:Salaros.Config.ConfigKeyValue" />.</returns>
+        /// <returns>A <see cref="string" /> that represents the current <see cref="Salaros.Config.ConfigKeyValue" />.</returns>
         public override string ToString()
         {
             return ToString(MultiLineValues.NotAllowed);
@@ -113,11 +113,11 @@ namespace Salaros.Configuration
         /// ReSharper disable once InheritdocInvalidUsage
         /// <inheritdoc cref="ConfigLine" />
         /// <summary>
-        /// Returns a <see cref="T:System.String" /> that represents this instance.
+        /// Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
         /// <param name="multiLineSettings">The multi line settings.</param>
         /// <returns>
-        /// A <see cref="T:System.String" /> that represents this instance.
+        /// A <see cref="System.String" /> that represents this instance.
         /// </returns>
         public override string ToString(MultiLineValues multiLineSettings)
         {

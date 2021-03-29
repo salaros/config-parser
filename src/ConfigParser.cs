@@ -10,7 +10,7 @@ using Salaros.Configuration.Logging;
 
 namespace Salaros.Configuration
 {
-    public class ConfigParser
+    public partial class ConfigParser
     {
         private static readonly ILog Logger = LogProvider.GetCurrentClassLogger();
         protected readonly ConfigSection fileHeader;
@@ -48,6 +48,7 @@ namespace Salaros.Configuration
         public ConfigParser(ConfigParserSettings settings = null)
         {
             Settings = settings ?? new ConfigParserSettings();
+            NullSection = new NullConfigSection(this);
 
             fileHeader = new ConfigSection();
             sections = new Dictionary<string, ConfigSection>();
@@ -55,11 +56,11 @@ namespace Salaros.Configuration
 
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Salaros.Configuration.ConfigParser" /> class.
+        /// Initializes a new instance of the <see cref="Salaros.Configuration.ConfigParser" /> class.
         /// </summary>
         /// <param name="configFile">The configuration file (may be path or file content).</param>
         /// <param name="settings">The settings.</param>
-        /// <exception cref="T:System.ArgumentException">configFilePath</exception>
+        /// <exception cref="System.ArgumentException">configFilePath</exception>
         public ConfigParser(string configFile, ConfigParserSettings settings = null)
             : this(settings)
         {
@@ -111,16 +112,25 @@ namespace Salaros.Configuration
         /// <value>
         /// The sections.
         /// </value>
-        public ReadOnlyCollection<ConfigSection> Sections =>
-            new ReadOnlyCollection<ConfigSection>(sections.Values.ToArray());
+#if NET40
+        public ReadOnlyCollection<ConfigSection> Sections => new ReadOnlyCollection<ConfigSection>(
+#else
+        public IReadOnlyCollection<ConfigSection> Sections => new Collection<ConfigSection>(
+#endif
+            sections.Values.ToList());
 
         /// <summary>
         /// Gets configuration file's lines.
         /// </summary>
         /// <value>The lines.</value>
-        public ReadOnlyCollection<IConfigLine> Lines
-            => new ReadOnlyCollection<IConfigLine>(fileHeader.Lines.Concat(sections.Values.SelectMany(s => s.Lines))
-                .ToArray());
+#if NET40
+        public ReadOnlyCollection<IConfigLine> Lines => new ReadOnlyCollection<IConfigLine>(
+#else
+        public IReadOnlyCollection<IConfigLine> Lines => new Collection<IConfigLine>(
+#endif
+            fileHeader.Lines.Concat(sections.Values.SelectMany(s => s.Lines)).ToList());
+
+        public NullConfigSection NullSection { get; }
 
         #endregion Properties
 
@@ -143,19 +153,20 @@ namespace Salaros.Configuration
         /// </exception>
         internal virtual bool TryGetValue<T>(string sectionName, string keyName, out T value)
         {
-            if (string.IsNullOrWhiteSpace(sectionName))
+            if (sectionName is null)
                 throw new ArgumentNullException(nameof(sectionName));
+
             if (string.IsNullOrWhiteSpace(keyName))
-                throw new ArgumentNullException(nameof(keyName));
+                throw new ArgumentException("Key name must be a non-empty string.", nameof(keyName));
 
 #pragma warning disable IDE0034 // Simplify 'default' expression
             value = default(T);
 #pragma warning restore IDE0034 // Simplify 'default' expression
 
             if (!sections.TryGetValue(sectionName, out var section))
-                return false;
+                section = null;
 
-            var key = section.Keys.FirstOrDefault(k => Equals(keyName, k.Name));
+            var key = (section ?? fileHeader?.Section).Keys.FirstOrDefault(k => Equals(keyName, k.Name));
             if (key == null)
                 return false;
 
@@ -173,13 +184,13 @@ namespace Salaros.Configuration
         /// <typeparam name="T">The 1st type parameter.</typeparam>
         internal virtual T GetRawValue<T>(string sectionName, string keyName, T defaultValue)
         {
-            if (string.IsNullOrWhiteSpace(sectionName))
+            if (sectionName is null)
                 throw new ArgumentNullException(nameof(sectionName));
+
             if (string.IsNullOrWhiteSpace(keyName))
-                throw new ArgumentNullException(nameof(keyName));
+                throw new ArgumentException("Key name must be a non-empty string.", nameof(keyName));
 
             var iniKey = new ConfigKeyValue<T>(keyName, Settings.KeyValueSeparator, defaultValue, -1);
-
             if (!sections.TryGetValue(sectionName, out var section))
             {
                 section = new ConfigSection(sectionName, Lines.Any() ? Lines.Max(l => l.LineNumber) : 0);
@@ -188,11 +199,14 @@ namespace Salaros.Configuration
                 sections.Add(sectionName, section);
             }
 
-            var key = section.Keys.FirstOrDefault(k => Equals(keyName, k.Name));
+            var key = (section ?? fileHeader?.Section).Keys.FirstOrDefault(k => Equals(keyName, k.Name));
             if (key != null)
                 return (T)key.ValueRaw;
 
-            section.AddLine(iniKey);
+            if (section is null && Settings.MultiLineValues.HasFlag(MultiLineValues.AllowEmptyTopSection))
+                section = fileHeader.Section;
+
+            section?.AddLine(iniKey);
             return defaultValue;
         }
 
@@ -421,7 +435,7 @@ namespace Salaros.Configuration
             return values.Any() && string.IsNullOrWhiteSpace(values.First());
         }
 
-        #endregion
+#endregion
 
         #region SetValue
 
@@ -540,7 +554,7 @@ namespace Salaros.Configuration
             return SetValue(sectionName, keyName, EncodeByteArray(value));
         }
 
-        #endregion
+        #endregion SetValue
 
         #region Indexing
 
@@ -564,7 +578,7 @@ namespace Salaros.Configuration
             }
         }
 
-        #endregion
+        #endregion Indexing
 
         /// <summary>
         /// Save configuration file's content.
@@ -641,7 +655,7 @@ namespace Salaros.Configuration
             );
         }
 
-        #endregion
+        #endregion Methods
 
         #region Helpers
 
@@ -819,10 +833,17 @@ namespace Salaros.Configuration
                     throw new ConfigParserException("Unknown key=value situation detected!", lineNumber);
             }
 
-            if (append)
-                currentLine.Content = $"{currentLine.Content}{Settings.NewLine}{value}";
-            else
-                currentLine = new ConfigKeyValue<object>(keyName, separator, value, lineNumber);
+            try
+            {
+                if (append)
+                    currentLine.Content = $"{currentLine.Content}{Settings.NewLine}{value}";
+                else
+                    currentLine = new ConfigKeyValue<object>(keyName, separator, value, lineNumber);
+            }
+            catch (Exception ex)
+            {
+                throw new ConfigParserException($"Failed to parse the following line: '{lineRaw}'", lineNumber, ex);
+            }
         }
 
         /// <summary>

@@ -515,7 +515,7 @@ namespace Salaros.Configuration.Tests
                     new JsonSerializerSettings
                     {
                         ContractResolver = new ConfigParserSettingsResolver(),
-                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                     });
             }
             catch (Exception ex)
@@ -717,6 +717,29 @@ namespace Salaros.Configuration.Tests
             Assert.Equal(configParserString, configFromTextString, ignoreCase: true);
         }
 
+        /// <summary>
+        /// Tests if the usage of unicode symbols is allowed.
+        /// </summary>
+        [Fact]
+        public void IsSectionLessKeyLessFileParsed()
+        {
+            // Arrange
+            var redisConfig = RealWorldConfigFiles.FirstOrDefault(f => f.EndsWith("redis.conf", StringComparison.OrdinalIgnoreCase));
+            var configParser = new ConfigParser(
+               redisConfig,
+               new ConfigParserSettings
+               {
+                   MultiLineValues = MultiLineValues.AllowValuelessKeys | MultiLineValues.AllowEmptyTopSection,
+                   KeyValueSeparator = " ",
+               }
+            );
+
+            // Act
+            var clientBufferLimitValue = configParser.NullSection.GetValue("client-output-buffer-limit");
+
+            // Assert
+            Assert.Equal("normal 0 0 0", clientBufferLimitValue, ignoreCase: true);
+        }
 
         [Fact]
         public void IsCustomNumberFormatWorking_ThousandSeparator()
