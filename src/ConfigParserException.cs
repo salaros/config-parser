@@ -6,7 +6,7 @@ namespace Salaros.Configuration
     {
         /// <inheritdoc />
         /// <summary>
-        /// Initializes a new instance of the <see cref="Salaros.Configuration.ConfigParserException" /> class.
+        /// Initializes a new instance of the <see cref="ConfigParserException" /> class.
         /// </summary>
         /// <param name="message">Message.</param>
         /// <param name="lineNumber">Line number.</param>

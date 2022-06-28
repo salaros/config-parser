@@ -13,7 +13,7 @@ namespace Salaros.Configuration
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Salaros.Configuration.ConfigSection" /> class.
+        /// Initializes a new instance of the <see cref="ConfigSection" /> class.
         /// </summary>
         /// <param name="sectionName">Section name.</param>
         /// <param name="lineNumber">Line number.</param>
@@ -63,11 +63,11 @@ namespace Salaros.Configuration
 
         /// <inheritdoc />
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <param name="multiLineSettings">The multi line settings.</param>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public string ToString(MultiLineValues multiLineSettings) => ToString();
 
@@ -153,11 +153,14 @@ namespace Salaros.Configuration
         /// <value>
         /// The indentation.
         /// </value>
-        /// <exception cref="System.NotImplementedException"></exception>
-        public string Indentation
-        {
-            get;
-        }
+        public string Indentation { get; }
+
+        public override
+#if NET40
+        ReadOnlyCollection<ConfigSection> Sections => new ReadOnlyCollection<ConfigSection>(new List<ConfigSection> { this });
+#else
+        IReadOnlyCollection<ConfigSection> Sections => new List<ConfigSection> { this };
+# endif
 
         #endregion
 
@@ -170,8 +173,8 @@ namespace Salaros.Configuration
         /// The <see cref="string"/>.
         /// </value>
         /// <param name="keyName">Name of the key.</param>
-        /// <returns>Key value.</returns>
-        public override string this[string keyName]
+        /// <returns>Key entry with the specified key name.</returns>
+        public string this[string keyName]
         {
             get
             {
@@ -183,6 +186,6 @@ namespace Salaros.Configuration
             }
         }
 
-        #endregion
+#endregion
     }
 }

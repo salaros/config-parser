@@ -9,7 +9,7 @@ namespace Salaros.Configuration
         protected readonly string yes, no;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Salaros.Configuration.Helpers.BooleanConverters.YesNoConverter" /> class.
+        /// Initializes a new instance of the <see cref="YesNoConverter" /> class.
         /// </summary>
         /// <param name="yes">The yes.</param>
         /// <param name="no">The no.</param>
@@ -35,12 +35,12 @@ namespace Salaros.Configuration
         /// <summary>
         /// Converts the given value object to the specified type, using the specified context and culture information.
         /// </summary>
-        /// <param name="context">An <see cref="System.ComponentModel.ITypeDescriptorContext" /> that provides a format context.</param>
-        /// <param name="culture">A <see cref="System.Globalization.CultureInfo" />. If <see langword="null" /> is passed, the current culture is assumed.</param>
-        /// <param name="value">The <see cref="System.Object" /> to convert.</param>
-        /// <param name="destinationType">The <see cref="System.Type" /> to convert the <paramref name="value" /> parameter to.</param>
+        /// <param name="context">An <see cref="ITypeDescriptorContext" /> that provides a format context.</param>
+        /// <param name="culture">A <see cref="CultureInfo" />. If <see langword="null" /> is passed, the current culture is assumed.</param>
+        /// <param name="value">The <see cref="object" /> to convert.</param>
+        /// <param name="destinationType">The <see cref="Type" /> to convert the <paramref name="value" /> parameter to.</param>
         /// <returns>
-        /// An <see cref="System.Object" /> that represents the converted value.
+        /// An <see cref="object" /> that represents the converted value.
         /// </returns>
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
@@ -53,11 +53,11 @@ namespace Salaros.Configuration
         /// <summary>
         /// Converts the given value object to a Boolean object.
         /// </summary>
-        /// <param name="context">An <see cref="System.ComponentModel.ITypeDescriptorContext" /> that provides a format context.</param>
-        /// <param name="culture">A <see cref="System.Globalization.CultureInfo" /> that specifies the culture to which to convert.</param>
-        /// <param name="value">The <see cref="System.Object" /> to convert.</param>
+        /// <param name="context">An <see cref="ITypeDescriptorContext" /> that provides a format context.</param>
+        /// <param name="culture">A <see cref="CultureInfo" /> that specifies the culture to which to convert.</param>
+        /// <param name="value">The <see cref="object" /> to convert.</param>
         /// <returns>
-        /// An <see cref="System.Object" /> that represents the converted <paramref name="value" />.
+        /// An <see cref="object" /> that represents the converted <paramref name="value" />.
         /// </returns>
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {

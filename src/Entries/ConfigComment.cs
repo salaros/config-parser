@@ -39,9 +39,9 @@
 
         /// <inheritdoc />
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents the current <see cref="Salaros.Config.IniComment" />.
+        /// Returns a <see cref="string" /> that represents the current <see cref="Salaros.Config.IniComment" />.
         /// </summary>
-        /// <returns>A <see cref="System.String" /> that represents the current <see cref="Salaros.Config.IniComment" />.</returns>
+        /// <returns>A <see cref="string" /> that represents the current <see cref="Salaros.Config.IniComment" />.</returns>
         public override string ToString()
         {
             return (string.IsNullOrWhiteSpace(Comment))

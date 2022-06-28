@@ -113,11 +113,11 @@ namespace Salaros.Configuration
         /// ReSharper disable once InheritdocInvalidUsage
         /// <inheritdoc cref="ConfigLine" />
         /// <summary>
-        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <param name="multiLineSettings">The multi line settings.</param>
         /// <returns>
-        /// A <see cref="System.String" /> that represents this instance.
+        /// A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString(MultiLineValues multiLineSettings)
         {
