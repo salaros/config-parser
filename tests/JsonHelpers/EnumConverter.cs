@@ -318,6 +318,7 @@ namespace Koopman.CheckPoint.Json
         internal static string[] CamelCaseToArray(this string source)
         {
             return Regex.Matches(source, @"(^[a-z\d]+|[A-Z\d]+(?![a-z])|[A-Z][a-z\d]+)")
+                .OfType<Match>()
                 .Select(m => m.Value)
                 .ToArray();
         }

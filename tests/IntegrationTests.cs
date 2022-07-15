@@ -21,8 +21,10 @@ namespace Salaros.Configuration.Tests
         /// </summary>
         static IntegrationTests()
         {
+#if !NET40_OR_GREATER
             // Allow the usage of ANSI encoding other than the default one
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+#endif
 
             RealWorldConfigFiles = Directory
                 .GetFiles(Path.Combine(Environment.CurrentDirectory, "Resources", "RealWorld"))
@@ -189,7 +191,7 @@ namespace Salaros.Configuration.Tests
 
             var configFile = new ConfigParser(multiLineDelimitedFilePath, new ConfigParserSettings
             {
-                MultiLineValues = MultiLineValues.Simple
+                MultiLineValues = MultiLineValues.Simple,
             });
             var multiLineDelimitedValue = configFile.GetValue("Multiline Values", "chorus", string.Empty);
             Assert.Equal(
@@ -244,7 +246,11 @@ namespace Salaros.Configuration.Tests
 
             Assert.True(
                 new[] {"Multi-line values", "disallowed"}
-                    .All(s => multiLineException.Message?.Contains(s, StringComparison.InvariantCulture) ?? false)
+                    .All(s => multiLineException.Message?.Contains(s
+#if !NET40_OR_GREATER
+                    , StringComparison.InvariantCulture
+#endif
+                    ) ?? false)
             );
         }
 
@@ -466,7 +472,11 @@ namespace Salaros.Configuration.Tests
                 // ReSharper disable once UnusedVariable
                 var willNeverWork = new ConfigParser(ansiCyrillicFilePath);
             });
-            Assert.True(invalidDataException.Message?.Contains("detect encoding", StringComparison.OrdinalIgnoreCase));
+            Assert.True(invalidDataException.Message?.Contains("detect encoding"
+#if !NET40_OR_GREATER
+                , StringComparison.InvariantCulture
+#endif
+            ));
 
             // ANSI Latin1 - works
             var ansiLatin1FilePath = EncodingSampleFiles.FirstOrDefault(f =>
