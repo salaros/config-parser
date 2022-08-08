@@ -46,7 +46,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.CSharp" Version="4.5.0" Condition="'$(TargetFramework)' != 'net40'" />
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" Condition="'$(TargetFramework)' != 'net40'" />
         <Reference Include="Microsoft.CSharp" Version="4.0.0" Condition="'$(TargetFramework)' == 'net40'" />
     </ItemGroup>
 

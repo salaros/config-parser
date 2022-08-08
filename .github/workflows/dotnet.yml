@@ -1,0 +1,56 @@
+name: Build Config Parser
+
+on:
+  push:
+    branches: [ "master" ]
+
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest  
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Setup NuGet.exe
+      uses: NuGet/setup-nuget@v1
+      with:
+        nuget-api-key: ${{secrets.NUGET_API_KEY}}
+        
+    # Execute all unit tests in the solution
+    - name: Execute unit tests
+      run: |
+        dotnet restore
+        dotnet build --no-restore
+
+    # Execute all unit tests in the solution
+    - name: Execute unit tests
+      run: dotnet test tests --no-build --no-restore
+
+
+    - name: Use GitVersion to generate SemVer version
+      if: startsWith(github.ref, 'refs/tags')
+      run: |
+        dotnet tool update gitversion.tool --tool-path .github/tools
+        echo ::set-env name=TAG_VERSION::$(.github/tools/dotnet-gitversion /output json /showvariable SemVer)
+        
+    - name: Set package version
+      if: startsWith(github.ref, 'refs/tags')
+      uses: KageKirin/set-csproj-version@v1
+      with:
+        version: ${{ env.TAG_NAME }}
+
+    - name: NuGet push
+      if: startsWith(github.ref, 'refs/tags')
+      run: nuget push **\*.nupkg

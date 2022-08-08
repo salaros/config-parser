@@ -1,53 +1,66 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-    <IsPackable>false</IsPackable>
-    <RootNamespace>Salaros.Configuration.Tests</RootNamespace>
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net452</TargetFrameworks>
+        <IsPackable>false</IsPackable>
+        <RootNamespace>Salaros.Configuration.Tests</RootNamespace>
+        <DebugType>portable</DebugType>
+    </PropertyGroup>
 
-  <PropertyGroup>
-      <OutputPath>..\bin\$(Configuration)\</OutputPath>
-      <Company>Salaros</Company>
-      <Product>ConfigParser</Product>
-      <Authors>Zhmayev Yaroslav aka Salaros</Authors>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputPath>..\bin\$(Configuration)\</OutputPath>
+        <Company>Salaros</Company>
+        <Product>ConfigParser</Product>
+        <Authors>Zhmayev Yaroslav aka Salaros</Authors>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.*" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" />
-    <PackageReference Include="xunit" Version="2.4.*" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.*">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
-  </ItemGroup>
+    <PropertyGroup>
+		<XUnitVersion>2.3.*</XUnitVersion>
+	    <XUnitVersion Condition="!$(TargetFramework.Contains('net4'))">2.4.*</XUnitVersion>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\src\ConfigParser.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Resources\*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="ConfigParser.Tests.csproj.DotSettings" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Resources\**\*.*">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <Target Name="CleanTestFiles" AfterTargets="Clean">
     <ItemGroup>
-      <TestFiles Include="$(OutputPath)Resources\**\*.*" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.*" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" Condition="!$(TargetFramework.Contains('net4')) And '$(TargetFramework)' != 'net6.0'" />
+        <PackageReference Include="System.Text.Encoding.CodePages" Version="6.0.*" Condition="'$(TargetFramework)' == 'net6.0'" />
+        <PackageReference Include="xunit" Version="$(XUnitVersion)" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="$(XUnitVersion)">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
     </ItemGroup>
-    <Message Text="Deleting test-related files from $(OutputPath)Resources\" Importance="high" />
-    <Delete Files="@(TestFiles)" />
-  </Target>
+
+    <ItemGroup>
+        <ProjectReference Include="..\src\ConfigParser.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Resources\*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Remove="ConfigParser.Tests.csproj.DotSettings" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Resources\**\*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Resources\Structure\no-section.ini">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <Target Name="CleanTestFiles" AfterTargets="Clean">
+        <ItemGroup>
+            <TestFiles Include="$(OutputPath)Resources\**\*.*" />
+        </ItemGroup>
+        <Message Text="Deleting test-related files from $(OutputPath)Resources\" Importance="high" />
+        <Delete Files="@(TestFiles)" />
+    </Target>
 </Project>
